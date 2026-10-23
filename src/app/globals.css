@@ -1,26 +1,110 @@
+/* ============================================================
+   globals.css – THUYNGA Shop Global Styles
+   Next.js 16 + Tailwind CSS v4
+   Màu chủ đạo: Đỏ rượu vang #800028
+   ============================================================ */
+
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-be-vietnam-pro), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --color-brand: #800028;
+  --color-brand-dark: #5c001e;
+  --color-brand-light: #9e0032;
+  --color-brand-50: #fff0f3;
+  --color-brand-100: #ffe0e8;
+  --color-brand-200: #ffc2d1;
+  --color-gold: #d4af37;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-brand: #800028;
+  --color-brand-dark: #5c001e;
+  --color-brand-light: #9e0032;
+  --color-brand-50: #fff0f3;
+  --header-height: 72px;
+  --mobile-header-height: 60px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Base Styles ────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-be-vietnam-pro), system-ui, sans-serif;
+  color: #1f2937;
+  background-color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* ── Custom Utilities ───────────────────────────────────────── */
+.bg-brand {
+  background-color: #800028;
+}
+
+.bg-brand-dark {
+  background-color: #5c001e;
+}
+
+.bg-brand-light {
+  background-color: #9e0032;
+}
+
+.text-brand {
+  color: #800028;
+}
+
+.text-brand-light {
+  color: #9e0032;
+}
+
+.border-brand {
+  border-color: #800028;
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #800028 0%, #a0003a 100%);
+}
+
+.brand-gradient-gold {
+  background: linear-gradient(135deg, #800028 0%, #5c001e 60%, #3d0014 100%);
+}
+
+/* Scrollbar ẩn nhưng vẫn scroll mượt trên mobile/desktop */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Container chuẩn cho website */
+.shop-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .shop-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .shop-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
