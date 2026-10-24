@@ -1,20 +1,45 @@
 import Link from "next/link";
 import {
   Phone,
-  Clock,
   ShieldCheck,
   Truck,
   RotateCcw,
   Flame,
   ChevronDown,
-  Search,
   PackageSearch,
   BookOpen,
+  LayoutGrid,
+  Plane,
+  ShieldPlus,
+  Coffee,
+  Apple,
+  Droplet,
+  Baby,
 } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CartButton } from "./CartButton";
 import { UserAccountMenu } from "./UserAccountMenu";
 import { MobileNav } from "./MobileNav";
+
+// Helper lấy tên hiển thị ngắn gọn, cân đối cho thanh menu ngang trên Desktop
+function getCategoryShortName(slug: string, fullName: string) {
+  if (slug.includes("thuc-pham-chuc-nang")) return "TPCN & Sức khỏe";
+  if (slug.includes("thuc-pham-do-uong")) return "Thực phẩm & Đồ uống";
+  if (slug.includes("trai-cay")) return "Trái cây tươi bay";
+  if (slug.includes("my-pham")) return "Mỹ phẩm làm đẹp";
+  if (slug.includes("me-va-be")) return "Mẹ & Bé";
+  return fullName;
+}
+
+// Helper lấy icon đại diện cho ngành hàng
+function getCategoryIcon(slug: string) {
+  if (slug.includes("thuc-pham-chuc-nang")) return ShieldPlus;
+  if (slug.includes("thuc-pham-do-uong")) return Coffee;
+  if (slug.includes("trai-cay")) return Apple;
+  if (slug.includes("my-pham")) return Droplet;
+  if (slug.includes("me-va-be")) return Baby;
+  return LayoutGrid;
+}
 
 interface SubCategory {
   id: string;
@@ -138,99 +163,137 @@ export function Header({ categories }: HeaderProps) {
       </div>
 
       {/* ── 3. Category Navigation Bar (Desktop Mega Menu) ────────── */}
-      <nav className="bg-white border-b border-gray-100 hidden lg:block shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
+      <nav className="bg-white border-b border-gray-200/80 hidden lg:block shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
         <div className="shop-container">
-          <div className="flex items-center justify-between">
-            {/* Mega Menu Dropdown Trigger */}
-            <div className="relative group">
-              <div className="flex items-center gap-2.5 px-5 py-3 bg-[#800028] text-white font-bold text-sm rounded-t-lg cursor-pointer hover:bg-[#5c001e] transition-colors">
-                <span className="w-4 h-0.5 bg-white relative before:absolute before:-top-1.5 before:w-4 before:h-0.5 before:bg-white after:absolute after:top-1.5 after:w-4 after:h-0.5 after:bg-white" />
-                <span>TẤT CẢ DANH MỤC</span>
-                <ChevronDown className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" />
-              </div>
+          <div className="flex items-center gap-1.5 xl:gap-2.5 py-1.5">
+            {/* 1. Mega Menu Button (TẤT CẢ DANH MỤC) – Khối cố định sang trọng bên trái */}
+            <div className="relative group shrink-0">
+              <button
+                type="button"
+                className="flex items-center justify-between gap-1.5 w-44 xl:w-52 px-3 xl:px-4 py-2.5 bg-gradient-to-r from-[#800028] to-[#9e0032] hover:from-[#5c001e] hover:to-[#800028] text-white font-bold text-xs xl:text-sm rounded-xl shadow-xs transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <LayoutGrid className="w-4 h-4 text-amber-300" />
+                  <span className="tracking-wide uppercase font-black">TẤT CẢ DANH MỤC</span>
+                </div>
+                <ChevronDown className="w-4 h-4 text-white/80 transition-transform duration-200 group-hover:rotate-180" />
+              </button>
 
               {/* Mega Menu Dropdown Content */}
-              <div className="absolute top-full left-0 w-72 bg-white rounded-b-2xl shadow-2xl border border-gray-100 py-2 hidden group-hover:block z-50">
-                {categories.map((cat) => (
-                  <div key={cat.id} className="relative group/sub">
-                    <Link
-                      href={`/danh-muc/${cat.slug}`}
-                      className="flex items-center justify-between px-4 py-2.5 text-sm font-semibold text-gray-800 hover:text-[#800028] hover:bg-rose-50/60 transition-colors"
-                    >
-                      <span>{cat.name}</span>
-                      {cat.children && cat.children.length > 0 && (
-                        <ChevronDown className="w-4 h-4 -rotate-90 text-gray-400 group-hover/sub:text-[#800028]" />
-                      )}
-                    </Link>
-
-                    {/* Subcategories Flyout Menu */}
-                    {cat.children && cat.children.length > 0 && (
-                      <div className="absolute top-0 left-full w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 hidden group-hover/sub:block z-50 ml-1">
-                        <div className="px-4 py-1.5 text-xs font-bold text-[#800028] uppercase border-b border-gray-100 mb-1">
-                          {cat.name}
-                        </div>
-                        {cat.children.map((sub) => (
-                          <Link
-                            key={sub.id}
-                            href={`/danh-muc/${sub.slug}`}
-                            className="block px-4 py-2 text-xs font-medium text-gray-700 hover:text-[#800028] hover:bg-rose-50/60 transition-colors"
-                          >
-                            {sub.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
+              <div className="absolute top-full left-0 w-72 pt-1.5 hidden group-hover:block z-50">
+                <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 py-2.5 overflow-hidden">
+                  <div className="px-4 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100 mb-1 flex items-center justify-between">
+                    <span>5 Ngành hàng nhập khẩu</span>
+                    <span className="text-[10px] text-[#800028] font-bold">Chính hãng</span>
                   </div>
-                ))}
+                  {categories.map((cat) => {
+                    const Icon = getCategoryIcon(cat.slug);
+                    return (
+                      <div key={cat.id} className="relative group/sub">
+                        <Link
+                          href={`/danh-muc/${cat.slug}`}
+                          className="flex items-center justify-between px-4 py-2.5 text-xs xl:text-sm font-semibold text-gray-800 hover:text-[#800028] hover:bg-rose-50/70 transition-colors"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="w-7 h-7 rounded-lg bg-rose-50 text-[#800028] flex items-center justify-center shrink-0">
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <span className="truncate">{cat.name}</span>
+                          </div>
+                          {cat.children && cat.children.length > 0 && (
+                            <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-gray-400 group-hover/sub:text-[#800028] shrink-0" />
+                          )}
+                        </Link>
+
+                        {/* Subcategories Flyout Menu */}
+                        {cat.children && cat.children.length > 0 && (
+                          <div className="absolute top-0 left-full w-64 pt-0 hidden group-hover/sub:block z-50 pl-1.5">
+                            <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-3">
+                              <div className="px-2 py-1 text-xs font-bold text-[#800028] uppercase border-b border-gray-100 mb-2 flex items-center gap-1.5">
+                                <Icon className="w-3.5 h-3.5 text-[#800028]" />
+                                <span>{cat.name}</span>
+                              </div>
+                              <div className="space-y-0.5">
+                                {cat.children.map((sub) => (
+                                  <Link
+                                    key={sub.id}
+                                    href={`/danh-muc/${sub.slug}`}
+                                    className="block px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:text-[#800028] hover:bg-rose-50/60 rounded-lg transition-colors"
+                                  >
+                                    {sub.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
-            {/* Horizontal Nav Links */}
-            <div className="flex items-center gap-1 xl:gap-2 text-sm font-medium text-gray-700">
-              {categories.slice(0, 5).map((cat) => (
-                <div key={cat.id} className="relative group/nav py-3 px-2 xl:px-3">
-                  <Link
-                    href={`/danh-muc/${cat.slug}`}
-                    className="flex items-center gap-1 hover:text-[#800028] transition-colors whitespace-nowrap font-semibold"
-                  >
-                    <span>{cat.name}</span>
+            {/* 2. Primary Horizontal Category Links (Tiếp nối liền mạch ngay sau nút Danh mục) */}
+            <div className="flex items-center gap-0.5 xl:gap-1 text-xs xl:text-sm font-semibold text-gray-700">
+              {categories.slice(0, 5).map((cat) => {
+                const Icon = getCategoryIcon(cat.slug);
+                const displayName = getCategoryShortName(cat.slug, cat.name);
+                return (
+                  <div key={cat.id} className="relative group/nav">
+                    <Link
+                      href={`/danh-muc/${cat.slug}`}
+                      className="flex items-center gap-1.5 px-2 xl:px-2.5 py-2 rounded-xl text-gray-700 hover:text-[#800028] hover:bg-rose-50/70 transition-all whitespace-nowrap"
+                    >
+                      <Icon className="w-3.5 h-3.5 text-gray-400 group-hover/nav:text-[#800028] transition-colors shrink-0" />
+                      <span>{displayName}</span>
+                      {cat.children && cat.children.length > 0 && (
+                        <ChevronDown className="w-3 h-3 text-gray-400 group-hover/nav:text-[#800028] transition-transform duration-200 group-hover/nav:rotate-180 shrink-0" />
+                      )}
+                    </Link>
+
+                    {/* Dropdown for specific category */}
                     {cat.children && cat.children.length > 0 && (
-                      <ChevronDown className="w-3.5 h-3.5 text-gray-400 group-hover/nav:text-[#800028] transition-transform group-hover/nav:rotate-180" />
+                      <div className="absolute top-full left-0 w-64 pt-1.5 hidden group-hover/nav:block z-50">
+                        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-2.5">
+                          <div className="px-2.5 py-1 text-xs font-bold text-[#800028] border-b border-gray-100 mb-1 flex items-center gap-1.5">
+                            <Icon className="w-3.5 h-3.5" />
+                            <span>{cat.name}</span>
+                          </div>
+                          {cat.children.map((sub) => (
+                            <Link
+                              key={sub.id}
+                              href={`/danh-muc/${sub.slug}`}
+                              className="block px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:text-[#800028] hover:bg-rose-50/60 rounded-lg transition-colors"
+                            >
+                              {sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
                     )}
-                  </Link>
+                  </div>
+                );
+              })}
+            </div>
 
-                  {/* Dropdown for specific category */}
-                  {cat.children && cat.children.length > 0 && (
-                    <div className="absolute top-full left-0 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 hidden group-hover/nav:block z-50">
-                      {cat.children.map((sub) => (
-                        <Link
-                          key={sub.id}
-                          href={`/danh-muc/${sub.slug}`}
-                          className="block px-4 py-2 text-xs font-medium text-gray-700 hover:text-[#800028] hover:bg-rose-50/60 transition-colors"
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-
+            {/* 3. Utility Promotion Badges (Căn sát góc phải bằng ml-auto, cân xứng với Giỏ hàng) */}
+            <div className="flex items-center gap-2 ml-auto shrink-0">
               {/* Flash Sale link */}
               <Link
                 href="/flash-sale"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-orange-700 font-extrabold rounded-full transition-colors whitespace-nowrap ml-2"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 hover:from-amber-600 hover:to-red-700 text-white font-black text-xs rounded-full shadow-xs hover:shadow-md hover:scale-105 transition-all whitespace-nowrap tracking-wide"
               >
-                <Flame className="w-4 h-4 text-orange-600 animate-bounce" />
+                <Flame className="w-3.5 h-3.5 fill-current animate-pulse text-amber-200" />
                 <span>FLASH SALE</span>
               </Link>
 
-              {/* Blog Link */}
+              {/* Blog Cẩm Nang Sức Khỏe (Hiện trên màn hình siêu rộng 2XL) */}
               <Link
                 href="/tin-tuc"
-                className="flex items-center gap-1 px-3 py-3 hover:text-[#800028] transition-colors whitespace-nowrap"
+                className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-[#800028] hover:bg-rose-50/60 rounded-xl transition-colors whitespace-nowrap"
               >
-                <BookOpen className="w-4 h-4 text-gray-400" />
+                <BookOpen className="w-3.5 h-3.5 text-gray-400" />
                 <span>Góc sức khỏe</span>
               </Link>
             </div>
