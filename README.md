@@ -198,7 +198,8 @@ D:\github\ThuongMaiDienTu-shop\
 ├── prisma/                             # Cơ sở dữ liệu Prisma
 │   ├── schema.prisma                   # Toàn bộ 18 models dữ liệu PostgreSQL
 │   ├── seed.ts                         # Script khởi tạo Admin, 5 Ngành hàng & 25 danh mục con
-│   └── seed-products.ts                # Script nạp sản phẩm mẫu thực tế & phiên Flash Sale
+│   ├── seed-products.ts                # Script nạp sản phẩm mẫu thực tế & phiên Flash Sale
+│   └── seed-reviews.ts                 # Script nạp đánh giá thực tế từ người mua đã xác thực
 │
 └── src/
     ├── middleware.ts                   # Bảo vệ route /admin và /tai-khoan theo role
@@ -211,6 +212,7 @@ D:\github\ThuongMaiDienTu-shop\
     │   │   ├── layout.tsx              # Storefront Layout (Server Component load categories)
     │   │   ├── page.tsx                # Trang chủ (Hero slider, Flash sale đếm ngược, 5 ngành hàng)
     │   │   ├── san-pham/               # Listing tất cả sản phẩm & tìm kiếm
+    │   │   │   └── [slug]/page.tsx     # Chi tiết sản phẩm (RSC + Schema JSON-LD + Metadata SEO)
     │   │   ├── danh-muc/[slug]/        # Danh mục theo slug & bộ lọc đa tiêu chí
     │   │   ├── gio-hang/               # Trang giỏ hàng chi tiết
     │   │   ├── thanh-toan/             # Trang thanh toán (VietQR & COD)
@@ -232,6 +234,7 @@ D:\github\ThuongMaiDienTu-shop\
     │   └── api/                        # REST API Handlers
     │       ├── auth/[...nextauth]/     # NextAuth authentication endpoints
     │       ├── products/               # API tìm kiếm, lọc sản phẩm
+    │       ├── reviews/                # API gửi đánh giá sản phẩm (POST /api/reviews)
     │       ├── cart/                   # API đồng bộ giỏ hàng
     │       ├── orders/                 # API tạo đơn, tính phí ship, webhook thanh toán
     │       └── webhooks/               # Webhook nhận biến động số dư VietQR (Sepay/PayOS)
@@ -257,8 +260,14 @@ D:\github\ThuongMaiDienTu-shop\
     │   │   │   ├── CategoryProductSection.tsx # Khối sản phẩm theo từng ngành hàng
     │   │   │   └── BrandCommitmentSection.tsx # Khối giới thiệu showroom & 4 cam kết vàng
     │   │   │
-    │   │   └── product/
-    │   │       └── ProductCard.tsx     # Card sản phẩm cốt lõi dùng chung (Cờ xuất xứ, HSD, thêm giỏ nhanh)
+    │   │   └── product/                # Component cho sản phẩm
+    │   │       ├── ProductCard.tsx          # Card sản phẩm cốt lõi dùng chung (Cờ xuất xứ, HSD, thêm giỏ nhanh)
+    │   │       ├── ProductDetailClient.tsx  # Điều phối State chi tiết sản phẩm (Client Component)
+    │   │       ├── ProductImageGallery.tsx  # Thư viện ảnh zoom kính lúp + Lightbox toàn màn hình
+    │   │       ├── ProductInfoSection.tsx   # Tên, giá, chọn biến thể realtime, 4 cam kết vàng, số lượng
+    │   │       ├── ProductTabs.tsx          # Tab mô tả chi tiết, thông số quy cách & chính sách Air Cargo
+    │   │       ├── ProductReviewsSection.tsx# Đánh giá sao, bộ lọc điểm, modal gửi đánh giá
+    │   │       └── StickyMobileCartBar.tsx  # Thanh mua hàng cố định đáy màn hình mobile khi cuộn
     │   │
     │   └── ui/                         # Các UI primitives tái sử dụng (Button, Modal, Input, Badge...)
     │
@@ -364,20 +373,31 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
 - [x] Khối sản phẩm theo từng ngành hàng với component `ProductCard` chuẩn thương mại.
 - [x] Khắc phục triệt để cấu hình Turbopack Tailwind v4, tốc độ tải trang đạt **~650ms**.
 
-### 🔜 Giai đoạn 3: Chi Tiết Sản Phẩm & Trang Danh Mục (TASK TIẾP THEO)
-- [ ] **Trang chi tiết sản phẩm (`/san-pham/[slug]`)**:
-  - Thư viện nhiều ảnh có zoom và chọn thumbnail.
-  - Bộ chọn biến thể (khi click đổi dung tích/hương vị/combo -> giá, giá gốc, tồn kho và ảnh tự động thay đổi mượt mà).
-  - Hiển thị nổi bật: **Xuất xứ**, **Quy cách đóng gói**, **Hạn sử dụng (Date)**.
-  - Số lượng thêm giỏ hàng, nút Mua ngay, bảng mô tả thành phần / công dụng.
-  - Đánh giá sao & Sản phẩm cùng ngành hàng gợi ý.
-- [ ] **Trang danh mục & Bộ lọc (`/danh-muc/[slug]`)**:
-  - Breadcrumbs điều hướng chuẩn SEO.
-  - Bộ lọc đa tiêu chí bên trái (Desktop) / Popup lọc (Mobile): Khoảng giá, Quốc gia xuất xứ (Hàn, Nhật, Mỹ, Úc...), Thương hiệu, Trạng thái còn hàng.
-  - Sắp xếp: Giá tăng dần, Giá giảm dần, Mới nhất, Bán chạy nhất.
+### ✅ Giai đoạn 3: Chi Tiết Sản Phẩm Chuẩn E-Commerce Cao Cấp (ĐÃ XONG)
+- [x] **Trang chi tiết sản phẩm (`/san-pham/[slug]`)**:
+  - [x] Thư viện nhiều ảnh với tương tác zoom kính lúp (lens magnifier hover) và popup Lightbox toàn màn hình.
+  - [x] Bộ chọn biến thể thông minh (Smart Variant Selector): Khi click đổi biến thể -> giá, giá gốc, SKU, tồn kho và ảnh sản phẩm tự động cập nhật mượt mà.
+  - [x] Hiển thị 4 cam kết vàng nổi bật: **Xuất xứ (kèm cờ quốc gia)**, **Quy cách đóng gói**, **Hạn sử dụng (Date HSD rõ ràng)**, **Vận chuyển Air Cargo chuẩn nhiệt độ**.
+  - [x] Tích hợp bộ chọn số lượng với ràng buộc tồn kho thực tế, kết nối Zustand Cart Store, nút "Mua ngay" chuyển thẳng sang thanh toán.
+  - [x] Hệ thống Tab nội dung: (1) Mô tả công dụng & hướng dẫn dùng, (2) Bảng thông số kỹ thuật chi tiết & HSD, (3) Chính sách vận chuyển Air Cargo & đổi trả 7 ngày.
+  - [x] Khu vực Đánh giá khách hàng xác thực: Điểm trung bình, phân bổ sao 1-5, danh sách review kèm ảnh, Modal gửi đánh giá mới kết nối `POST /api/reviews`.
+  - [x] Thanh mua hàng dính cố định dưới đáy mobile (**Sticky Mobile Cart Bar**) khi cuộn xuống.
+  - [x] Khối sản phẩm cùng ngành hàng gợi ý (Related Products) tăng tỷ lệ chốt đơn chéo.
+  - [x] Cấu hình SEO tối đa: Schema.org Product JSON-LD structured data + Dynamic OpenGraph/Twitter Metadata.
 
-### 🔜 Giai đoạn 4: Giỏ Hàng & Quy Trình Thanh Toán (VietQR & COD)
+### 🔜 Giai đoạn 4: Danh Mục Sản Phẩm & Bộ Lọc Đa Tiêu Chí (TASK TIẾP THEO)
+- [ ] **Trang danh mục & Bộ lọc (`/danh-muc/[slug]`)**:
+  - Breadcrumbs điều hướng phân cấp chuẩn SEO.
+  - Bộ lọc đa tiêu chí bên trái (Desktop) / Drawer trượt lọc (Mobile): Khoảng giá (Price range slider), Quốc gia xuất xứ (Hàn, Nhật, Mỹ, Úc...), Thương hiệu, Trạng thái còn hàng / Flash Sale.
+  - Sắp xếp: Giá tăng dần, Giá giảm dần, Mới nhất, Bán chạy nhất.
+  - Phân trang hoặc Infinite Scroll mượt mà.
+
+### 🔜 Giai đoạn 5: Giỏ Hàng & Quy Trình Thanh Toán (VietQR & COD)
 - [ ] **Trang giỏ hàng (`/gio-hang`)**: Tăng giảm số lượng có kiểm tra tồn kho tối đa, xóa sản phẩm, nhập mã Voucher giảm giá.
+- [ ] **Trang thanh toán (`/thanh-toan`)**:
+  - Form thông tin giao hàng có chọn Tỉnh/Thành, Quận/Huyện, Phường/Xã (API địa giới hành chính VN).
+  - Phương thức thanh toán: **VietQR tự động sinh mã QR đúng số tiền + nội dung đơn** hoặc **COD (Thanh toán khi nhận hàng)**.
+  - Transaction xử lý đơn hàng chống oversell (`SELECT ... FOR UPDATE` trong Prisma `$transaction`).
 - [ ] **Trang thanh toán (`/thanh-toan`)**:
   - Chọn địa chỉ nhận hàng (Tỉnh / Huyện / Xã chuẩn Việt Nam).
   - Phương thức COD (Tiền mặt).
