@@ -11,6 +11,44 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // ============================================================
+// COUNTRY FLAGS
+// ============================================================
+
+/**
+ * Lấy emoji cờ quốc gia từ tên quốc gia xuất xứ
+ * @example getCountryFlag("Hàn Quốc") → "🇰🇷"
+ */
+export function getCountryFlag(origin: string | null | undefined): string {
+  if (!origin) return "🌐";
+  const norm = origin.trim().toLowerCase();
+  if (norm.includes("hàn quốc") || norm.includes("korea")) return "🇰🇷";
+  if (
+    norm.includes("mỹ") ||
+    norm.includes("hoa kỳ") ||
+    norm.includes("usa") ||
+    norm.includes("united states")
+  )
+    return "🇺🇸";
+  if (norm.includes("nhật") || norm.includes("japan")) return "🇯🇵";
+  if (norm.includes("úc") || norm.includes("australia")) return "🇦🇺";
+  if (norm.includes("new zealand")) return "🇳🇿";
+  if (norm.includes("pháp") || norm.includes("france")) return "🇫🇷";
+  if (norm.includes("đức") || norm.includes("germany")) return "🇩🇪";
+  if (
+    norm.includes("anh") ||
+    norm.includes("uk") ||
+    norm.includes("united kingdom")
+  )
+    return "🇬🇧";
+  if (norm.includes("đan mạch") || norm.includes("denmark")) return "🇩🇰";
+  if (norm.includes("nga") || norm.includes("russia")) return "🇷🇺";
+  if (norm.includes("canada")) return "🇨🇦";
+  if (norm.includes("thụy sĩ") || norm.includes("switzerland")) return "🇨🇭";
+  if (norm.includes("thái lan") || norm.includes("thailand")) return "🇹🇭";
+  return "🌐";
+}
+
+// ============================================================
 // FORMAT CURRENCY (VNĐ)
 // ============================================================
 

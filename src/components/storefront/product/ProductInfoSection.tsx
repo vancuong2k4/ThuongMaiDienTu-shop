@@ -19,9 +19,11 @@ import {
   Layers,
   MapPin,
   CheckCircle2,
+  Plane,
 } from "lucide-react";
 import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 
 export interface VariantData {
   id: string;
@@ -209,49 +211,86 @@ export function ProductInfoSection({
         )}
       </div>
 
-      {/* ── 3. Four Core Highlights (Xuất xứ, Quy cách, HSD, Vận chuyển) */}
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-3 text-xs">
-        {/* Xuất xứ */}
-        <div className="p-3 rounded-xl bg-gray-50/80 border border-gray-100 flex items-start gap-2.5">
-          <MapPin className="w-4 h-4 text-[#800028] shrink-0 mt-0.5" />
-          <div>
-            <span className="text-gray-400 block text-[11px]">Xuất xứ:</span>
-            <strong className="text-gray-800 font-semibold">
-              {product.origin || "Nhập khẩu chính ngạch"}
-            </strong>
+      {/* ── 3. Four Golden Commitments & Product Highlights ───────── */}
+      <div className="rounded-2xl border border-amber-300/80 bg-gradient-to-br from-amber-50/70 via-rose-50/30 to-amber-50/50 p-4 shadow-sm space-y-3">
+        <div className="flex items-center justify-between border-b border-amber-200/70 pb-2.5">
+          <div className="flex items-center gap-2">
+            <span className="w-5 h-5 rounded-full bg-gradient-to-r from-amber-500 to-[#800028] text-white flex items-center justify-center text-xs font-black shadow-xs">
+              ★
+            </span>
+            <span className="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">
+              4 Cam Kết Vàng Từ THUYNGA Shop
+            </span>
           </div>
+          <span className="text-[11px] font-bold text-amber-900 bg-amber-100/90 px-2.5 py-0.5 rounded-full border border-amber-300/70 shadow-2xs">
+            Chuẩn Chính Hãng 100%
+          </span>
         </div>
 
-        {/* Quy cách */}
-        <div className="p-3 rounded-xl bg-gray-50/80 border border-gray-100 flex items-start gap-2.5">
-          <Layers className="w-4 h-4 text-[#800028] shrink-0 mt-0.5" />
-          <div>
-            <span className="text-gray-400 block text-[11px]">Quy cách:</span>
-            <strong className="text-gray-800 font-semibold truncate block">
-              {product.specification || selectedVariant.name}
-            </strong>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+          {/* Cam kết 1: Xuất xứ kèm cờ quốc gia */}
+          <div className="p-3 rounded-xl bg-white/95 border border-amber-200/80 shadow-2xs flex items-start gap-3 hover:border-amber-400 transition-colors">
+            <div className="shrink-0 mt-0.5">
+              <CountryFlag country={product.origin} className="w-8 h-5.5 rounded-xs shadow-xs" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-gray-400 block text-[11px] font-medium">Xuất xứ chính ngạch:</span>
+              <strong className="text-gray-900 font-bold block text-sm truncate">
+                {product.origin ? `${product.origin}` : "Nhập khẩu chính hãng"}
+              </strong>
+              <span className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                <span>Đầy đủ hóa đơn & tem phụ</span>
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Hạn sử dụng - Date HSD */}
-        <div className="p-3 rounded-xl bg-gray-50/80 border border-gray-100 flex items-start gap-2.5">
-          <Calendar className="w-4 h-4 text-[#800028] shrink-0 mt-0.5" />
-          <div>
-            <span className="text-gray-400 block text-[11px]">Hạn sử dụng (Date):</span>
-            <strong className="text-gray-800 font-semibold">
-              {product.expiryInfo || "Date xa mới nhất"}
-            </strong>
+          {/* Cam kết 2: Hạn sử dụng (Date HSD) */}
+          <div className="p-3 rounded-xl bg-white/95 border border-amber-200/80 shadow-2xs flex items-start gap-3 hover:border-amber-400 transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-rose-100/80 text-[#800028] flex items-center justify-center shrink-0">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-gray-400 block text-[11px] font-medium">Hạn sử dụng (Date HSD):</span>
+              <strong className="text-[#800028] font-bold block text-sm truncate">
+                {product.expiryInfo || "Date xa mới nhất"}
+              </strong>
+              <span className="text-[10px] text-rose-700 font-semibold block mt-0.5">
+                Cam kết date mới – Không bán cận date
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Cam kết giao hàng */}
-        <div className="p-3 rounded-xl bg-gray-50/80 border border-gray-100 flex items-start gap-2.5">
-          <Truck className="w-4 h-4 text-[#800028] shrink-0 mt-0.5" />
-          <div>
-            <span className="text-gray-400 block text-[11px]">Vận chuyển:</span>
-            <strong className="text-gray-800 font-semibold">
-              Giao hỏa tốc toàn quốc
-            </strong>
+          {/* Cam kết 3: Quy cách đóng gói */}
+          <div className="p-3 rounded-xl bg-white/95 border border-amber-200/80 shadow-2xs flex items-start gap-3 hover:border-amber-400 transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-amber-100/80 text-amber-900 flex items-center justify-center shrink-0">
+              <PackageCheck className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-gray-400 block text-[11px] font-medium">Quy cách đóng gói:</span>
+              <strong className="text-gray-900 font-bold block text-sm truncate">
+                {product.specification || selectedVariant.name}
+              </strong>
+              <span className="text-[10px] text-gray-500 block mt-0.5 truncate">
+                Nguyên seal niêm phong của hãng
+              </span>
+            </div>
+          </div>
+
+          {/* Cam kết 4: Vận chuyển Air Cargo & Nhiệt độ */}
+          <div className="p-3 rounded-xl bg-white/95 border border-amber-200/80 shadow-2xs flex items-start gap-3 hover:border-amber-400 transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-blue-100/80 text-blue-700 flex items-center justify-center shrink-0">
+              <Plane className="w-4 h-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-gray-400 block text-[11px] font-medium">Vận chuyển Air Cargo:</span>
+              <strong className="text-gray-900 font-bold block text-sm truncate">
+                Bay 48h - Kho mát 2-8°C
+              </strong>
+              <span className="text-[10px] text-blue-700 font-semibold block mt-0.5">
+                Giao hỏa tốc 2h nội thành
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -467,22 +506,29 @@ export function ProductInfoSection({
           </span>
         </div>
 
-        {/* 4 Cam kết vàng của shop */}
-        <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-2 text-xs text-gray-700">
-          <div className="font-bold text-gray-900 text-xs uppercase tracking-wider mb-2">
-            Chính sách bán hàng tại THUYNGA Shop:
+        {/* Chính sách bảo hành & Quyền lợi khách hàng */}
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-rose-50/30 border border-gray-200/80 space-y-2.5 text-xs text-gray-700 shadow-2xs">
+          <div className="font-bold text-gray-900 text-xs uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-gray-200/60">
+            <ShieldCheck className="w-4 h-4 text-[#800028]" />
+            <span>Chính Sách & Quyền Lợi Khách Hàng:</span>
           </div>
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#800028] shrink-0" />
-            <span>Cam kết 100% hàng chính hãng – Bồi thường 200% nếu phát hiện hàng giả</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <RotateCcw className="w-4 h-4 text-[#800028] shrink-0" />
-            <span>Đổi trả miễn phí trong 7 ngày nếu lỗi từ nhà sản xuất</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <PackageCheck className="w-4 h-4 text-[#800028] shrink-0" />
-            <span>Đồng kiểm khi nhận hàng – Hỗ trợ thanh toán VietQR & COD</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <span><strong>Bồi thường 200%:</strong> Nếu phát hiện hàng giả, hàng nhái kém chất lượng.</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <RotateCcw className="w-4 h-4 text-[#800028] shrink-0 mt-0.5" />
+              <span><strong>Đổi trả 7 ngày:</strong> Miễn phí nếu sản phẩm có lỗi bao bì hoặc cận date.</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <PackageCheck className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <span><strong>Đồng kiểm hàng:</strong> Mở gói kiểm tra đúng sản phẩm trước khi thanh toán.</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <Truck className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+              <span><strong>Giao nhanh toàn quốc:</strong> Hỗ trợ thanh toán VietQR tự động & COD.</span>
+            </div>
           </div>
         </div>
       </div>

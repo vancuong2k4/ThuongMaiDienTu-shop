@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FileText, Table, Truck, ShieldCheck, CheckCircle } from "lucide-react";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 
 interface ProductTabsProps {
   product: {
@@ -114,7 +115,10 @@ export function ProductTabs({ product }: ProductTabsProps) {
                     Xuất xứ
                   </td>
                   <td className="py-3 px-4 font-semibold text-gray-900">
-                    {product.origin || "Nhập khẩu chính hãng"}
+                    <span className="inline-flex items-center gap-2">
+                      <CountryFlag country={product.origin} className="w-5 h-3.5 rounded-2xs" />
+                      <span>{product.origin || "Nhập khẩu chính hãng"}</span>
+                    </span>
                   </td>
                 </tr>
                 <tr className="bg-gray-50/50">

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ShoppingBag, Heart, Star, Check } from "lucide-react";
 import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 
 export interface ProductCardData {
   id: string;
@@ -103,14 +104,8 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Origin Badge */}
         {product.origin && (
-          <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-white text-[10px] font-bold tracking-wide">
-            {product.origin === "Hàn Quốc" && "🇰🇷 "}
-            {product.origin === "Mỹ" && "🇺🇸 "}
-            {product.origin === "Nhật Bản" && "🇯🇵 "}
-            {product.origin === "Úc" && "🇦🇺 "}
-            {product.origin === "New Zealand" && "🇳🇿 "}
-            {product.origin === "Pháp" && "🇫🇷 "}
-            {product.origin === "Đan Mạch" && "🇩🇰 "}
+          <div className="absolute top-2.5 left-2.5 px-2 py-1 rounded-md bg-black/65 backdrop-blur-md text-white text-[10px] font-bold tracking-wide flex items-center gap-1.5 shadow-sm">
+            <CountryFlag country={product.origin} className="w-4 h-2.5 rounded-2xs" />
             <span>{product.origin}</span>
           </div>
         )}

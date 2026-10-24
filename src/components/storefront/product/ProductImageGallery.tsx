@@ -3,6 +3,7 @@
 import { useState, useRef, MouseEvent } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Maximize2, X, ShieldCheck } from "lucide-react";
+import { CountryFlag } from "@/components/ui/CountryFlag";
 
 interface ProductImageGalleryProps {
   images: Array<{ url: string; alt: string | null }>;
@@ -88,14 +89,8 @@ export function ProductImageGallery({
 
         {/* Origin Badge */}
         {origin && (
-          <div className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-bold tracking-wide flex items-center gap-1.5 shadow-sm">
-            {origin === "Hàn Quốc" && "🇰🇷"}
-            {origin === "Mỹ" && "🇺🇸"}
-            {origin === "Nhật Bản" && "🇯🇵"}
-            {origin === "Úc" && "🇦🇺"}
-            {origin === "New Zealand" && "🇳🇿"}
-            {origin === "Pháp" && "🇫🇷"}
-            {origin === "Đan Mạch" && "🇩🇰"}
+          <div className="absolute top-3.5 left-3.5 px-3 py-1.5 rounded-full bg-black/65 backdrop-blur-md text-white text-xs font-bold tracking-wide flex items-center gap-2 shadow-md">
+            <CountryFlag country={origin} className="w-5 h-3.5 rounded-2xs" />
             <span>Xuất xứ: {origin}</span>
           </div>
         )}
