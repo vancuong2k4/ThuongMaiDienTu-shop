@@ -15,9 +15,9 @@ export function NewsletterForm() {
 
   if (isSubmitted) {
     return (
-      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-800 text-xs text-emerald-300">
+      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 text-xs text-zinc-300">
         <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-        <span>Cảm ơn bạn! Mã voucher 50K sẽ được gửi vào email sớm nhất.</span>
+        <span>Cảm ơn bạn! Mã voucher 50.000₫ sẽ được gửi đến email.</span>
       </div>
     );
   }
@@ -30,11 +30,11 @@ export function NewsletterForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Nhập email của bạn..."
-        className="w-full h-9 px-3 rounded-l-xl bg-gray-800 border border-gray-700 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#800028]"
+        className="w-full h-9 px-3 rounded-l-xl bg-zinc-900 border border-zinc-800 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#800028]"
       />
       <button
         type="submit"
-        className="h-9 px-3.5 bg-[#800028] hover:bg-[#5c001e] text-white rounded-r-xl text-xs font-bold transition-colors flex items-center justify-center shrink-0"
+        className="h-9 px-3.5 bg-[#800028] hover:bg-[#5c001e] text-white rounded-r-xl text-xs font-bold transition-colors flex items-center justify-center shrink-0 cursor-pointer"
         aria-label="Đăng ký nhận tin"
       >
         <Send className="w-3.5 h-3.5" />
