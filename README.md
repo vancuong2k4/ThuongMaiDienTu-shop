@@ -359,7 +359,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
 - [x] Thiết lập kết nối PostgreSQL thật (`thuyngashop`), đồng bộ 18 models Prisma.
 - [x] Cấu hình NextAuth v5 phân quyền `ADMIN` và `CUSTOMER`.
 - [x] Khởi tạo Zustand Cart Store với tính năng lưu giỏ hàng vào `localStorage`.
-- [x] Seed đầy đủ tài khoản Admin, 5 ngành hàng chính, 25 danh mục con, 12 sản phẩm chi tiết và 1 phiên Flash Sale.
+- [x] Seed đầy đủ tài khoản Admin, 5 ngành hàng chính, 25 danh mục con, 50 sản phẩm chi tiết (tối thiểu 10 sản phẩm/ngành hàng) và phiên Flash Sale.
 - [x] Cấu hình bảo mật HTTP Headers (CSP, HSTS, X-Frame-Options, Image Remote Patterns).
 
 ### ✅ Giai đoạn 2: Layout Storefront & Trang Chủ Hoàn Chỉnh (ĐÃ XONG)

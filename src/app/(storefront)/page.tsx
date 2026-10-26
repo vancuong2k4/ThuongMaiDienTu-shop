@@ -69,7 +69,7 @@ export default async function StorefrontHomePage() {
           categoryId: { in: scopeCategoryIds },
           isActive: true,
         },
-        take: 8,
+        take: 10,
         include: {
           category: {
             select: {
