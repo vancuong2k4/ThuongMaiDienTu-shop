@@ -16,14 +16,9 @@ import {
 } from "lucide-react";
 import { CountryFlag } from "@/components/ui/CountryFlag";
 import { formatVND } from "@/lib/utils";
+import { PRICE_RANGES } from "./constants";
 
-export const PRICE_RANGES = [
-  { id: "under-300k", label: "Dưới 300.000₫", min: 0, max: 300000 },
-  { id: "300k-500k", label: "300.000₫ – 500.000₫", min: 300000, max: 500000 },
-  { id: "500k-1m", label: "500.000₫ – 1.000.000₫", min: 500000, max: 1000000 },
-  { id: "1m-2m", label: "1.000.000₫ – 2.000.000₫", min: 1000000, max: 2000000 },
-  { id: "above-2m", label: "Trên 2.000.000₫", min: 2000000, max: null },
-] as const;
+export { PRICE_RANGES };
 
 export interface AvailableFilters {
   origins: string[];

@@ -2,16 +2,10 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { SlidersHorizontal, ArrowUpDown, X, RotateCcw } from "lucide-react";
-import { PRICE_RANGES } from "./FilterContent";
+import { PRICE_RANGES, SORT_OPTIONS } from "./constants";
 import { CountryFlag } from "@/components/ui/CountryFlag";
 
-export const SORT_OPTIONS = [
-  { value: "featured", label: "Nổi bật nhất" },
-  { value: "newest", label: "Mới nhất" },
-  { value: "price_asc", label: "Giá: Thấp đến Cao" },
-  { value: "price_desc", label: "Giá: Cao đến Thấp" },
-  { value: "bestseller", label: "Bán chạy nhất" },
-] as const;
+export { SORT_OPTIONS };
 
 interface CategoryToolbarProps {
   totalCount: number;

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { CategoryBreadcrumbs } from "@/components/storefront/category/CategoryBreadcrumbs";
 import { CategoryPageClient } from "@/components/storefront/category/CategoryPageClient";
-import { PRICE_RANGES } from "@/components/storefront/category/FilterContent";
+import { PRICE_RANGES } from "@/components/storefront/category/constants";
 import { Search, ShieldCheck } from "lucide-react";
 
 interface PageProps {

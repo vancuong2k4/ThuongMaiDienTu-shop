@@ -5,7 +5,7 @@ import { Prisma } from "@prisma/client";
 import { CategoryBreadcrumbs, BreadcrumbItem } from "@/components/storefront/category/CategoryBreadcrumbs";
 import { CategoryHeader } from "@/components/storefront/category/CategoryHeader";
 import { CategoryPageClient } from "@/components/storefront/category/CategoryPageClient";
-import { PRICE_RANGES } from "@/components/storefront/category/FilterContent";
+import { PRICE_RANGES } from "@/components/storefront/category/constants";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
