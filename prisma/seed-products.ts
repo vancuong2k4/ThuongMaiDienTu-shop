@@ -18,13 +18,31 @@ async function main() {
     return;
   }
 
+  const getSubcatId = async (slug: string, fallbackId: string) => {
+    const sub = await prisma.category.findUnique({ where: { slug } });
+    return sub ? sub.id : fallbackId;
+  };
+
+  const catHongSam = await getSubcatId("hong-sam-dong-trung-ha-thao", catTpcN.id);
+  const catBoNao = await getSubcatId("bo-nao-tang-cuong-tri-nho", catTpcN.id);
+  const catVitamin = await getSubcatId("vitamin-khoang-chat", catTpcN.id);
+  const catCherry = await getSubcatId("cherry-nhap-khau", catFruit.id);
+  const catNho = await getSubcatId("nho-nhap-khau", catFruit.id);
+  const catTao = await getSubcatId("tao-envy-rockit", catFruit.id);
+  const catMacca = await getSubcatId("hat-dinh-duong-ngu-coc", catFnb.id);
+  const catBanhKeo = await getSubcatId("banh-keo-chocolate-nhap-khau", catFnb.id);
+  const catChongNang = await getSubcatId("kem-chong-nang", catCosme.id);
+  const catSerum = await getSubcatId("serum-tinh-chat-phuc-hoi", catCosme.id);
+  const catSuaBot = await getSubcatId("sua-bot-cong-thuc", catMomBaby.id);
+  const catAnDam = await getSubcatId("dinh-duong-an-dam", catMomBaby.id);
+
   // ── Danh sách sản phẩm mẫu chuẩn ──────────────────────────────────────────
   const products = [
     // 1. Thực phẩm chức năng
     {
       name: "Hồng sâm củ khô KGC Jung Kwan Jang Hàn Quốc (Hộp thiếc)",
       slug: "hong-sam-cu-kho-kgc-jung-kwan-jang-han-quoc",
-      categoryId: catTpcN.id,
+      categoryId: catHongSam,
       brand: "KGC Jung Kwan Jang",
       origin: "Hàn Quốc",
       specification: "Hộp thiếc hút chân không kèm hộp gỗ thông",
@@ -65,7 +83,7 @@ async function main() {
     {
       name: "Viên uống bổ não Ginkgo Biloba Trunature 120mg Mỹ",
       slug: "vien-uong-bo-nao-ginkgo-biloba-trunature-120mg",
-      categoryId: catTpcN.id,
+      categoryId: catBoNao,
       brand: "Trunature",
       origin: "Mỹ",
       specification: "Lọ 340 viên nang mềm",
@@ -88,7 +106,7 @@ async function main() {
     {
       name: "Collagen Nước DHC Beauty 7000 Plus Nhật Bản",
       slug: "collagen-nuoc-dhc-beauty-7000-plus-nhat-ban",
-      categoryId: catTpcN.id,
+      categoryId: catVitamin,
       brand: "DHC",
       origin: "Nhật Bản",
       specification: "Hộp 10 chai x 50ml",
@@ -122,7 +140,7 @@ async function main() {
     {
       name: "Cherry Đỏ Mỹ Size 9.0 Hàng Bay Chuẩn Tươi Tuyển Chọn",
       slug: "cherry-do-my-size-9-hang-bay",
-      categoryId: catFruit.id,
+      categoryId: catCherry,
       brand: "USA Cherries",
       origin: "Mỹ",
       specification: "Đóng hộp giữ nhiệt kèm đá gel",
@@ -163,7 +181,7 @@ async function main() {
     {
       name: "Nho Mẫu Đơn Shine Muscat Hàn Quốc (Hộp quà cao cấp)",
       slug: "nho-mau-don-shine-muscat-han-quoc",
-      categoryId: catFruit.id,
+      categoryId: catNho,
       brand: "Shine Muscat",
       origin: "Hàn Quốc",
       specification: "Chùm 700g-800g đóng hộp quà tặng",
@@ -195,7 +213,7 @@ async function main() {
     {
       name: "Táo Envy New Zealand Size 24 Giòn Ngọt",
       slug: "tao-envy-new-zealand-size-24",
-      categoryId: catFruit.id,
+      categoryId: catTao,
       brand: "Envy Apple",
       origin: "New Zealand",
       specification: "Túi 1kg hoặc thùng 9kg",
@@ -229,7 +247,7 @@ async function main() {
     {
       name: "Hạt Macca Úc Nứt Vỏ Tự Nhiên Mourad's 500g",
       slug: "hat-macca-uc-nut-vo-mourads-500g",
-      categoryId: catFnb.id,
+      categoryId: catMacca,
       brand: "Mourad's",
       origin: "Úc",
       specification: "Gói 500g ép nhiệt kèm dụng cụ tách",
@@ -261,7 +279,7 @@ async function main() {
     {
       name: "Bánh Quy Bơ Hoàng Gia Danisa Đan Mạch",
       slug: "banh-quy-bo-hoang-gia-danisa-dan-mach",
-      categoryId: catFnb.id,
+      categoryId: catBanhKeo,
       brand: "Danisa",
       origin: "Đan Mạch",
       specification: "Hộp thiếc sang trọng",
@@ -295,7 +313,7 @@ async function main() {
     {
       name: "Kem Chống Nắng La Roche-Posay Anthelios UVmune 400 Pháp",
       slug: "kem-chong-nang-la-roche-posay-anthelios-uvmune-400",
-      categoryId: catCosme.id,
+      categoryId: catChongNang,
       brand: "La Roche-Posay",
       origin: "Pháp",
       specification: "Chai 50ml nắp vặn",
@@ -327,7 +345,7 @@ async function main() {
     {
       name: "Serum Phục Hồi Cấp Ẩm B5 GoodnDoc Hydra B5 Hàn Quốc",
       slug: "serum-phuc-hoi-cap-am-b5-goodndoc-hydra-b5",
-      categoryId: catCosme.id,
+      categoryId: catSerum,
       brand: "GoodnDoc",
       origin: "Hàn Quốc",
       specification: "Chai thủy tinh 30ml có ống hút",
@@ -352,7 +370,7 @@ async function main() {
     {
       name: "Sữa Bột Aptamil Profutura Úc (Lon 900g)",
       slug: "sua-bot-aptamil-profutura-uc-lon-900g",
-      categoryId: catMomBaby.id,
+      categoryId: catSuaBot,
       brand: "Aptamil",
       origin: "Úc",
       specification: "Lon thiếc 900g",
@@ -393,7 +411,7 @@ async function main() {
     {
       name: "Bột Ăn Dặm Gerber Organic Yến Mạch Chuối Mỹ",
       slug: "bot-an-dam-gerber-organic-yen-mach-chuoi-my",
-      categoryId: catMomBaby.id,
+      categoryId: catAnDam,
       brand: "Gerber",
       origin: "Mỹ",
       specification: "Hộp 227g",

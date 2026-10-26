@@ -385,33 +385,38 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - [x] Khối sản phẩm cùng ngành hàng gợi ý (Related Products) tăng tỷ lệ chốt đơn chéo.
   - [x] Cấu hình SEO tối đa: Schema.org Product JSON-LD structured data + Dynamic OpenGraph/Twitter Metadata.
 
-### 🔜 Giai đoạn 4: Danh Mục Sản Phẩm & Bộ Lọc Đa Tiêu Chí (TASK TIẾP THEO)
-- [ ] **Trang danh mục & Bộ lọc (`/danh-muc/[slug]`)**:
-  - Breadcrumbs điều hướng phân cấp chuẩn SEO.
-  - Bộ lọc đa tiêu chí bên trái (Desktop) / Drawer trượt lọc (Mobile): Khoảng giá (Price range slider), Quốc gia xuất xứ (Hàn, Nhật, Mỹ, Úc...), Thương hiệu, Trạng thái còn hàng / Flash Sale.
-  - Sắp xếp: Giá tăng dần, Giá giảm dần, Mới nhất, Bán chạy nhất.
-  - Phân trang hoặc Infinite Scroll mượt mà.
+### ✅ Giai đoạn 4: Danh Mục Sản Phẩm & Bộ Lọc Đa Tiêu Chí (ĐÃ XONG)
+- [x] **Trang danh mục & Bộ lọc (`/danh-muc/[slug]`)**:
+  - [x] Breadcrumbs điều hướng phân cấp chuẩn SEO kết hợp Schema.org BreadcrumbList JSON-LD.
+  - [x] Header danh mục: Phân biệt rõ Ngành hàng chính vs Chuyên mục con, 3 cam kết vàng nhanh, thanh chọn chuyên mục trực thuộc (Subcategory pills).
+  - [x] Bộ lọc đa tiêu chí bên trái (Desktop Sidebar) & Drawer trượt mượt mà (Mobile Slide-over Sheet):
+    - [x] 5 mốc khoảng giá nhanh (Dưới 300k, 300k-500k, 500k-1M, 1M-2M, trên 2M) + Ô nhập khoảng giá tùy chỉnh (Min - Max).
+    - [x] Xuất xứ quốc gia đi kèm vector SVG cờ sắc nét (`CountryFlag.tsx` chuẩn 11 quốc gia nhập khẩu).
+    - [x] Thương hiệu dạng checklist đi kèm ô tìm kiếm nhanh thương hiệu trong tích tắc.
+    - [x] Trạng thái: Chỉ hiện hàng còn tồn kho & Đang có ưu đãi / giảm giá HOT.
+  - [x] Thanh Toolbar thông minh: Đếm số lượng sản phẩm tìm thấy, Nút mở bộ lọc mobile kèm badge đếm tiêu chí, Dropdown sắp xếp (Nổi bật nhất, Mới nhất, Giá tăng/giảm dần, Bán chạy nhất).
+  - [x] Hệ thống Active Filter Chips: Hiển thị trực quan các tiêu chí đang lọc, nút xóa nhanh từng tag hoặc 1-click "Xóa tất cả".
+  - [x] Lưới sản phẩm Responsive (2/3/4 cột) tái sử dụng component `ProductCard`, trạng thái rỗng (Empty State) thân thiện.
+  - [x] Phân trang (Pagination) thông minh: Đánh số trang với dấu ellipsis `...`, nút Trước/Sau, đồng bộ tuyệt đối với `searchParams` URL mà không reload trang.
+  - [x] Trang catalog toàn bộ & tìm kiếm (`/san-pham?search=...`): Hỗ trợ tìm kiếm từ khóa cả có dấu và không dấu (thông qua chuẩn hóa slug), tích hợp chung bộ lọc đa tiêu chí.
+  - [x] Tối ưu hóa SEO Server-Side: Dynamic `generateMetadata` và Schema.org `CollectionPage` JSON-LD tự động theo từng danh mục.
 
-### 🔜 Giai đoạn 5: Giỏ Hàng & Quy Trình Thanh Toán (VietQR & COD)
+### 🔜 Giai đoạn 5: Giỏ Hàng & Quy Trình Thanh Toán (VietQR & COD) (TASK TIẾP THEO)
 - [ ] **Trang giỏ hàng (`/gio-hang`)**: Tăng giảm số lượng có kiểm tra tồn kho tối đa, xóa sản phẩm, nhập mã Voucher giảm giá.
 - [ ] **Trang thanh toán (`/thanh-toan`)**:
-  - Form thông tin giao hàng có chọn Tỉnh/Thành, Quận/Huyện, Phường/Xã (API địa giới hành chính VN).
-  - Phương thức thanh toán: **VietQR tự động sinh mã QR đúng số tiền + nội dung đơn** hoặc **COD (Thanh toán khi nhận hàng)**.
-  - Transaction xử lý đơn hàng chống oversell (`SELECT ... FOR UPDATE` trong Prisma `$transaction`).
-- [ ] **Trang thanh toán (`/thanh-toan`)**:
   - Chọn địa chỉ nhận hàng (Tỉnh / Huyện / Xã chuẩn Việt Nam).
-  - Phương thức COD (Tiền mặt).
+  - Phương thức COD (Tiền mặt khi nhận hàng).
   - Phương thức VietQR: Tự sinh mã QR ngân hàng kèm mã đơn hàng và số tiền chính xác, khách quét app ngân hàng là chuyển khoản ngay.
   - **Transaction khóa dòng (`SELECT ... FOR UPDATE`) trừ tồn kho an toàn tuyệt đối**.
 
-### 🔜 Giai đoạn 5: Trang Quản Trị Admin CMS (`/admin`)
+### 🔜 Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`)
 - [ ] Dashboard tổng quan doanh thu, số đơn chờ xử lý, sản phẩm sắp hết hàng.
 - [ ] Quản lý Sản phẩm / Biến thể / Tồn kho (Thêm, sửa, xóa, upload ảnh).
 - [ ] Quản lý Đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt -> Đang giao -> Hoàn thành -> Hủy trả lại kho).
 - [ ] Quản lý Mã giảm giá (Voucher) & Quản lý Danh mục.
 - [ ] Cài đặt giao diện: Chủ shop tự thay Banner, Logo, Hotline, Nội dung chân trang ngay trên web.
 
-### 🔜 Giai đoạn 6: Triển Khai Lên VPS Ubuntu & Production
+### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
 - [ ] Cài đặt SSL miễn phí qua Cloudflare hoặc Certbot Let's Encrypt.
@@ -419,4 +424,4 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
 
 ---
 
-*Tài liệu được lập và duy trì bởi Developer Trần Văn Cường & AI Co-pilot | Cập nhật lần cuối: 2026-10-24*
+*Tài liệu được lập và duy trì bởi Developer Trần Văn Cường & AI Co-pilot | Cập nhật lần cuối: 2026-10-26*
