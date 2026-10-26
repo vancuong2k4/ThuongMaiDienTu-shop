@@ -44,8 +44,8 @@ export default async function StorefrontHomePage() {
     orderBy: { startTime: "desc" },
   });
 
-  // 2. Lấy 5 ngành hàng chính kèm danh mục con và sản phẩm (tối ưu 1 query chống N+1)
-  const categoriesWithProducts = await prisma.category.findMany({
+  // 2. Lấy 5 ngành hàng chính kèm danh mục con
+  const parentCategories = await prisma.category.findMany({
     where: {
       parentId: null,
       isActive: true,
@@ -55,8 +55,20 @@ export default async function StorefrontHomePage() {
         where: { isActive: true },
         orderBy: { sortOrder: "asc" },
       },
-      products: {
-        where: { isActive: true },
+    },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  // Lấy sản phẩm cho từng ngành hàng (bao gồm sản phẩm thuộc danh mục cha & toàn bộ danh mục con)
+  const categoriesWithProducts = await Promise.all(
+    parentCategories.map(async (cat) => {
+      const scopeCategoryIds = [cat.id, ...cat.children.map((c) => c.id)];
+
+      const products = await prisma.product.findMany({
+        where: {
+          categoryId: { in: scopeCategoryIds },
+          isActive: true,
+        },
         take: 8,
         include: {
           category: {
@@ -75,10 +87,14 @@ export default async function StorefrontHomePage() {
           },
         },
         orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
-      },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
+      });
+
+      return {
+        ...cat,
+        products,
+      };
+    })
+  );
 
   // 3. Serialize Decimal sang number thuần (tránh lỗi React 19 RSC serialization)
   const serializedFlashSaleItems = activeFlashSale
