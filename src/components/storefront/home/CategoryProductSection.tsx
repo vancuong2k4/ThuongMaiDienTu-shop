@@ -14,6 +14,7 @@ interface CategoryProductSectionProps {
     slug: string;
   }>;
   products: ProductCardData[];
+  totalProducts?: number;
 }
 
 export function CategoryProductSection({
@@ -24,6 +25,7 @@ export function CategoryProductSection({
   accentColor = "#800028",
   subcategories = [],
   products,
+  totalProducts,
 }: CategoryProductSectionProps) {
   if (!products || products.length === 0) return null;
 
@@ -70,12 +72,25 @@ export function CategoryProductSection({
           </div>
         </div>
 
-        {/* Product Grid */}
+        {/* Product Grid (Tối đa 8 sản phẩm = đúng 2 hàng 4 cột) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {/* Nút Xem thêm khi tổng số sản phẩm trong ngành hàng nhiều hơn số hiển thị trên trang chủ */}
+        {totalProducts && totalProducts > products.length && (
+          <div className="mt-8 text-center">
+            <Link
+              href={`/danh-muc/${slug}`}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white hover:bg-rose-50 text-[#800028] font-bold text-xs sm:text-sm border border-rose-200 hover:border-[#800028] shadow-2xs transition-all hover:scale-[1.02] cursor-pointer"
+            >
+              <span>Xem thêm {totalProducts - products.length} sản phẩm {title} khác</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

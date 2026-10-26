@@ -16,6 +16,7 @@ export interface ProductCardData {
   origin: string | null;
   specification: string | null;
   expiryInfo: string | null;
+  isFeatured?: boolean;
   category: {
     name: string;
     slug: string;
@@ -110,12 +111,19 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        {/* Discount Badge */}
-        {discountPercent > 0 && (
-          <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-red-600 text-white text-[11px] font-black shadow-sm">
-            -{discountPercent}%
-          </div>
-        )}
+        {/* Badges top right: Discount and/or HOT */}
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 z-10">
+          {product.isFeatured && (
+            <div className="px-1.5 py-0.5 rounded-md bg-amber-500 text-white text-[10px] font-black uppercase tracking-wider shadow-sm">
+              HOT
+            </div>
+          )}
+          {discountPercent > 0 && (
+            <div className="px-2 py-0.5 rounded-md bg-red-600 text-white text-[11px] font-black shadow-sm">
+              -{discountPercent}%
+            </div>
+          )}
+        </div>
 
         {/* Wishlist Button */}
         <button

@@ -59,38 +59,47 @@ export default async function StorefrontHomePage() {
     orderBy: { sortOrder: "asc" },
   });
 
-  // Lấy sản phẩm cho từng ngành hàng (bao gồm sản phẩm thuộc danh mục cha & toàn bộ danh mục con)
+  // Lấy tối đa 8 sản phẩm cho từng ngành hàng (chuẩn 2 hàng 4 cột), ưu tiên sản phẩm HOT & Mới nhất
   const categoriesWithProducts = await Promise.all(
     parentCategories.map(async (cat) => {
       const scopeCategoryIds = [cat.id, ...cat.children.map((c) => c.id)];
 
-      const products = await prisma.product.findMany({
-        where: {
-          categoryId: { in: scopeCategoryIds },
-          isActive: true,
-        },
-        take: 10,
-        include: {
-          category: {
-            select: {
-              name: true,
-              slug: true,
+      const [totalCount, products] = await Promise.all([
+        prisma.product.count({
+          where: {
+            categoryId: { in: scopeCategoryIds },
+            isActive: true,
+          },
+        }),
+        prisma.product.findMany({
+          where: {
+            categoryId: { in: scopeCategoryIds },
+            isActive: true,
+          },
+          take: 8, // Tối đa 8 sản phẩm (đúng 2 hàng cân đối trên desktop)
+          include: {
+            category: {
+              select: {
+                name: true,
+                slug: true,
+              },
+            },
+            variants: {
+              where: { isActive: true },
+              orderBy: { sortOrder: "asc" },
+            },
+            images: {
+              orderBy: { sortOrder: "asc" },
+              take: 2,
             },
           },
-          variants: {
-            where: { isActive: true },
-            orderBy: { sortOrder: "asc" },
-          },
-          images: {
-            orderBy: { sortOrder: "asc" },
-            take: 2,
-          },
-        },
-        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
-      });
+          orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+        }),
+      ]);
 
       return {
         ...cat,
+        totalCount,
         products,
       };
     })
@@ -124,6 +133,7 @@ export default async function StorefrontHomePage() {
     slug: cat.slug,
     description: cat.description,
     children: cat.children,
+    totalCount: cat.totalCount,
     products: cat.products.map((p) => ({
       id: p.id,
       name: p.name,
@@ -132,6 +142,7 @@ export default async function StorefrontHomePage() {
       origin: p.origin,
       specification: p.specification,
       expiryInfo: p.expiryInfo,
+      isFeatured: p.isFeatured,
       category: p.category,
       images: p.images,
       variants: p.variants.map((v) => ({
@@ -187,6 +198,7 @@ export default async function StorefrontHomePage() {
               accentColor={meta.accentColor}
               subcategories={cat.children}
               products={cat.products as unknown as ProductCardData[]}
+              totalProducts={cat.totalCount}
             />
           );
         })}
