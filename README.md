@@ -401,15 +401,32 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - [x] Trang catalog toàn bộ & tìm kiếm (`/san-pham?search=...`): Hỗ trợ tìm kiếm từ khóa cả có dấu và không dấu (thông qua chuẩn hóa slug), tích hợp chung bộ lọc đa tiêu chí.
   - [x] Tối ưu hóa SEO Server-Side: Dynamic `generateMetadata` và Schema.org `CollectionPage` JSON-LD tự động theo từng danh mục.
 
-### 🔜 Giai đoạn 5: Giỏ Hàng & Quy Trình Thanh Toán (VietQR & COD) (TASK TIẾP THEO)
-- [ ] **Trang giỏ hàng (`/gio-hang`)**: Tăng giảm số lượng có kiểm tra tồn kho tối đa, xóa sản phẩm, nhập mã Voucher giảm giá.
-- [ ] **Trang thanh toán (`/thanh-toan`)**:
-  - Chọn địa chỉ nhận hàng (Tỉnh / Huyện / Xã chuẩn Việt Nam).
-  - Phương thức COD (Tiền mặt khi nhận hàng).
-  - Phương thức VietQR: Tự sinh mã QR ngân hàng kèm mã đơn hàng và số tiền chính xác, khách quét app ngân hàng là chuyển khoản ngay.
-  - **Transaction khóa dòng (`SELECT ... FOR UPDATE`) trừ tồn kho an toàn tuyệt đối**.
+### ✅ Giai đoạn 5: Giỏ Hàng & Quy Trình Thanh Toán (VietQR & COD) (ĐÃ XONG)
+- [x] **Trang giỏ hàng toàn diện (`/gio-hang`)**:
+  - [x] Tăng giảm số lượng sản phẩm có kiểm tra ràng buộc tồn kho thực tế (`stock`), nút xóa từng món và xóa sạch giỏ hàng.
+  - [x] Thanh tiến trình Freeship (**Free Shipping Progress Bar**) động: Hiển thị số tiền còn thiếu để đạt mốc miễn phí vận chuyển 500.000₫.
+  - [x] Áp dụng mã giảm giá (Voucher) linh hoạt: `WELCOME50` (giảm 50.000₫), `FREESHIP` (miễn phí ship), `THUYNGA10` (giảm 10%), `VIP200K` (giảm 200.000₫).
+  - [x] Bảng tổng kết chi phí: Tạm tính, Phí ship, Giảm giá voucher, Tổng thanh toán.
+  - [x] Trạng thái giỏ hàng rỗng (Empty State) với gợi ý mua sắm thân thiện.
+- [x] **Trang thanh toán đặt hàng (`/thanh-toan`)**:
+  - [x] Nhập thông tin người nhận (Họ tên, Số điện thoại hợp lệ).
+  - [x] Bộ chọn địa chỉ 3 cấp chuẩn hành chính Việt Nam (`AddressSelector.tsx`): 63 Tỉnh/Thành phố, Quận/Huyện, Phường/Xã và Số nhà/Đường.
+  - [x] Bộ chọn phương thức thanh toán (`PaymentMethodSelector.tsx`):
+    - [x] **COD (Thanh toán khi nhận hàng)**: Đồng kiểm ngoại quan sản phẩm trước khi giao tiền.
+    - [x] **VietQR Napas 24/7**: Chuyển khoản ngân hàng tức thì, tự động điền số tài khoản, số tiền và nội dung chuyển khoản.
+  - [x] Cột tóm tắt đơn hàng trực quan, danh sách sản phẩm snapshot, ghi chú đơn hàng.
+- [x] **API Đặt hàng an toàn tuyệt đối (`POST /api/orders`)**:
+  - [x] **Pessimistic Locking (`SELECT ... FOR UPDATE`)**: Khóa dòng biến thể trong PostgreSQL transaction nhằm loại bỏ 100% rủi ro Overselling (bán vượt tồn kho).
+  - [x] Trừ tồn kho biến thể tự động, kiểm tra và tăng `usedCount` của Voucher trong cùng 1 transaction atomic.
+  - [x] Lưu trữ **Snapshot bất biến** vào `order_items` (tên, variant, sku, giá, ảnh tại thời điểm đặt).
+  - [x] Sinh mã đơn hàng chuẩn `TN-YYYYMMDD-XXXX` và mã chuyển khoản `transferCode`.
+  - [x] Tự động ghi nhật ký trạng thái đơn hàng đầu tiên (`OrderStatusHistory: PENDING`).
+- [x] **Trang đặt hàng thành công (`/thanh-toan/thanh-cong/[orderNumber]`)**:
+  - [x] Tạo mã VietQR chuẩn Napas 24/7 trực quan tự động khớp số tiền và mã chuyển khoản.
+  - [x] Nút sao chép 1-chạm (1-click copy) tiện lợi cho: Số tài khoản, Số tiền, Nội dung chuyển khoản.
+  - [x] Hiển thị chi tiết đơn hàng, địa chỉ nhận hàng, phương thức thanh toán và hotline chăm sóc khách hàng.
 
-### 🔜 Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`)
+### 🔜 Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`) (TASK TIẾP THEO)
 - [ ] Dashboard tổng quan doanh thu, số đơn chờ xử lý, sản phẩm sắp hết hàng.
 - [ ] Quản lý Sản phẩm / Biến thể / Tồn kho (Thêm, sửa, xóa, upload ảnh).
 - [ ] Quản lý Đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt -> Đang giao -> Hoàn thành -> Hủy trả lại kho).
