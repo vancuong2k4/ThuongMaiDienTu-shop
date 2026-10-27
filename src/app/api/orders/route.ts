@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { PaymentMethod } from "@prisma/client";
 
 interface OrderItemRequest {
@@ -41,6 +42,16 @@ function generateOrderNumber(): string {
 
 export async function POST(req: NextRequest) {
   try {
+    // 0. Bắt buộc đăng nhập tài khoản
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Vui lòng đăng nhập tài khoản trước khi thực hiện đặt hàng." },
+        { status: 401 }
+      );
+    }
+
+    const currentUserId = session.user.id;
     const body = (await req.json()) as CreateOrderBody;
     const {
       recipientName,
@@ -276,6 +287,7 @@ export async function POST(req: NextRequest) {
         const newOrder = await tx.order.create({
           data: {
             orderNumber,
+            userId: currentUserId,
             recipientName: recipientName.trim(),
             recipientPhone: cleanPhone,
             shippingAddress: formattedShippingAddress,

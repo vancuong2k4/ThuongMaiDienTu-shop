@@ -26,7 +26,22 @@ import {
   CheckCircle,
 } from "lucide-react";
 
-export const CheckoutClient: React.FC = () => {
+interface CheckoutClientProps {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+    defaultAddress?: {
+      province: string;
+      district: string;
+      ward: string;
+      street: string;
+    };
+  };
+}
+
+export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
@@ -39,13 +54,13 @@ export const CheckoutClient: React.FC = () => {
   const totalPrice = useCartStore((s) => s.totalPrice);
   const clearCart = useCartStore((s) => s.clearCart);
 
-  // Form State
-  const [recipientName, setRecipientName] = useState("");
-  const [recipientPhone, setRecipientPhone] = useState("");
-  const [province, setProvince] = useState("");
-  const [district, setDistrict] = useState("");
-  const [ward, setWard] = useState("");
-  const [addressDetail, setAddressDetail] = useState("");
+  // Form State (điền trước thông tin từ tài khoản đã đăng nhập)
+  const [recipientName, setRecipientName] = useState(user.name || "");
+  const [recipientPhone, setRecipientPhone] = useState(user.phone || "");
+  const [province, setProvince] = useState(user.defaultAddress?.province || "");
+  const [district, setDistrict] = useState(user.defaultAddress?.district || "");
+  const [ward, setWard] = useState(user.defaultAddress?.ward || "");
+  const [addressDetail, setAddressDetail] = useState(user.defaultAddress?.street || "");
   const [note, setNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>("VIETQR");
 
@@ -206,6 +221,25 @@ export const CheckoutClient: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* CỘT TRÁI: THÔNG TIN GIAO HÀNG & THANH TOÁN (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
+            {/* Banner tài khoản đã đăng nhập */}
+            <div className="bg-emerald-50/70 border border-emerald-200/90 rounded-2xl p-4 flex items-center justify-between text-xs shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                  {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 font-bold text-neutral-900">
+                    <span>Tài khoản đặt hàng:</span>
+                    <span className="text-emerald-800">{user.name}</span>
+                  </div>
+                  <p className="text-[11px] text-neutral-500">{user.email}</p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-semibold shrink-0">
+                <CheckCircle className="w-3.5 h-3.5" /> Đã xác thực
+              </span>
+            </div>
+
             {/* Box 1: Thông tin người nhận */}
             <div className="bg-white rounded-2xl border border-neutral-200 p-5 sm:p-6 shadow-sm space-y-4">
               <div className="flex items-center gap-2 text-neutral-900 font-semibold border-b border-neutral-100 pb-3">

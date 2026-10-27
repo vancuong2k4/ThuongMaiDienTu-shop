@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   Tag,
   ArrowRight,
@@ -11,6 +12,7 @@ import {
   Check,
   X,
   Loader2,
+  Lock,
 } from "lucide-react";
 import { formatVND } from "@/lib/utils";
 import type { AppliedVoucher } from "@/store/cart";
@@ -44,6 +46,9 @@ export function CartOrderSummary({
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
 
   const handleApply = async (codeToApply?: string) => {
     const code = (codeToApply || voucherInput).trim().toUpperCase();
@@ -220,15 +225,30 @@ export function CartOrderSummary({
         </div>
       </div>
 
-      {/* ── Nút Tiến Hành Thanh Toán ──────────────────────────────── */}
+      {/* ── Nút Tiến Hành Thanh Toán (Yêu cầu đăng nhập) ─────────────── */}
       <div className="pt-2">
-        <Link
-          href="/thanh-toan"
-          className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#800028] to-[#9e0032] hover:from-[#5c001e] hover:to-[#800028] text-white font-black text-sm tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-rose-900/20 active:scale-[0.99] transition-all cursor-pointer"
-        >
-          <span>Tiến Hành Thanh Toán</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+        {isAuthenticated ? (
+          <Link
+            href="/thanh-toan"
+            className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#800028] to-[#9e0032] hover:from-[#5c001e] hover:to-[#800028] text-white font-black text-sm tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-rose-900/20 active:scale-[0.99] transition-all cursor-pointer"
+          >
+            <span>Tiến Hành Thanh Toán</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        ) : (
+          <div className="space-y-2">
+            <Link
+              href="/dang-nhap?callbackUrl=/thanh-toan"
+              className="w-full py-3.5 px-6 rounded-2xl bg-[#800028] hover:bg-[#60001e] text-white font-black text-sm tracking-wide uppercase flex items-center justify-center gap-2 shadow-lg shadow-rose-900/20 active:scale-[0.99] transition-all cursor-pointer"
+            >
+              <Lock className="w-4 h-4" />
+              <span>Đăng Nhập Để Thanh Toán</span>
+            </Link>
+            <p className="text-[11px] text-center text-amber-800 bg-amber-50 py-1.5 px-3 rounded-lg border border-amber-200">
+              Vui lòng đăng nhập để tiếp tục thanh toán và tích điểm thành viên
+            </p>
+          </div>
+        )}
       </div>
 
       {/* ── 3 Cam kết mua sắm an toàn ─────────────────────────────── */}

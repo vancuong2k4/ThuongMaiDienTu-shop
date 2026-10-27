@@ -31,6 +31,18 @@ export default auth((req) => {
     }
   }
 
+  // ── Bảo vệ Trang Thanh Toán (Bắt buộc đăng nhập trước khi thanh toán) ──
+  if (
+    pathname.startsWith("/thanh-toan") &&
+    !pathname.startsWith("/thanh-toan/thanh-cong")
+  ) {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(
+        new URL(`/dang-nhap?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
+      );
+    }
+  }
+
   // ── Redirect nếu đã đăng nhập mà vào trang login/register ─
   if (
     isLoggedIn &&
@@ -50,6 +62,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/tai-khoan/:path*",
+    "/thanh-toan/:path*",
     "/dang-nhap",
     "/dang-ky",
     // Bỏ qua API auth routes (NextAuth tự xử lý)
