@@ -211,12 +211,18 @@ D:\github\ThuongMaiDienTu-shop\
     │   ├── (storefront)/               # Route Group: TRANG KHÁCH HÀNG
     │   │   ├── layout.tsx              # Storefront Layout (Server Component load categories)
     │   │   ├── page.tsx                # Trang chủ (Hero slider, Flash sale đếm ngược, 5 ngành hàng)
+    │   │   ├── dang-nhap/              # Trang đăng nhập tài khoản (Email/Mật khẩu + nút demo 1-click)
+    │   │   ├── dang-ky/                # Trang đăng ký thành viên mới
     │   │   ├── san-pham/               # Listing tất cả sản phẩm & tìm kiếm
     │   │   │   └── [slug]/page.tsx     # Chi tiết sản phẩm (RSC + Schema JSON-LD + Metadata SEO)
     │   │   ├── danh-muc/[slug]/        # Danh mục theo slug & bộ lọc đa tiêu chí
-    │   │   ├── gio-hang/               # Trang giỏ hàng chi tiết
-    │   │   ├── thanh-toan/             # Trang thanh toán (VietQR & COD)
-    │   │   ├── tai-khoan/              # Quản lý tài khoản khách & xem đơn hàng
+    │   │   ├── gio-hang/               # Trang giỏ hàng chi tiết (Thanh Freeship 500k + Voucher)
+    │   │   ├── thanh-toan/             # Trang thanh toán (Bắt buộc đăng nhập, chọn địa chỉ, VietQR live preview & COD)
+    │   │   │   └── thanh-cong/[orderNumber]/ # Trang xác nhận đơn hàng thành công kèm mã VietQR Napas 24/7
+    │   │   ├── tai-khoan/              # User Portal: Quản lý hồ sơ, sổ địa chỉ 63 tỉnh/thành, đổi mật khẩu
+    │   │   │   ├── don-hang/           # Lịch sử đơn hàng, bộ lọc tabs, timeline 4 bước & hủy đơn hoàn kho
+    │   │   │   │   └── [orderNumber]/  # Chi tiết đơn hàng, mã VietQR thanh toán bù & nút mua lại
+    │   │   │   └── yeu-thich/          # Danh sách sản phẩm yêu thích (Wishlist) + thêm giỏ nhanh
     │   │   └── tin-tuc/                # Blog cẩm nang & góc sức khỏe
     │   │
     │   ├── (admin)/                    # Route Group: TRANG QUẢN TRỊ ADMIN CMS
@@ -232,44 +238,56 @@ D:\github\ThuongMaiDienTu-shop\
     │   │       └── cai-dat/            # Chỉnh sửa logo, hotline, banner trang chủ, footer
     │   │
     │   └── api/                        # REST API Handlers
-    │       ├── auth/[...nextauth]/     # NextAuth authentication endpoints
+    │       ├── auth/
+    │       │   ├── [...nextauth]/      # NextAuth authentication endpoints
+    │       │   └── register/           # API đăng ký tài khoản khách hàng mới
+    │       ├── user/
+    │       │   ├── profile/            # API cập nhật hồ sơ cá nhân
+    │       │   ├── change-password/    # API đổi mật khẩu bảo mật bcrypt
+    │       │   ├── addresses/          # API sổ địa chỉ giao hàng (GET, POST, PATCH, DELETE)
+    │       │   └── orders/[orderNumber]/cancel/ # API hủy đơn hàng & tự động hoàn tồn kho
+    │       ├── wishlist/
+    │       │   ├── route.ts            # API lấy danh sách ID sản phẩm yêu thích
+    │       │   └── toggle/             # API thả tim / bỏ thích sản phẩm
+    │       ├── vouchers/apply/         # API kiểm tra & áp dụng mã giảm giá
     │       ├── products/               # API tìm kiếm, lọc sản phẩm
     │       ├── reviews/                # API gửi đánh giá sản phẩm (POST /api/reviews)
-    │       ├── cart/                   # API đồng bộ giỏ hàng
-    │       ├── orders/                 # API tạo đơn, tính phí ship, webhook thanh toán
-    │       └── webhooks/               # Webhook nhận biến động số dư VietQR (Sepay/PayOS)
+    │       └── orders/                 # API tạo đơn an toàn (Pessimistic Locking SELECT FOR UPDATE)
     │
     ├── components/
     │   ├── providers.tsx               # NextAuth SessionProvider + TanStack QueryClientProvider
     │   │
     │   ├── storefront/
-    │   │   ├── layout/                 # Các component layout trang khách
-    │   │   │   ├── Header.tsx          # Header 3 tầng: TopBar, MainBar, Mega Menu
-    │   │   │   ├── SearchBar.tsx       # Tìm kiếm thông minh với gợi ý từ khóa hot
-    │   │   │   ├── CartButton.tsx      # Nút giỏ hàng kết nối Zustand có badge nhảy số
-    │   │   │   ├── UserAccountMenu.tsx # Menu tài khoản (nhận diện role Admin / Khách)
-    │   │   │   ├── MobileNav.tsx       # Drawer trượt off-canvas cho mobile (Accordion 2 cấp)
-    │   │   │   ├── MobileBottomNav.tsx # Thanh điều hướng cố định dưới đáy mobile
-    │   │   │   ├── Footer.tsx          # 4 cam kết vàng + 4 cột thông tin chính sách
-    │   │   │   ├── NewsletterForm.tsx  # Form nhận voucher 50.000₫
-    │   │   │   └── QuickContact.tsx    # Nút nổi gọi Hotline, Chat Zalo & Cuộn lên đầu
+    │   │   ├── auth/                   # Component Đăng nhập & Đăng ký
+    │   │   │   ├── LoginForm.tsx       # Form đăng nhập kèm banner chuyển tiếp từ checkout
+    │   │   │   └── RegisterForm.tsx    # Form đăng ký thành viên mới
     │   │   │
-    │   │   ├── home/                   # Component riêng cho Trang chủ
-    │   │   │   ├── HeroBannerCarousel.tsx # Slider banner chính tự động chuyển slide + 2 sub-banner
-    │   │   │   ├── FlashSaleSection.tsx   # Khối Flash Sale đếm ngược thời gian thực + thanh tiến trình
-    │   │   │   ├── CategoryProductSection.tsx # Khối sản phẩm theo từng ngành hàng
-    │   │   │   └── BrandCommitmentSection.tsx # Khối giới thiệu showroom & 4 cam kết vàng
+    │   │   ├── account/                # Component User Portal
+    │   │   │   ├── AccountSidebar.tsx  # Sidebar điều hướng trang cá nhân
+    │   │   │   ├── AccountPageClient.tsx # Quản lý Hồ sơ, Sổ địa chỉ & Đổi mật khẩu
+    │   │   │   ├── AddAddressModal.tsx # Modal thêm địa chỉ mới 3 cấp 63 tỉnh/thành
+    │   │   │   ├── OrderListClient.tsx # Danh sách đơn hàng có tabs lọc & nút hủy/mua lại
+    │   │   │   ├── OrderDetailView.tsx # Chi tiết đơn hàng, timeline 4 bước & VietQR
+    │   │   │   └── WishlistClient.tsx  # Lưới sản phẩm yêu thích + thêm giỏ nhanh
     │   │   │
-    │   │   └── product/                # Component cho sản phẩm
-    │   │       ├── ProductCard.tsx          # Card sản phẩm cốt lõi dùng chung (Cờ xuất xứ, HSD, thêm giỏ nhanh)
-    │   │       ├── ProductDetailClient.tsx  # Điều phối State chi tiết sản phẩm (Client Component)
-    │   │       ├── ProductImageGallery.tsx  # Thư viện ảnh zoom kính lúp + Lightbox toàn màn hình
-    │   │       ├── ProductInfoSection.tsx   # Tên, giá, chọn biến thể realtime, 4 cam kết vàng, số lượng
-    │   │       ├── ProductTabs.tsx          # Tab mô tả chi tiết, thông số quy cách & chính sách Air Cargo
-    │   │       ├── ProductReviewsSection.tsx# Đánh giá sao, bộ lọc điểm, modal gửi đánh giá
-    │   │       └── StickyMobileCartBar.tsx  # Thanh mua hàng cố định đáy màn hình mobile khi cuộn
+    │   │   ├── cart/                   # Component Giỏ hàng
+    │   │   │   ├── FreeShippingProgress.tsx # Thanh tiến trình freeship 500k
+    │   │   │   ├── CartItemRow.tsx     # Dòng sản phẩm kiểm tra tồn kho tối đa
+    │   │   │   ├── CartOrderSummary.tsx# Tóm tắt chi phí & voucher + nút đăng nhập thanh toán
+    │   │   │   └── CartEmptyState.tsx  # Giao diện giỏ hàng rỗng
+    │   │   │
+    │   │   ├── checkout/               # Component Thanh toán
+    │   │   │   ├── AddressSelector.tsx # Chọn địa chỉ 3 cấp độ chuẩn Việt Nam
+    │   │   │   ├── PaymentMethodSelector.tsx # Chọn COD / VietQR kèm live preview
+    │   │   │   ├── VietQRCard.tsx      # Trình tạo mã VietQR Napas 24/7 offline 100%
+    │   │   │   ├── CheckoutClient.tsx  # Form thanh toán tự điền thông tin user
+    │   │   │   └── OrderSuccessView.tsx# Xác nhận đặt hàng thành công kèm VietQR
+    │   │   │
+    │   │   ├── layout/                 # Layout Header, Footer, Menu, Quick Contact
+    │   │   ├── home/                   # Hero Slider, Flash Sale, Category Grid
+    │   │   └── product/                # ProductCard, Gallery, Info, WishlistButton
     │   │
-    │   └── ui/                         # Các UI primitives tái sử dụng (Button, Modal, Input, Badge...)
+    │   └── ui/                         # UI primitives: CountryFlag, Modal, Badge...
     │
     ├── lib/
     │   ├── prisma.ts                   # Prisma Client Singleton (tránh cạn kiệt connection pool)
@@ -331,9 +349,14 @@ D:\github\ThuongMaiDienTu-shop\
    ```
    👉 Mở trình duyệt tại: **[http://localhost:3000](http://localhost:3000)**
 
-6. **Tài khoản Admin quản trị mặc định**:
-   - **Email:** `admin@thuyngashop.com.vn`
-   - **Mật khẩu:** `Admin@123456`
+6. **Tài khoản thử nghiệm hệ thống (Test Accounts)**:
+   - **Tài khoản Quản trị viên (Admin):**
+     - Email: `admin@thuyngashop.com.vn`
+     - Mật khẩu: `Admin@123456`
+   - **Tài khoản Khách hàng thành viên (Customer):**
+     - Email: `khachhang@thuyngashop.vn`
+     - Mật khẩu: `Khach@123456`
+   *(Có sẵn nút 1-click "Điền tài khoản Admin mẫu" tại trang đăng nhập `/dang-nhap` để test nhanh).*
 
 ---
 
@@ -409,29 +432,68 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - [x] Bảng tổng kết chi phí: Tạm tính, Phí ship, Giảm giá voucher, Tổng thanh toán.
   - [x] Trạng thái giỏ hàng rỗng (Empty State) với gợi ý mua sắm thân thiện.
 - [x] **Trang thanh toán đặt hàng (`/thanh-toan`)**:
-  - [x] Nhập thông tin người nhận (Họ tên, Số điện thoại hợp lệ).
+  - [x] **Bắt buộc đăng nhập trước khi thanh toán**: Bảo vệ 2 lớp (Middleware + Server Component), tự động chuyển hướng sang `/dang-nhap?callbackUrl=/thanh-toan` và quay lại ngay sau khi đăng nhập thành công.
+  - [x] Tự động điền sẵn thông tin (Auto-fill): Họ tên, Số điện thoại và Địa chỉ mặc định của khách hàng.
   - [x] Bộ chọn địa chỉ 3 cấp chuẩn hành chính Việt Nam (`AddressSelector.tsx`): 63 Tỉnh/Thành phố, Quận/Huyện, Phường/Xã và Số nhà/Đường.
   - [x] Bộ chọn phương thức thanh toán (`PaymentMethodSelector.tsx`):
     - [x] **COD (Thanh toán khi nhận hàng)**: Đồng kiểm ngoại quan sản phẩm trước khi giao tiền.
-    - [x] **VietQR Napas 24/7**: Chuyển khoản ngân hàng tức thì, tự động điền số tài khoản, số tiền và nội dung chuyển khoản.
-  - [x] Cột tóm tắt đơn hàng trực quan, danh sách sản phẩm snapshot, ghi chú đơn hàng.
+    - [x] **VietQR Napas 24/7 (Live Preview)**: Hiển thị trực tiếp mã QR Napas 24/7 và thông tin ngân hàng ngay khi khách bấm chọn phương thức.
+- [x] **Công nghệ VietQR Napas 24/7 độc lập (`VietQRCard.tsx`)**:
+  - [x] Tích hợp thư viện `qrcode` sinh mã QR dạng DataURL nội bộ trực tiếp trên trình duyệt (Offline 100%, không bị ảnh hưởng bởi lỗi mạng hay adblock bên thứ ba).
+  - [x] Cấu hình CSP (Content Security Policy) và RemotePatterns cấp quyền cho `img.vietqr.io` trong `next.config.ts`.
+  - [x] Hỗ trợ nút sao chép 1-chạm (1-click copy): Số tài khoản MB Bank, Tên chủ tài khoản, Số tiền, Nội dung chuyển khoản.
 - [x] **API Đặt hàng an toàn tuyệt đối (`POST /api/orders`)**:
   - [x] **Pessimistic Locking (`SELECT ... FOR UPDATE`)**: Khóa dòng biến thể trong PostgreSQL transaction nhằm loại bỏ 100% rủi ro Overselling (bán vượt tồn kho).
   - [x] Trừ tồn kho biến thể tự động, kiểm tra và tăng `usedCount` của Voucher trong cùng 1 transaction atomic.
   - [x] Lưu trữ **Snapshot bất biến** vào `order_items` (tên, variant, sku, giá, ảnh tại thời điểm đặt).
   - [x] Sinh mã đơn hàng chuẩn `TN-YYYYMMDD-XXXX` và mã chuyển khoản `transferCode`.
+  - [x] Gán `userId` xác thực của khách hàng vào đơn hàng để quản lý trong lịch sử cá nhân.
   - [x] Tự động ghi nhật ký trạng thái đơn hàng đầu tiên (`OrderStatusHistory: PENDING`).
 - [x] **Trang đặt hàng thành công (`/thanh-toan/thanh-cong/[orderNumber]`)**:
-  - [x] Tạo mã VietQR chuẩn Napas 24/7 trực quan tự động khớp số tiền và mã chuyển khoản.
-  - [x] Nút sao chép 1-chạm (1-click copy) tiện lợi cho: Số tài khoản, Số tiền, Nội dung chuyển khoản.
-  - [x] Hiển thị chi tiết đơn hàng, địa chỉ nhận hàng, phương thức thanh toán và hotline chăm sóc khách hàng.
+  - [x] Tạo mã VietQR chuẩn Napas 24/7 trực quan tự động khớp số tiền và mã chuyển khoản của đơn.
+  - [x] Nút sao chép 1-chạm tiện lợi, chi tiết đơn hàng, địa chỉ nhận hàng và hotline CSKH.
+
+### ✅ Giai đoạn 5.5: User Portal & Xác Thực Khách Hàng Toàn Diện (ĐÃ XONG)
+- [x] **Trang Đăng nhập (`/dang-nhap`) & Đăng ký (`/dang-ky`)**:
+  - [x] Giao diện sang trọng chuẩn nhận diện thương hiệu đỏ rượu `#800028` và vàng gold.
+  - [x] Tích hợp NextAuth v5 Credentials provider, bảo mật mật khẩu với `bcryptjs` (salt 12 rounds).
+  - [x] Nhận diện `callbackUrl` thông minh: tự động đưa khách về trang giỏ hàng/thanh toán hoặc trang trước đó.
+  - [x] Nút 1-click điền tài khoản thử nghiệm nhanh (Admin / Customer).
+  - [x] API Đăng ký tài khoản mới: `POST /api/auth/register` có kiểm tra trùng lặp email và số điện thoại.
+- [x] **Trang Thông tin tài khoản (`/tai-khoan`)**:
+  - [x] **Hồ sơ cá nhân**: Xem và cập nhật họ tên, số điện thoại (`PATCH /api/user/profile`).
+  - [x] **Sổ địa chỉ nhận hàng (`AddressBook`)**: Xem danh sách địa chỉ, Modal thêm địa chỉ mới 3 cấp 63 Tỉnh/Thành (`POST /api/user/addresses`), thiết lập địa chỉ mặc định (`PATCH /api/user/addresses/[id]`), xóa địa chỉ an toàn (`DELETE /api/user/addresses/[id]`).
+  - [x] **Bảo mật & Đổi mật khẩu**: Kiểm tra mật khẩu hiện tại và cập nhật mật khẩu mới (`POST /api/user/change-password`).
+- [x] **Đơn hàng của tôi (`/tai-khoan/don-hang`)**:
+  - [x] Bộ lọc đơn hàng theo 6 Tabs: Tất cả, Chờ xác nhận, Đang xử lý, Đang giao, Đã giao, Đã hủy.
+  - [x] Nút **"Hủy đơn hàng"**: Cho phép khách tự hủy đơn `PENDING` và hệ thống **tự động hoàn trả lại số lượng tồn kho (`stock`)** vào cơ sở dữ liệu (`POST /api/user/orders/[orderNumber]/cancel`).
+  - [x] Nút **"Mua lại"**: Đưa toàn bộ sản phẩm của đơn hàng cũ vào lại giỏ hàng Zustand với 1 cú click.
+  - [x] **Trang Chi tiết đơn hàng (`/tai-khoan/don-hang/[orderNumber]`)**: Thanh Timeline tiến trình vận chuyển 4 bước trực quan, tích hợp lại mã VietQR Napas 24/7 để thanh toán bù bất cứ lúc nào.
+- [x] **Sản phẩm yêu thích - Wishlist (`/tai-khoan/yeu-thich`)**:
+  - [x] Nút Thả Tim tương tác realtime (`WishlistButton.tsx`) đồng bộ trên toàn bộ card sản phẩm và trang chi tiết sản phẩm.
+  - [x] Lưu trạng thái thả tim trực tiếp vào bảng `wishlist` trong PostgreSQL (`POST /api/wishlist/toggle`).
+  - [x] Trang quản lý Wishlist: Lưới sản phẩm đã lưu, nút thêm nhanh vào giỏ hàng và nút xóa khỏi danh sách.
 
 ### 🔜 Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`) (TASK TIẾP THEO)
-- [ ] Dashboard tổng quan doanh thu, số đơn chờ xử lý, sản phẩm sắp hết hàng.
-- [ ] Quản lý Sản phẩm / Biến thể / Tồn kho (Thêm, sửa, xóa, upload ảnh).
-- [ ] Quản lý Đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt -> Đang giao -> Hoàn thành -> Hủy trả lại kho).
-- [ ] Quản lý Mã giảm giá (Voucher) & Quản lý Danh mục.
-- [ ] Cài đặt giao diện: Chủ shop tự thay Banner, Logo, Hotline, Nội dung chân trang ngay trên web.
+- [ ] **Admin Layout & Navigation (`/admin`)**: Sidebar menu phân quyền nghiêm ngặt chỉ tài khoản `role === "ADMIN"` mới truy cập được.
+- [ ] **Dashboard Tổng quan (`/admin/dashboard`)**:
+  - Thống kê doanh thu ngày, tuần, tháng (kèm biểu đồ trực quan).
+  - Đếm số lượng đơn hàng mới cần duyệt, đơn đang giao, đơn hoàn thành.
+  - Bảng cảnh báo các sản phẩm sắp hết hàng trong kho (`stock < 10`).
+  - Danh sách đơn hàng mới nhất đặt trong ngày.
+- [ ] **Quản lý Đơn hàng (`/admin/don-hang`)**:
+  - Bảng danh sách đơn hàng đầy đủ: Tìm kiếm theo mã đơn, tên khách, số điện thoại, lọc theo trạng thái đơn & thanh toán.
+  - Modal / Trang xem chi tiết đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt ➔ Đã xác nhận ➔ Đang giao ➔ Đã giao / Hủy), cập nhật trạng thái thanh toán (Đã thanh toán qua VietQR).
+  - Tự động ghi nhật ký vào `OrderStatusHistory`.
+  - In phiếu đóng gói gửi hàng (Packing Slip).
+- [ ] **Quản lý Sản phẩm & Biến thể (`/admin/san-pham`)**:
+  - Bảng danh sách sản phẩm: Lọc theo danh mục, xuất xứ, tìm kiếm theo tên/SKU.
+  - Form thêm mới / chỉnh sửa sản phẩm: Tên, slug, danh mục, thương hiệu, xuất xứ, quy cách, HSD, mô tả Rich Text HTML.
+  - Quản lý danh sách Biến thể (SKU, Tên biến thể, Giá bán, Giá gốc, Tồn kho `stock`, Trọng lượng, Ảnh).
+  - Bật / Tắt trạng thái kinh doanh (`isActive`), đánh dấu sản phẩm nổi bật (`isFeatured`).
+- [ ] **Quản lý Danh mục Ngành hàng (`/admin/danh-muc`)**: Cây danh mục 2 cấp (Cha - Con), thêm / sửa / xóa / sắp xếp thứ tự hiển thị.
+- [ ] **Quản lý Mã giảm giá Voucher (`/admin/vouchers`)**: Thêm voucher `%` hoặc số tiền cố định, thiết lập ngày bắt đầu, ngày kết thúc, giá trị đơn tối thiểu, số lượt dùng tối đa.
+- [ ] **Cài đặt Website (`/admin/cai-dat`)**: Cấu hình Hotline, Logo, Banner trang chủ, Footer động lưu trong bảng `site_settings`.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
@@ -441,4 +503,4 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
 
 ---
 
-*Tài liệu được lập và duy trì bởi Developer Trần Văn Cường & AI Co-pilot | Cập nhật lần cuối: 2026-10-26*
+*Tài liệu được lập và duy trì bởi Developer Trần Văn Cường & AI Co-pilot | Cập nhật lần cuối: 2026-10-27*
