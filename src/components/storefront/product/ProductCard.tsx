@@ -7,6 +7,7 @@ import { ShoppingBag, Heart, Star, Check } from "lucide-react";
 import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
 import { CountryFlag } from "@/components/ui/CountryFlag";
+import { WishlistButton } from "@/components/storefront/product/WishlistButton";
 
 export interface ProductCardData {
   id: string;
@@ -43,7 +44,6 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const [isAdded, setIsAdded] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
 
   // Chọn biến thể mặc định hoặc biến thể đầu tiên
@@ -83,12 +83,6 @@ export function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setIsAdded(false), 1800);
   };
 
-  const handleToggleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
-  };
-
   return (
     <div className="group relative bg-white rounded-2xl border border-gray-100 hover:border-[#ffe0e8] hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
       {/* ── 1. Image & Badges Container ────────────────────────────── */}
@@ -126,19 +120,12 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Wishlist Button */}
-        <button
-          onClick={handleToggleWishlist}
-          className={`absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-            isWishlisted
-              ? "bg-rose-50 text-red-500 shadow-md"
-              : "bg-white/80 backdrop-blur-sm text-gray-500 hover:text-red-500 hover:bg-white opacity-0 group-hover:opacity-100"
-          }`}
-          aria-label="Thêm vào yêu thích"
-        >
-          <Heart
-            className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`}
+        <div className="absolute bottom-2.5 right-2.5 z-10">
+          <WishlistButton
+            productId={product.id}
+            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm border border-neutral-200 flex items-center justify-center shadow-xs opacity-90 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-white"
           />
-        </button>
+        </div>
 
         {/* Date / HSD preview badge */}
         {product.expiryInfo && (

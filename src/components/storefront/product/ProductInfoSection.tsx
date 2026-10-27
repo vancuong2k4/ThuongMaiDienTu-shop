@@ -24,6 +24,7 @@ import {
 import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
 import { CountryFlag } from "@/components/ui/CountryFlag";
+import { WishlistButton } from "@/components/storefront/product/WishlistButton";
 
 export interface VariantData {
   id: string;
@@ -69,7 +70,6 @@ export function ProductInfoSection({
 }: ProductInfoSectionProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const router = useRouter();
 
@@ -470,20 +470,11 @@ export function ProductInfoSection({
 
         {/* Yêu thích & Chia sẻ */}
         <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs text-gray-500">
-          <button
-            type="button"
-            onClick={() => setIsWishlisted(!isWishlisted)}
-            className="flex items-center gap-1.5 hover:text-red-600 transition-colors"
-          >
-            <Heart
-              className={`w-4 h-4 ${
-                isWishlisted ? "text-red-600 fill-current" : ""
-              }`}
-            />
-            <span>
-              {isWishlisted ? "Đã lưu vào yêu thích" : "Lưu vào yêu thích"}
-            </span>
-          </button>
+          <WishlistButton
+            productId={product.id}
+            showText={true}
+            className="hover:text-red-600 transition-colors"
+          />
 
           <button
             type="button"
