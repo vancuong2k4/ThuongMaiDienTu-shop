@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart";
+import { VietQRCard } from "@/components/storefront/checkout/VietQRCard";
 import {
   Package,
   Calendar,
@@ -252,99 +253,11 @@ export const OrderDetailView: React.FC<OrderDetailViewProps> = ({ order }) => {
 
       {/* KHỐI VIETQR NẾU CHƯA THANH TOÁN */}
       {order.paymentMethod === "VIETQR" && order.paymentStatus === "PENDING" && currentStep !== -1 && (
-        <div className="bg-white rounded-3xl border-2 border-[#800028]/20 p-6 shadow-sm">
-          <div className="flex items-center gap-2.5 pb-4 mb-4 border-b border-neutral-100">
-            <div className="w-8 h-8 rounded-lg bg-[#800028] text-white flex items-center justify-center">
-              <QrCode className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="font-bold text-sm text-neutral-900">
-                Thanh toán đơn hàng qua VietQR Napas 24/7
-              </h3>
-              <p className="text-xs text-neutral-500">
-                Đơn hàng của bạn đang chờ chuyển khoản để bộ phận kho tiến hành gửi hàng.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-6 items-center">
-            {/* Ảnh QR */}
-            <div className="shrink-0 text-center">
-              <div className="w-44 h-44 bg-white border border-neutral-200 rounded-2xl p-2 shadow-xs">
-                <img
-                  src={vietQrUrl}
-                  alt="VietQR"
-                  className="w-full h-full object-contain rounded-xl"
-                />
-              </div>
-              <span className="inline-block mt-2 text-[10px] text-neutral-500 font-medium">
-                Quét bằng app ngân hàng bất kỳ
-              </span>
-            </div>
-
-            {/* Bảng chi tiết chuyển khoản */}
-            <div className="flex-1 w-full space-y-2 text-xs">
-              <div className="p-2.5 bg-neutral-50 rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-neutral-500 block">Số tài khoản</span>
-                  <span className="font-mono font-bold text-sm text-[#800028]">
-                    {bankInfo.accountNumber}
-                  </span>
-                </div>
-                <button
-                  onClick={() => copyToClipboard(bankInfo.accountNumber, "stk")}
-                  className="px-2 py-1 bg-white border border-neutral-200 rounded text-[11px] font-medium hover:border-[#800028] flex items-center gap-1 cursor-pointer"
-                >
-                  {copiedField === "stk" ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                  <span>{copiedField === "stk" ? "Đã chép" : "Sao chép"}</span>
-                </button>
-              </div>
-
-              <div className="p-2.5 bg-neutral-50 rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-neutral-500 block">Chủ tài khoản</span>
-                  <span className="font-bold text-neutral-900">{bankInfo.accountName}</span>
-                </div>
-              </div>
-
-              <div className="p-2.5 bg-neutral-50 rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-neutral-500 block">Số tiền cần chuyển</span>
-                  <span className="font-bold text-[#800028] text-sm">
-                    {order.total.toLocaleString("vi-VN")}₫
-                  </span>
-                </div>
-                <button
-                  onClick={() => copyToClipboard(order.total.toString(), "amount")}
-                  className="px-2 py-1 bg-white border border-neutral-200 rounded text-[11px] font-medium hover:border-[#800028] flex items-center gap-1 cursor-pointer"
-                >
-                  {copiedField === "amount" ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                  <span>{copiedField === "amount" ? "Đã chép" : "Sao chép"}</span>
-                </button>
-              </div>
-
-              <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] text-neutral-600 block font-medium">
-                    Nội dung chuyển khoản (bắt buộc)
-                  </span>
-                  <span className="font-mono font-bold text-[#800028] text-sm">
-                    {order.transferCode || order.orderNumber}
-                  </span>
-                </div>
-                <button
-                  onClick={() =>
-                    copyToClipboard(order.transferCode || order.orderNumber, "code")
-                  }
-                  className="px-2.5 py-1 bg-[#800028] text-white rounded text-[11px] font-bold hover:bg-[#60001e] flex items-center gap-1 cursor-pointer shadow-xs"
-                >
-                  {copiedField === "code" ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                  <span>{copiedField === "code" ? "Đã chép" : "Sao chép"}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <VietQRCard
+          amount={order.total}
+          transferCode={order.transferCode || order.orderNumber}
+          orderNumber={order.orderNumber}
+        />
       )}
 
       {/* 2 CỘT THÔNG TIN: GIAO HÀNG & CHI TIẾT SẢN PHẨM */}

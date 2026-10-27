@@ -303,6 +303,7 @@ export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
                 value={paymentMethod}
                 onChange={setPaymentMethod}
                 disabled={isSubmitting}
+                totalAmount={finalTotal}
               />
             </div>
 

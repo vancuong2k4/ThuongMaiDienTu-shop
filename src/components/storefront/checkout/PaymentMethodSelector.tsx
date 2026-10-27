@@ -1,12 +1,13 @@
 // ============================================================
 // components/storefront/checkout/PaymentMethodSelector.tsx
-// Chọn phương thức thanh toán: COD hoặc VietQR
+// Chọn phương thức thanh toán: COD hoặc VietQR (kèm Preview QR)
 // ============================================================
 
 "use client";
 
 import React from "react";
 import { Truck, QrCode, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
+import { VietQRCard } from "./VietQRCard";
 
 export type PaymentMethodType = "COD" | "VIETQR";
 
@@ -14,12 +15,14 @@ interface PaymentMethodSelectorProps {
   value: PaymentMethodType;
   onChange: (method: PaymentMethodType) => void;
   disabled?: boolean;
+  totalAmount?: number;
 }
 
 export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   value,
   onChange,
   disabled = false,
+  totalAmount = 0,
 }) => {
   return (
     <div className="space-y-4">
@@ -134,6 +137,17 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
           </div>
         </label>
       </div>
+
+      {/* Hiển thị Khung Xem trước Mã VietQR ngay khi người dùng chọn VietQR */}
+      {value === "VIETQR" && totalAmount > 0 && (
+        <div className="pt-2 animate-in fade-in-50 duration-300">
+          <VietQRCard
+            amount={totalAmount}
+            transferCode="TN DAT HANG"
+            previewMode={true}
+          />
+        </div>
+      )}
     </div>
   );
 };

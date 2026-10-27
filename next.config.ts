@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "img.vietqr.io",
+        pathname: "/**",
+      },
     ],
     // Tự động convert sang WebP/AVIF
     formats: ["image/avif", "image/webp"],
@@ -60,8 +65,8 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // unsafe-eval cần cho Next.js dev
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://media.thuyngashop.com.vn https://placehold.co https://images.unsplash.com",
-              "connect-src 'self' https://api.vietqr.io",
+              "img-src 'self' data: blob: https://media.thuyngashop.com.vn https://placehold.co https://images.unsplash.com https://img.vietqr.io https://*.vietqr.io",
+              "connect-src 'self' https://api.vietqr.io https://*.vietqr.io",
               "frame-src 'none'",
             ].join("; "),
           },
