@@ -65,6 +65,9 @@ export function formatVND(amount: number | string): string {
   }).format(num);
 }
 
+/** Bí danh cho formatVND để chuẩn hóa gọi tiền tệ */
+export const formatCurrency = formatVND;
+
 /**
  * Tính % giảm giá
  * @example calcDiscount(200000, 150000) → 25 (%)

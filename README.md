@@ -483,11 +483,14 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Bộ đếm thông báo Realtime: Huy hiệu đếm số đơn hàng mới cần xác nhận (`PENDING`) và đánh giá chờ duyệt trực tiếp từ database.
   - Header tiện ích: Nút chuyển nhanh xem Cửa hàng Live (`/`), Thông báo đơn cần xử lý, Menu profile quản trị viên và Đăng xuất an toàn.
   - Bộ UI Primitives chuẩn hóa: `AdminCard`, `AdminPageHeader`, `AdminBadge`.
-- [ ] **Module 6.2: Dashboard Tổng Quan, Thống Kê Doanh Thu & Cảnh Báo Tồn Kho (`/admin/dashboard`)**:
-  - Thống kê doanh thu ngày, tuần, tháng (kèm biểu đồ trực quan).
-  - Đếm số lượng đơn hàng mới cần duyệt, đơn đang giao, đơn hoàn thành.
-  - Bảng cảnh báo các sản phẩm sắp hết hàng trong kho (`stock < 10`).
-  - Danh sách đơn hàng mới nhất đặt trong ngày.
+- [x] **Module 6.2: Dashboard Tổng Quan, Thống Kê Doanh Thu & Cảnh Báo Tồn Kho (`/admin/dashboard`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thống kê 6 chỉ số KPIs then chốt: Doanh thu thuần, Tổng đơn hàng, Giá trị trung bình đơn (AOV), Khách thành viên, Đơn chờ duyệt & Kho sắp hết.
+  - Tính toán chính xác phần trăm tăng trưởng (+%) so với kỳ báo cáo trước đó.
+  - Bộ lọc thời gian linh hoạt (Hôm nay, 7 ngày qua, 30 ngày qua, Toàn thời gian) cập nhật URL mượt mà không tải lại trang.
+  - Biểu đồ tương tác trực quan SVG/CSS (`RevenueChart.tsx`): Chuyển đổi giữa Doanh thu và Số đơn, thanh tiến trình hiển thị doanh số từng ngày kèm tooltip chi tiết.
+  - Tỷ lệ phân bổ trạng thái đơn hàng (Tiến trình %: Chờ duyệt, Đã xác nhận, Đang giao, Đã giao, Đã hủy) & Danh sách Top sản phẩm bán chạy nhất.
+  - Bảng cảnh báo tồn kho kho hàng (`LowStockTable.tsx`): Tự động quét mặt hàng có tồn kho `<= 10`, phân loại mức độ nguy hiểm và có phím tắt nhập thêm kho.
+  - Bảng hoạt động đơn hàng mới nhất (`RecentOrdersTable.tsx`): Hiển thị thông tin khách đặt, phương thức thanh toán, trạng thái với huy hiệu `AdminBadge` và liên kết kiểm tra nhanh.
 - [ ] **Module 6.3: Quản Lý Sản Phẩm & Biến Thể Tồn Kho (`/admin/san-pham`)**:
   - Bảng danh sách sản phẩm: Lọc theo danh mục, xuất xứ, tìm kiếm theo tên/SKU.
   - Form thêm mới / chỉnh sửa sản phẩm: Tên, slug, danh mục, thương hiệu, xuất xứ, quy cách, HSD, mô tả Rich Text HTML.
