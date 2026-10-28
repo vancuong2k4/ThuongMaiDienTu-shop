@@ -14,7 +14,9 @@ export default auth((req) => {
   // ── Bảo vệ Admin routes ──────────────────────────────────
   if (pathname.startsWith("/admin")) {
     if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/dang-nhap", req.url));
+      return NextResponse.redirect(
+        new URL(`/dang-nhap?callbackUrl=${encodeURIComponent(pathname)}`, req.url)
+      );
     }
     if (userRole !== "ADMIN") {
       // Không phải admin → về trang chủ

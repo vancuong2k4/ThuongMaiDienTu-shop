@@ -474,26 +474,35 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - [x] Lưu trạng thái thả tim trực tiếp vào bảng `wishlist` trong PostgreSQL (`POST /api/wishlist/toggle`).
   - [x] Trang quản lý Wishlist: Lưới sản phẩm đã lưu, nút thêm nhanh vào giỏ hàng và nút xóa khỏi danh sách.
 
-### 🔜 Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`) (TASK TIẾP THEO)
-- [ ] **Admin Layout & Navigation (`/admin`)**: Sidebar menu phân quyền nghiêm ngặt chỉ tài khoản `role === "ADMIN"` mới truy cập được.
-- [ ] **Dashboard Tổng quan (`/admin/dashboard`)**:
+### 👑 Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`) (ĐANG TRIỂN KHAI THEO TỪNG MODULE)
+- [x] **Module 6.1: Khung Nền tảng Admin Layout, Sidebar Navigation, Header & Phân Quyền Bảo Mật RBAC** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Middleware bảo vệ nghiêm ngặt: Chỉ tài khoản `role === "ADMIN"` mới được truy cập `/admin/*`, tự động lưu `callbackUrl` khi chuyển hướng đăng nhập.
+  - Phân quyền kép (Double RBAC Guard) tại cả Middleware và Server Layout `src/app/(admin)/layout.tsx`.
+  - Giao diện Admin Shell chuẩn mực: Dark Slate (`#0f172a`) kết hợp màu đỏ rượu mận (`#800028`) đặc trưng của THUYNGA Shop.
+  - Sidebar Navigation co giãn linh hoạt (Desktop collapse `w-64` <-> `w-20` lưu `localStorage`, Mobile Drawer vuốt mượt mà) với 8 phân hệ quản trị.
+  - Bộ đếm thông báo Realtime: Huy hiệu đếm số đơn hàng mới cần xác nhận (`PENDING`) và đánh giá chờ duyệt trực tiếp từ database.
+  - Header tiện ích: Nút chuyển nhanh xem Cửa hàng Live (`/`), Thông báo đơn cần xử lý, Menu profile quản trị viên và Đăng xuất an toàn.
+  - Bộ UI Primitives chuẩn hóa: `AdminCard`, `AdminPageHeader`, `AdminBadge`.
+- [ ] **Module 6.2: Dashboard Tổng Quan, Thống Kê Doanh Thu & Cảnh Báo Tồn Kho (`/admin/dashboard`)**:
   - Thống kê doanh thu ngày, tuần, tháng (kèm biểu đồ trực quan).
   - Đếm số lượng đơn hàng mới cần duyệt, đơn đang giao, đơn hoàn thành.
   - Bảng cảnh báo các sản phẩm sắp hết hàng trong kho (`stock < 10`).
   - Danh sách đơn hàng mới nhất đặt trong ngày.
-- [ ] **Quản lý Đơn hàng (`/admin/don-hang`)**:
-  - Bảng danh sách đơn hàng đầy đủ: Tìm kiếm theo mã đơn, tên khách, số điện thoại, lọc theo trạng thái đơn & thanh toán.
-  - Modal / Trang xem chi tiết đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt ➔ Đã xác nhận ➔ Đang giao ➔ Đã giao / Hủy), cập nhật trạng thái thanh toán (Đã thanh toán qua VietQR).
-  - Tự động ghi nhật ký vào `OrderStatusHistory`.
-  - In phiếu đóng gói gửi hàng (Packing Slip).
-- [ ] **Quản lý Sản phẩm & Biến thể (`/admin/san-pham`)**:
+- [ ] **Module 6.3: Quản Lý Sản Phẩm & Biến Thể Tồn Kho (`/admin/san-pham`)**:
   - Bảng danh sách sản phẩm: Lọc theo danh mục, xuất xứ, tìm kiếm theo tên/SKU.
   - Form thêm mới / chỉnh sửa sản phẩm: Tên, slug, danh mục, thương hiệu, xuất xứ, quy cách, HSD, mô tả Rich Text HTML.
   - Quản lý danh sách Biến thể (SKU, Tên biến thể, Giá bán, Giá gốc, Tồn kho `stock`, Trọng lượng, Ảnh).
   - Bật / Tắt trạng thái kinh doanh (`isActive`), đánh dấu sản phẩm nổi bật (`isFeatured`).
-- [ ] **Quản lý Danh mục Ngành hàng (`/admin/danh-muc`)**: Cây danh mục 2 cấp (Cha - Con), thêm / sửa / xóa / sắp xếp thứ tự hiển thị.
-- [ ] **Quản lý Mã giảm giá Voucher (`/admin/vouchers`)**: Thêm voucher `%` hoặc số tiền cố định, thiết lập ngày bắt đầu, ngày kết thúc, giá trị đơn tối thiểu, số lượt dùng tối đa.
-- [ ] **Cài đặt Website (`/admin/cai-dat`)**: Cấu hình Hotline, Logo, Banner trang chủ, Footer động lưu trong bảng `site_settings`.
+- [ ] **Module 6.4: Quản Lý Danh Mục Ngành Hàng (`/admin/danh-muc`)**: Cây danh mục 2 cấp (Cha - Con), thêm / sửa / xóa / sắp xếp thứ tự hiển thị.
+- [ ] **Module 6.5: Quản Lý Đơn Hàng (`/admin/don-hang`)**:
+  - Bảng danh sách đơn hàng đầy đủ: Tìm kiếm theo mã đơn, tên khách, số điện thoại, lọc theo trạng thái đơn & thanh toán.
+  - Modal / Trang xem chi tiết đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt ➔ Đã xác nhận ➔ Đang giao ➔ Đã giao / Hủy), cập nhật trạng thái thanh toán (Đã thanh toán qua VietQR).
+  - Tự động ghi nhật ký vào `OrderStatusHistory`.
+  - In phiếu đóng gói gửi hàng (Packing Slip).
+- [ ] **Module 6.6: Quản Lý Mã Giảm Giá Voucher (`/admin/voucher`)**: Thêm voucher `%` hoặc số tiền cố định, thiết lập ngày bắt đầu, ngày kết thúc, giá trị đơn tối thiểu, số lượt dùng tối đa.
+- [ ] **Module 6.7: Quản Lý Khách Hàng (`/admin/khach-hang`)**: Danh sách thành viên, tổng chi tiêu, tổng số đơn mua, kích hoạt/khóa tài khoản.
+- [ ] **Module 6.8: Kiểm Duyệt Đánh Giá Khách Hàng (`/admin/danh-gia`)**: Duyệt bình luận, số sao, hình ảnh đính kèm trước khi công khai.
+- [ ] **Module 6.9: Cài Đặt Hệ Thống (`/admin/cai-dat`)**: Cấu hình Hotline, Logo, STK VietQR Napas 24/7 nhận tiền, mức phí vận chuyển mặc định.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
