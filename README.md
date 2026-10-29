@@ -491,11 +491,14 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tỷ lệ phân bổ trạng thái đơn hàng (Tiến trình %: Chờ duyệt, Đã xác nhận, Đang giao, Đã giao, Đã hủy) & Danh sách Top sản phẩm bán chạy nhất.
   - Bảng cảnh báo tồn kho kho hàng (`LowStockTable.tsx`): Tự động quét mặt hàng có tồn kho `<= 10`, phân loại mức độ nguy hiểm và có phím tắt nhập thêm kho.
   - Bảng hoạt động đơn hàng mới nhất (`RecentOrdersTable.tsx`): Hiển thị thông tin khách đặt, phương thức thanh toán, trạng thái với huy hiệu `AdminBadge` và liên kết kiểm tra nhanh.
-- [ ] **Module 6.3: Quản Lý Sản Phẩm & Biến Thể Tồn Kho (`/admin/san-pham`)**:
-  - Bảng danh sách sản phẩm: Lọc theo danh mục, xuất xứ, tìm kiếm theo tên/SKU.
-  - Form thêm mới / chỉnh sửa sản phẩm: Tên, slug, danh mục, thương hiệu, xuất xứ, quy cách, HSD, mô tả Rich Text HTML.
-  - Quản lý danh sách Biến thể (SKU, Tên biến thể, Giá bán, Giá gốc, Tồn kho `stock`, Trọng lượng, Ảnh).
-  - Bật / Tắt trạng thái kinh doanh (`isActive`), đánh dấu sản phẩm nổi bật (`isFeatured`).
+- [x] **Module 6.3: Quản Lý Sản Phẩm & Biến Thể Tồn Kho (`/admin/san-pham`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bảng danh sách sản phẩm phân trang, tìm kiếm đa năng theo tên sản phẩm, thương hiệu hoặc mã SKU, hiển thị dải giá min-max, tổng tồn kho và số biến thể.
+  - Bộ lọc nâng cao theo danh mục phân cấp, xuất xứ quốc gia với cờ emoji, mức độ tồn kho (Dồi dào, Sắp hết, Hết hàng) và trạng thái kinh doanh.
+  - Bật / Tắt nhanh tức thì trạng thái kinh doanh (`isActive`) và đánh dấu nổi bật (`isFeatured`) ngay trên bảng với Optimistic UI.
+  - Form Thêm mới (`/admin/san-pham/tao-moi`) & Chỉnh sửa (`/admin/san-pham/[id]`) chuẩn chỉnh 5 phân khu: Thông tin cơ bản, Biến thể & Giá, Thư viện hình ảnh, Mô tả chi tiết HTML có Preview, và Cấu hình SEO.
+  - Tự động sinh slug chuẩn tiếng Việt và mã SKU thông minh theo phân loại.
+  - API Tải ảnh lên máy chủ cục bộ (`POST /api/upload`) hỗ trợ định dạng PNG, JPG, WEBP và dán link ảnh CDN ngoài.
+  - Cơ chế Xóa an toàn: Tự động phát hiện sản phẩm đã có lịch sử đơn hàng để chuyển sang trạng thái "Ngừng kinh doanh" thay vì xóa cứng, bảo toàn dữ liệu kế toán và hóa đơn khách hàng.
 - [ ] **Module 6.4: Quản Lý Danh Mục Ngành Hàng (`/admin/danh-muc`)**: Cây danh mục 2 cấp (Cha - Con), thêm / sửa / xóa / sắp xếp thứ tự hiển thị.
 - [ ] **Module 6.5: Quản Lý Đơn Hàng (`/admin/don-hang`)**:
   - Bảng danh sách đơn hàng đầy đủ: Tìm kiếm theo mã đơn, tên khách, số điện thoại, lọc theo trạng thái đơn & thanh toán.
