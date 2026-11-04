@@ -499,7 +499,13 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tự động sinh slug chuẩn tiếng Việt và mã SKU thông minh theo phân loại.
   - API Tải ảnh lên máy chủ cục bộ (`POST /api/upload`) hỗ trợ định dạng PNG, JPG, WEBP và dán link ảnh CDN ngoài.
   - Cơ chế Xóa an toàn: Tự động phát hiện sản phẩm đã có lịch sử đơn hàng để chuyển sang trạng thái "Ngừng kinh doanh" thay vì xóa cứng, bảo toàn dữ liệu kế toán và hóa đơn khách hàng.
-- [ ] **Module 6.4: Quản Lý Danh Mục Ngành Hàng (`/admin/danh-muc`)**: Cây danh mục 2 cấp (Cha - Con), thêm / sửa / xóa / sắp xếp thứ tự hiển thị.
+- [x] **Module 6.4: Quản Lý Danh Mục Ngành Hàng (`/admin/danh-muc`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bảng cấu trúc cây danh mục 2 tầng (Hierarchical Tree View): Ngành hàng gốc Cấp 1 có thể thu gọn / mở rộng các phân loại con Cấp 2, hiển thị số lượng sản phẩm liên kết (trực tiếp và tổng của ngành hàng).
+  - Thao tác nhanh tức thì: Bật / tắt nhanh hiển thị trên website (`isActive`) với Optimistic UI, mở nhanh trang danh mục ngoài storefront (`/danh-muc/[slug]`).
+  - Modal Thêm mới & Chỉnh sửa danh mục (`CategoryModal.tsx`): Tự động tạo slug tiếng Việt chuẩn SEO, tải ảnh/icon ngành hàng lên máy chủ hoặc dán URL ngoài, chọn phân cấp cha/con chống lỗi vòng lặp (Circular Dependency Guard), cấu hình thứ tự hiển thị (`sortOrder`) và thẻ Meta SEO.
+  - Cơ chế Xóa Danh Mục An Toàn (Safe Category Deletion): Chặn xóa danh mục nếu đang chứa danh mục con hoặc đang có sản phẩm liên kết nhằm bảo toàn 100% dữ liệu phân loại.
+  - Hệ thống REST APIs hoàn chỉnh: `GET /api/admin/categories`, `POST /api/admin/categories`, `PUT /api/admin/categories/[id]`, `DELETE /api/admin/categories/[id]`, `PATCH /api/admin/categories/[id]/toggle`.
+  - Bộ thẻ thống kê nhanh: Tổng danh mục (30), Ngành hàng gốc (5), Phân loại con (25), Đang hiển thị (30).
 - [ ] **Module 6.5: Quản Lý Đơn Hàng (`/admin/don-hang`)**:
   - Bảng danh sách đơn hàng đầy đủ: Tìm kiếm theo mã đơn, tên khách, số điện thoại, lọc theo trạng thái đơn & thanh toán.
   - Modal / Trang xem chi tiết đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt ➔ Đã xác nhận ➔ Đang giao ➔ Đã giao / Hủy), cập nhật trạng thái thanh toán (Đã thanh toán qua VietQR).
