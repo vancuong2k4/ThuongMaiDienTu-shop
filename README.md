@@ -564,7 +564,24 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
       2. **Tab Sổ Địa Chỉ**: Danh sách địa chỉ giao hàng đã lưu 4 cấp (Số nhà, Phường/Xã, Quận/Huyện, Tỉnh/Thành) kèm huy hiệu ĐỊA CHỈ MẶC ĐỊNH.
       3. **Tab Đánh Giá**: Toàn bộ đánh giá nhận xét thực tế đã gửi kèm số sao (1-5 sao), nội dung và liên kết đến sản phẩm ngoài website.
   - Hệ thống REST APIs chuẩn RBAC: `GET /api/admin/customers`, `GET /api/admin/customers/[id]`, `PATCH /api/admin/customers/[id]/toggle`.
-- [ ] **Module 6.8: Kiểm Duyệt Đánh Giá Khách Hàng (`/admin/danh-gia`)**: Duyệt bình luận, số sao, hình ảnh đính kèm trước khi công khai.
+- [x] **Module 6.8: Kiểm Duyệt Đánh Giá Khách Hàng (`/admin/danh-gia`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 4 Thẻ KPI thống kê đánh giá toàn diện: Tổng số đánh giá toàn sàn, Số đánh giá chờ kiểm duyệt (`PENDING` kèm hiệu ứng pulse cảnh báo), Số đánh giá đã công khai (`APPROVED`) và Điểm trung bình hài lòng của khách hàng (làm tròn thập phân ví dụ 5.0/5.0).
+  - Bộ lọc thông minh (`ReviewFilters.tsx`):
+    - Tabs trạng thái: Tất cả, Chờ kiểm duyệt (kèm badge số lượng chờ duyệt thời gian thực), Đã công khai, Từ chối / Ẩn.
+    - Bộ lọc số sao linh hoạt: 5 sao, 4 sao, 3 sao, 2 sao, 1 sao hoặc tất cả.
+    - Ô tìm kiếm đa năng theo tên khách hàng, email người đánh giá, tên sản phẩm hoặc từ khóa trong nội dung nhận xét.
+    - Sắp xếp linh hoạt: Mới nhất, Sao cao nhất (5 ★), Sao thấp nhất (1 ★).
+  - Bảng dữ liệu kiểm duyệt trực quan (`ReviewTable.tsx`):
+    - Cột Sản phẩm: Ảnh thumbnail, tên sản phẩm và nút mở nhanh trang sản phẩm ngoài website (`/san-pham/[slug]`).
+    - Cột Khách hàng: Avatar / Initials, tên người gửi và email liên hệ.
+    - Cột Đánh giá: Sao vàng 1-5 sao, trích đoạn nhận xét của khách, danh sách ảnh đính kèm thực tế.
+    - **Modal Lightbox xem ảnh đánh giá**: Bấm vào thumbnail ảnh đánh giá để phóng to toàn màn hình chi tiết.
+    - Cột Trạng thái: Huy hiệu `🟡 Chờ duyệt` (amber pulse), `🟢 Đã công khai` (emerald), `🔴 Đã từ chối` (rose).
+    - Thao tác nhanh 1-chạm:
+      - Nút **"Duyệt"** (Check xanh): Phê duyệt tức thì để hiển thị công khai trên trang sản phẩm ngoài website.
+      - Nút **"Ẩn"** (Ban cam): Từ chối hoặc tạm ẩn đánh giá vi phạm khỏi website.
+      - Nút **"Xóa"** (Trash đỏ): Xóa vĩnh viễn đánh giá kèm modal xác nhận an toàn.
+  - Hệ thống REST APIs bảo mật chuẩn RBAC: `GET /api/admin/reviews`, `PATCH /api/admin/reviews/[id]/status`, `DELETE /api/admin/reviews/[id]`.
 - [ ] **Module 6.9: Cài Đặt Hệ Thống (`/admin/cai-dat`)**: Cấu hình Hotline, Logo, STK VietQR Napas 24/7 nhận tiền, mức phí vận chuyển mặc định.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production

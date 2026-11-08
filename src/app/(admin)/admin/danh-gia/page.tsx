@@ -1,28 +1,50 @@
-import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
-import { AdminCard } from "@/components/admin/ui/AdminCard";
-import { Star } from "lucide-react";
+// ============================================================
+// app/(admin)/admin/danh-gia/page.tsx
+// Trang Kiểm Duyệt Đánh Giá Khách Hàng Admin CMS (Module 6.8)
+// ============================================================
 
-export default function AdminReviewsPage() {
+import React from "react";
+import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
+import { ReviewManager } from "@/components/admin/reviews/ReviewManager";
+import { prisma } from "@/lib/prisma";
+import { ReviewStatus } from "@prisma/client";
+
+export const metadata = {
+  title: "Kiểm Duyệt Đánh Giá Khách Hàng | THUYNGA Shop Admin",
+  description: "Kiểm duyệt đánh giá, phê duyệt nhận xét công khai và loại bỏ bình luận vi phạm.",
+};
+
+export default async function AdminReviewsPage() {
+  // Lấy dữ liệu thống kê ban đầu song song
+  const [total, pending, approved, rejected, avgAgg] = await Promise.all([
+    prisma.review.count(),
+    prisma.review.count({ where: { status: ReviewStatus.PENDING } }),
+    prisma.review.count({ where: { status: ReviewStatus.APPROVED } }),
+    prisma.review.count({ where: { status: ReviewStatus.REJECTED } }),
+    prisma.review.aggregate({
+      _avg: { rating: true },
+    }),
+  ]);
+
+  const rawAvg = avgAgg._avg.rating || 5.0;
+  const averageRating = Math.round(rawAvg * 10) / 10;
+
+  const initialStats = {
+    total,
+    pending,
+    approved,
+    rejected,
+    averageRating,
+  };
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
         title="Kiểm Duyệt Đánh Giá Khách Hàng"
-        description="Kiểm duyệt bình luận, số sao và hình ảnh đánh giá từ khách hàng."
-        breadcrumbs={[{ label: "Đánh giá" }]}
+        description="Kiểm duyệt bình luận, số sao và hình ảnh thực tế từ khách hàng; phê duyệt công khai hoặc tạm ẩn đánh giá vi phạm."
+        breadcrumbs={[{ label: "Kiểm duyệt đánh giá" }]}
       />
-      <AdminCard>
-        <div className="text-center py-12">
-          <div className="w-16 h-16 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center mx-auto mb-4">
-            <Star className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-bold text-slate-800">
-            Phân hệ Kiểm Duyệt Đánh Giá (Module 6.8)
-          </h3>
-          <p className="text-sm text-slate-500 max-w-md mx-auto mt-2">
-            Module 6.8 sẽ bao gồm: Bảng danh sách đánh giá chờ duyệt (PENDING), phê duyệt công khai (APPROVED) hoặc từ chối (REJECTED), và phản hồi đánh giá của khách hàng.
-          </p>
-        </div>
-      </AdminCard>
+      <ReviewManager initialStats={initialStats} />
     </div>
   );
 }
