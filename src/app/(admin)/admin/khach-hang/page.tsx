@@ -1,28 +1,64 @@
-import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
-import { AdminCard } from "@/components/admin/ui/AdminCard";
-import { Users } from "lucide-react";
+// ============================================================
+// app/(admin)/admin/khach-hang/page.tsx
+// Trang Quản Lý Khách Hàng Admin CMS (Module 6.7)
+// ============================================================
 
-export default function AdminCustomersPage() {
+import React from "react";
+import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
+import { CustomerManager } from "@/components/admin/customers/CustomerManager";
+import { prisma } from "@/lib/prisma";
+import { Role } from "@prisma/client";
+
+export const metadata = {
+  title: "Quản Lý Khách Hàng | THUYNGA Shop Admin",
+  description: "Danh sách khách hàng, theo dõi chi tiêu trọn đời (LTV), phân hạng thành viên và quản lý tài khoản.",
+};
+
+export default async function AdminCustomersPage() {
+  // Lấy dữ liệu thống kê ban đầu song song
+  const [totalCustomers, activeCustomers, memberSpentAgg, customerOrders] =
+    await Promise.all([
+      prisma.user.count({ where: { role: Role.CUSTOMER } }),
+      prisma.user.count({ where: { role: Role.CUSTOMER, isActive: true } }),
+      prisma.order.aggregate({
+        _sum: { total: true },
+        where: {
+          userId: { not: null },
+          orderStatus: { not: "CANCELLED" },
+        },
+      }),
+      prisma.user.findMany({
+        where: { role: Role.CUSTOMER },
+        select: {
+          orders: {
+            where: { orderStatus: { not: "CANCELLED" } },
+            select: { total: true },
+          },
+        },
+      }),
+    ]);
+
+  // Đếm số VIP trong tập khách hàng
+  const vipCustomers = customerOrders.filter((c) => {
+    const totalSpent = c.orders.reduce((sum, o) => sum + Number(o.total), 0);
+    return totalSpent >= 5000000 || c.orders.length >= 3;
+  }).length;
+
+  const initialStats = {
+    totalCustomers,
+    activeCustomers,
+    vipCustomers,
+    totalSpentAll: Number(memberSpentAgg._sum.total || 0),
+  };
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
         title="Quản Lý Khách Hàng"
-        description="Danh sách người dùng, thống kê đơn mua, kích hoạt hoặc khóa tài khoản."
+        description="Theo dõi danh sách người dùng, thống kê giá trị trọn đời (LTV), phân hạng thành viên và kiểm soát trạng thái tài khoản."
         breadcrumbs={[{ label: "Khách hàng" }]}
       />
-      <AdminCard>
-        <div className="text-center py-12">
-          <div className="w-16 h-16 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center mx-auto mb-4">
-            <Users className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-bold text-slate-800">
-            Phân hệ Quản Lý Khách Hàng (Module 6.7)
-          </h3>
-          <p className="text-sm text-slate-500 max-w-md mx-auto mt-2">
-            Module 6.7 sẽ bao gồm: Bảng danh sách thành viên khách hàng, xem tổng chi tiêu, tổng số đơn hàng đã đặt, thông tin liên hệ và tính năng khóa/mở khóa tài khoản an toàn.
-          </p>
-        </div>
-      </AdminCard>
+      <CustomerManager initialStats={initialStats} />
     </div>
   );
 }

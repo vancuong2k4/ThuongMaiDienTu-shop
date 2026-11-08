@@ -544,7 +544,26 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bảng danh sách 10 đơn hàng gần nhất đã áp dụng mã (Mã đơn có liên kết kiểm tra nhanh, tên & sđt khách, tổng đơn, số tiền chiết khấu, trạng thái đơn & thời gian).
   - **Cơ chế Xóa Voucher An Toàn (Safe Deletion Guard)**: Chặn xóa cứng nếu voucher đã được sử dụng trong các đơn hàng thực tế (`usedCount > 0` hoặc `orders.length > 0`) nhằm bảo vệ tính toàn vẹn chứng từ kế toán, hướng dẫn quản trị viên chuyển sang trạng thái "Tạm dừng".
   - Hệ thống REST APIs bảo mật RBAC: `GET /api/admin/vouchers`, `POST /api/admin/vouchers`, `GET /api/admin/vouchers/[id]`, `PUT /api/admin/vouchers/[id]`, `DELETE /api/admin/vouchers/[id]`, `PATCH /api/admin/vouchers/[id]/toggle`.
-- [ ] **Module 6.7: Quản Lý Khách Hàng (`/admin/khach-hang`)**: Danh sách thành viên, tổng chi tiêu, tổng số đơn mua, kích hoạt/khóa tài khoản.
+- [x] **Module 6.7: Quản Lý Khách Hàng (`/admin/khach-hang`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 4 Thẻ KPI thống kê khách hàng toàn diện: Khách thành viên đăng ký, Tài khoản đang hoạt động, Khách hàng VIP và Tổng doanh số tích lũy từ thành viên.
+  - Phân hạng thành viên tự động 3 cấp bậc:
+    - **Khách VIP (Award badge vàng gold)**: Chi tiêu tích lũy ≥ 5.000.000₫ hoặc ≥ 3 đơn hàng.
+    - **Khách Quen (User badge xanh lá)**: Chi tiêu từ 1.000.000₫ hoặc ≥ 1 đơn hàng.
+    - **Khách Mới (Slate badge)**: Thành viên mới đăng ký, chưa có đơn hàng.
+  - Bộ lọc đa năng (`CustomerFilters.tsx`): Tìm kiếm nhanh theo tên, email, số điện thoại; Tabs phân hạng (Tất cả, VIP, Quen, Mới); lọc trạng thái (Đang hoạt động, Đã bị khóa); lọc vai trò (Khách hàng, Quản trị viên); sắp xếp (Mới tham gia nhất, Chi tiêu cao nhất, Nhiều đơn hàng nhất).
+  - Bảng dữ liệu thông minh (`CustomerTable.tsx`):
+    - Avatar với fallback chữ cái đầu thông minh, huy hiệu `ADMIN`, huy hiệu `Bạn` nhận diện tài khoản hiện tại.
+    - Email và số điện thoại kèm thao tác gọi hoặc sao chép 1-chạm có phản hồi tức thì.
+    - Tổng số đơn hàng và giá trị vòng đời khách hàng (LTV - Lifetime Value) tính từ các đơn đặt thực tế (loại trừ đơn hủy).
+    - Ngày đặt đơn gần nhất và ngày tạo tài khoản.
+    - **Cơ chế Khóa / Mở Khóa Tài Khoản & Bảo Vệ Chống Tự Khóa (Self-Lock Prevention Guard)**: Công tắc switch toggle với Optimistic UI, tự động vô hiệu hóa và chặn Admin tự khóa tài khoản của chính mình.
+  - Modal Hồ Sơ Khách Hàng Toàn Diện (`CustomerDetailModal.tsx`):
+    - Tóm tắt nhanh: Tổng chi tiêu LTV, Tổng đơn hàng, Số lượng đánh giá đã gửi.
+    - Hệ thống 3 Tabs chuyên sâu:
+      1. **Tab Đơn Hàng**: Danh sách tất cả đơn hàng đã mua (Mã đơn có link mở sang chi tiết đơn hàng, số món, tổng tiền, phương thức, trạng thái đơn & ngày đặt).
+      2. **Tab Sổ Địa Chỉ**: Danh sách địa chỉ giao hàng đã lưu 4 cấp (Số nhà, Phường/Xã, Quận/Huyện, Tỉnh/Thành) kèm huy hiệu ĐỊA CHỈ MẶC ĐỊNH.
+      3. **Tab Đánh Giá**: Toàn bộ đánh giá nhận xét thực tế đã gửi kèm số sao (1-5 sao), nội dung và liên kết đến sản phẩm ngoài website.
+  - Hệ thống REST APIs chuẩn RBAC: `GET /api/admin/customers`, `GET /api/admin/customers/[id]`, `PATCH /api/admin/customers/[id]/toggle`.
 - [ ] **Module 6.8: Kiểm Duyệt Đánh Giá Khách Hàng (`/admin/danh-gia`)**: Duyệt bình luận, số sao, hình ảnh đính kèm trước khi công khai.
 - [ ] **Module 6.9: Cài Đặt Hệ Thống (`/admin/cai-dat`)**: Cấu hình Hotline, Logo, STK VietQR Napas 24/7 nhận tiền, mức phí vận chuyển mặc định.
 
