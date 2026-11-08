@@ -1,28 +1,72 @@
-import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
-import { AdminCard } from "@/components/admin/ui/AdminCard";
-import { Tag } from "lucide-react";
+// ============================================================
+// app/(admin)/admin/voucher/page.tsx
+// Trang Quản Lý Mã Giảm Giá & Khuyến Mãi Admin CMS (Module 6.6)
+// ============================================================
 
-export default function AdminVouchersPage() {
+import React from "react";
+import { AdminPageHeader } from "@/components/admin/ui/AdminPageHeader";
+import { VoucherManager } from "@/components/admin/vouchers/VoucherManager";
+import { prisma } from "@/lib/prisma";
+
+export const metadata = {
+  title: "Quản Lý Mã Giảm Giá (Voucher) | THUYNGA Shop Admin",
+  description: "Tạo và quản lý các chương trình khuyến mãi, voucher chiết khấu và miễn phí vận chuyển.",
+};
+
+export default async function AdminVouchersPage() {
+  const now = new Date();
+
+  // Truy vấn song song dữ liệu thống kê ban đầu cho trang
+  const [total, active, upcoming, expired, usedCountAgg, discountAgg] =
+    await Promise.all([
+      prisma.voucher.count(),
+      prisma.voucher.count({
+        where: {
+          isActive: true,
+          startDate: { lte: now },
+          endDate: { gte: now },
+        },
+      }),
+      prisma.voucher.count({
+        where: {
+          isActive: true,
+          startDate: { gt: now },
+        },
+      }),
+      prisma.voucher.count({
+        where: {
+          endDate: { lt: now },
+        },
+      }),
+      prisma.voucher.aggregate({
+        _sum: { usedCount: true },
+      }),
+      prisma.order.aggregate({
+        _sum: { discountAmount: true },
+        where: {
+          voucherId: { not: null },
+          orderStatus: { not: "CANCELLED" },
+        },
+      }),
+    ]);
+
+  const initialStats = {
+    total,
+    active,
+    upcoming,
+    expired,
+    totalUsed: usedCountAgg._sum.usedCount || 0,
+    totalDiscountGiven: Number(discountAgg._sum.discountAmount || 0),
+  };
+
   return (
     <div className="space-y-6">
       <AdminPageHeader
         title="Quản Lý Mã Giảm Giá (Voucher)"
-        description="Tạo và quản lý các chương trình khuyến mãi, voucher giảm giá cho khách hàng."
-        breadcrumbs={[{ label: "Mã giảm giá" }]}
+        description="Tạo và quản lý các chương trình khuyến mãi, voucher chiết khấu theo %, tiền mặt và miễn phí vận chuyển."
+        breadcrumbs={[{ label: "Khuyến mãi & Voucher" }]}
       />
-      <AdminCard>
-        <div className="text-center py-12">
-          <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-4">
-            <Tag className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-bold text-slate-800">
-            Phân hệ Quản Lý Khuyến Mãi & Voucher (Module 6.6)
-          </h3>
-          <p className="text-sm text-slate-500 max-w-md mx-auto mt-2">
-            Module 6.6 sẽ bao gồm: Tạo mã coupon ngẫu nhiên hoặc tự chọn, giảm theo % hoặc số tiền cố định, giá trị đơn tối thiểu, số lượt sử dụng tối đa và thời hạn hiệu lực.
-          </p>
-        </div>
-      </AdminCard>
+      <VoucherManager initialStats={initialStats} />
     </div>
   );
 }

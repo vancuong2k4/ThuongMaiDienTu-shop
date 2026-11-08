@@ -525,7 +525,25 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Con dấu thanh toán nổi bật: Đóng dấu xanh "ĐÃ THANH TOÁN TOÀN BỘ" hoặc đóng dấu đỏ "THU HỘ TIỀN MẶT (COD)" ghi rõ số tiền cần thu.
     - Khối chữ ký xác nhận: Người lập phiếu, Nhân viên đóng gói, Đơn vị vận chuyển và Khách nhận hàng.
   - Hệ thống REST APIs độc lập & an toàn: `GET /api/admin/orders`, `GET /api/admin/orders/[id]`, `PATCH /api/admin/orders/[id]/status`, `PATCH /api/admin/orders/[id]/payment`, `PATCH /api/admin/orders/[id]/note`.
-- [ ] **Module 6.6: Quản Lý Mã Giảm Giá Voucher (`/admin/voucher`)**: Thêm voucher `%` hoặc số tiền cố định, thiết lập ngày bắt đầu, ngày kết thúc, giá trị đơn tối thiểu, số lượt dùng tối đa.
+- [x] **Module 6.6: Quản Lý Mã Giảm Giá Voucher (`/admin/voucher`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 4 Thẻ KPI thống kê tổng quan: Tổng số voucher, Số voucher đang chạy hiệu lực, Số voucher sắp diễn ra, Tổng lượt sử dụng thực tế & Tổng số tiền chiết khấu đã tài trợ khách hàng.
+  - Bộ lọc thông minh (`VoucherFilters.tsx`): Tìm kiếm mã code tự động in hoa, Tabs phân loại theo 3 hình thức (Giảm %, Giảm tiền mặt, Miễn phí vận chuyển), Dropdown lọc trạng thái vòng đời (Đang hoạt động, Sắp diễn ra, Đã hết hạn, Đang tạm dừng), nút xóa bộ lọc 1-chạm.
+  - Bảng dữ liệu thông minh (`VoucherTable.tsx`):
+    - Badge mã voucher nổi bật kèm nút sao chép mã 1-chạm (`Copy`) có phản hồi thị giác tức thì.
+    - Hiển thị loại & giá trị giảm linh hoạt: `% giảm (kèm mức trần tối đa)`, `Số tiền cố định` hoặc `Freeship tài trợ cước`.
+    - Điều kiện đơn hàng tối thiểu và giới hạn số lần dùng trên mỗi tài khoản.
+    - **Thanh tiến trình sử dụng trực quan (Usage Progress Bar)**: Tự động đổi màu cảnh báo (xanh lá an toàn, cam cảnh báo khi > 60%, đỏ nguy hiểm khi sắp hết lượt > 90%).
+    - Quản lý vòng đời (Lifecycle status): Huy hiệu hiển thị `Đang diễn ra`, `Sắp diễn ra`, `Đã hết hạn`, `Đã hết lượt`, `Tạm dừng`.
+    - Công tắc chuyển nhanh trạng thái `isActive` (Switch toggle với Optimistic UI).
+  - Modal Tạo mới & Chỉnh sửa voucher (`VoucherModal.tsx`):
+    - Tích hợp nút **"Tạo mã ngẫu nhiên (1-click Random Code Generator)"** sinh mã dạng `TN-XXXX`.
+    - Bộ chọn hình thức chiết khấu 3 thẻ trực quan, tự động đổi đơn vị `%` hoặc `₫`.
+    - Trường ngày giờ bắt đầu và kết thúc (`datetime-local`) có ràng buộc kiểm tra logic.
+  - Modal Xem Chi Tiết & Lịch Sử Sử Dụng (`VoucherDetailModal.tsx`):
+    - Tổng hợp chỉ số hiệu suất của voucher.
+    - Bảng danh sách 10 đơn hàng gần nhất đã áp dụng mã (Mã đơn có liên kết kiểm tra nhanh, tên & sđt khách, tổng đơn, số tiền chiết khấu, trạng thái đơn & thời gian).
+  - **Cơ chế Xóa Voucher An Toàn (Safe Deletion Guard)**: Chặn xóa cứng nếu voucher đã được sử dụng trong các đơn hàng thực tế (`usedCount > 0` hoặc `orders.length > 0`) nhằm bảo vệ tính toàn vẹn chứng từ kế toán, hướng dẫn quản trị viên chuyển sang trạng thái "Tạm dừng".
+  - Hệ thống REST APIs bảo mật RBAC: `GET /api/admin/vouchers`, `POST /api/admin/vouchers`, `GET /api/admin/vouchers/[id]`, `PUT /api/admin/vouchers/[id]`, `DELETE /api/admin/vouchers/[id]`, `PATCH /api/admin/vouchers/[id]/toggle`.
 - [ ] **Module 6.7: Quản Lý Khách Hàng (`/admin/khach-hang`)**: Danh sách thành viên, tổng chi tiêu, tổng số đơn mua, kích hoạt/khóa tài khoản.
 - [ ] **Module 6.8: Kiểm Duyệt Đánh Giá Khách Hàng (`/admin/danh-gia`)**: Duyệt bình luận, số sao, hình ảnh đính kèm trước khi công khai.
 - [ ] **Module 6.9: Cài Đặt Hệ Thống (`/admin/cai-dat`)**: Cấu hình Hotline, Logo, STK VietQR Napas 24/7 nhận tiền, mức phí vận chuyển mặc định.
