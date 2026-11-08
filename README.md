@@ -506,11 +506,25 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Cơ chế Xóa Danh Mục An Toàn (Safe Category Deletion): Chặn xóa danh mục nếu đang chứa danh mục con hoặc đang có sản phẩm liên kết nhằm bảo toàn 100% dữ liệu phân loại.
   - Hệ thống REST APIs hoàn chỉnh: `GET /api/admin/categories`, `POST /api/admin/categories`, `PUT /api/admin/categories/[id]`, `DELETE /api/admin/categories/[id]`, `PATCH /api/admin/categories/[id]/toggle`.
   - Bộ thẻ thống kê nhanh: Tổng danh mục (30), Ngành hàng gốc (5), Phân loại con (25), Đang hiển thị (30).
-- [ ] **Module 6.5: Quản Lý Đơn Hàng (`/admin/don-hang`)**:
-  - Bảng danh sách đơn hàng đầy đủ: Tìm kiếm theo mã đơn, tên khách, số điện thoại, lọc theo trạng thái đơn & thanh toán.
-  - Modal / Trang xem chi tiết đơn hàng: Cập nhật trạng thái đơn (Chờ duyệt ➔ Đã xác nhận ➔ Đang giao ➔ Đã giao / Hủy), cập nhật trạng thái thanh toán (Đã thanh toán qua VietQR).
-  - Tự động ghi nhật ký vào `OrderStatusHistory`.
-  - In phiếu đóng gói gửi hàng (Packing Slip).
+- [x] **Module 6.5: Quản Lý Đơn Hàng & Vận Chuyển (`/admin/don-hang`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bảng danh sách đơn hàng toàn diện: Lọc theo 7 tab trạng thái (Tất cả, Chờ xử lý, Đã xác nhận, Đang chuẩn bị, Đang giao, Đã giao, Đã hủy) kèm badge đếm số lượng realtime từ PostgreSQL.
+  - Bộ lọc đa năng: Tìm kiếm theo mã đơn hàng (`TN-...`), họ tên khách hàng, số điện thoại người nhận; kết hợp lọc theo phương thức thanh toán (COD / VietQR Napas 24/7) và trạng thái thanh toán (Chờ thanh toán, Đã thanh toán, Thất bại, Hoàn tiền).
+  - Thao tác đổi trạng thái nhanh (Quick Status Selector) ngay trên từng dòng đơn hàng không cần mở trang chi tiết.
+  - Máy trạng thái đơn hàng nghiêm ngặt (Order Status State Machine) xử lý trong Prisma transaction: Tự động ghi nhật ký lịch sử tiến trình vào bảng `OrderStatusHistory` kèm ghi chú lý do thay đổi.
+  - **Cơ chế Hoàn Tồn Kho Tự Động Nguyên Tử**: Khi đơn hàng chuyển sang `CANCELLED`, hệ thống tự động hoàn trả số lượng tồn kho (`stock: { increment: item.quantity }`) cho từng biến thể `ProductVariant`; ngược lại nếu mở lại đơn từ `CANCELLED` thì kiểm tra và trừ lại tồn kho nguyên tử.
+  - Trang Chi tiết đơn hàng chuyên sâu (`/admin/don-hang/[orderNumber]`):
+    - Thanh Timeline 5 bước tiến trình trực quan với biểu tượng Lucide và thời gian cập nhật chi tiết.
+    - Danh sách sản phẩm mua dạng Snapshot bất biến (tên sản phẩm, biến thể, ảnh, SKU, giá và số lượng).
+    - Hộp thao tác chuyển trạng thái đơn hàng kèm ô nhập ghi chú nội bộ.
+    - Nút 1-click "Đánh dấu Đã thanh toán (Mark as PAID)" lập tức ghi nhận tiền về cho đơn VietQR và cập nhật `paidAt`.
+    - Thẻ ghi chú nội bộ Admin (`internalNote`) hỗ trợ lưu tự động phục vụ phối hợp giữa nhân viên đóng gói và CSKH.
+  - Phiếu đóng gói & vận đơn in ấn chuẩn A4/A5 (`OrderPackingSlip.tsx` & `/admin/don-hang/[orderNumber]/in`):
+    - Tối ưu in ấn với CSS `@media print` loại bỏ hoàn toàn các thành phần thừa của giao diện web.
+    - Hiển thị logo, thông tin cửa hàng THUYNGA Shop, thông tin người nhận, mã đơn hàng, ngày đặt.
+    - Checklist kiểm tra đóng gói từng sản phẩm với ô tích kiểm hàng trực quan.
+    - Con dấu thanh toán nổi bật: Đóng dấu xanh "ĐÃ THANH TOÁN TOÀN BỘ" hoặc đóng dấu đỏ "THU HỘ TIỀN MẶT (COD)" ghi rõ số tiền cần thu.
+    - Khối chữ ký xác nhận: Người lập phiếu, Nhân viên đóng gói, Đơn vị vận chuyển và Khách nhận hàng.
+  - Hệ thống REST APIs độc lập & an toàn: `GET /api/admin/orders`, `GET /api/admin/orders/[id]`, `PATCH /api/admin/orders/[id]/status`, `PATCH /api/admin/orders/[id]/payment`, `PATCH /api/admin/orders/[id]/note`.
 - [ ] **Module 6.6: Quản Lý Mã Giảm Giá Voucher (`/admin/voucher`)**: Thêm voucher `%` hoặc số tiền cố định, thiết lập ngày bắt đầu, ngày kết thúc, giá trị đơn tối thiểu, số lượt dùng tối đa.
 - [ ] **Module 6.7: Quản Lý Khách Hàng (`/admin/khach-hang`)**: Danh sách thành viên, tổng chi tiêu, tổng số đơn mua, kích hoạt/khóa tài khoản.
 - [ ] **Module 6.8: Kiểm Duyệt Đánh Giá Khách Hàng (`/admin/danh-gia`)**: Duyệt bình luận, số sao, hình ảnh đính kèm trước khi công khai.
