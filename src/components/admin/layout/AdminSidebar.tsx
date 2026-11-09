@@ -18,6 +18,7 @@ import {
   Users,
   Star,
   Settings,
+  Image as ImageIcon,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -100,6 +101,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       icon: Star,
       badge: pendingReviewsCount,
       badgeColor: "bg-rose-500 text-white",
+    },
+    {
+      label: "Kho Media",
+      href: "/admin/media",
+      icon: ImageIcon,
     },
     {
       label: "Cài đặt",

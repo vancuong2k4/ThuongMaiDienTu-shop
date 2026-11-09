@@ -474,7 +474,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - [x] Lưu trạng thái thả tim trực tiếp vào bảng `wishlist` trong PostgreSQL (`POST /api/wishlist/toggle`).
   - [x] Trang quản lý Wishlist: Lưới sản phẩm đã lưu, nút thêm nhanh vào giỏ hàng và nút xóa khỏi danh sách.
 
-### 👑 Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`) (ĐANG TRIỂN KHAI THEO TỪNG MODULE)
+### ✅ Giai đoạn 6: Trang Quản Trị Admin CMS (`/admin`) (ĐÃ HOÀN THÀNH 100%)
 - [x] **Module 6.1: Khung Nền tảng Admin Layout, Sidebar Navigation, Header & Phân Quyền Bảo Mật RBAC** *(Đã hoàn thành & Đã kiểm thử)*:
   - Middleware bảo vệ nghiêm ngặt: Chỉ tài khoản `role === "ADMIN"` mới được truy cập `/admin/*`, tự động lưu `callbackUrl` khi chuyển hướng đăng nhập.
   - Phân quyền kép (Double RBAC Guard) tại cả Middleware và Server Layout `src/app/(admin)/layout.tsx`.
@@ -582,7 +582,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
       - Nút **"Ẩn"** (Ban cam): Từ chối hoặc tạm ẩn đánh giá vi phạm khỏi website.
       - Nút **"Xóa"** (Trash đỏ): Xóa vĩnh viễn đánh giá kèm modal xác nhận an toàn.
   - Hệ thống REST APIs bảo mật chuẩn RBAC: `GET /api/admin/reviews`, `PATCH /api/admin/reviews/[id]/status`, `DELETE /api/admin/reviews/[id]`.
-- [ ] **Module 6.9: Cài Đặt Hệ Thống (`/admin/cai-dat`)**: Cấu hình Hotline, Logo, STK VietQR Napas 24/7 nhận tiền, mức phí vận chuyển mặc định.
+- [x] **Module 6.9: Cài Đặt Hệ Thống & Thư Viện Media (`/admin/cai-dat` & `/admin/media`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - **Phân hệ Cài Đặt Hệ Thống (`/admin/cai-dat`)**:
+    - **Tab Thông tin thương hiệu**: Cấu hình Tên cửa hàng ("THUYNGA Shop"), Slogan cam kết chính hãng, Hotline CSKH, Email hỗ trợ, Địa chỉ showroom kho hàng, Thời gian mở cửa trực tổng đài, Facebook Fanpage, Zalo OA và kênh TikTok.
+    - **Tab Tài khoản VietQR Napas 24/7**: Cấu hình Ngân hàng thụ hưởng (danh sách 15 ngân hàng lớn: MB, VCB, TCB, BIDV, ACB...), Số tài khoản, Tên chủ thụ hưởng, Mẫu hiển thị VietQR.
+    - **Thẻ Live VietQR Preview**: Tự động sinh mã VietQR Napas 24/7 thời gian thực kèm tính năng quét thử 10.000₫ trực tiếp trên màn hình quản trị để kiểm tra độ chính xác của tài khoản ngân hàng.
+    - **Tab Vận chuyển & Freeship**: Cấu hình Phí vận chuyển tiêu chuẩn (30.000₫), Ngưỡng miễn phí vận chuyển Freeship (500.000₫ đồng bộ với thanh tiến trình Freeship giỏ hàng), Cam kết vận chuyển Air Cargo chuẩn nhiệt độ.
+    - **Tab SEO & Thẻ Meta**: Cấu hình Meta Title, Meta Description, Meta Keywords, OpenGraph Image URL kèm **Bộ mô phỏng Google Search SERP Simulator** hiển thị trực quan diện mạo website trên kết quả tìm kiếm Google.
+    - Hệ thống REST APIs cài đặt: `GET /api/admin/settings` (tự động nạp giá trị mặc định thông minh nếu chưa có), `PUT /api/admin/settings` (upsert nguyên tử theo từng phân khu hoặc toàn bộ).
+  - **Phân hệ Thư Viện Media (`/admin/media`)**:
+    - 3 Thẻ KPI thống kê: Tổng số hình ảnh, Dung lượng lưu trữ đã sử dụng trên máy chủ (KB/MB), Định dạng ảnh hỗ trợ (WEBP, PNG, JPG, SVG, AVIF).
+    - Modal Tải Ảnh (`MediaUploadModal.tsx`): Kéo & thả nhiều tệp cùng lúc từ máy tính hoặc thêm nhanh ảnh từ liên kết URL bên ngoài.
+    - Lưới Ảnh Thông Minh (`MediaGrid.tsx`): Hiển thị ảnh vuông sắc nét, tên tệp, dung lượng và ngày tạo; Nút sao chép URL ảnh 1-chạm (`Copy URL`) có phản hồi tức thì để dán vào bài viết hoặc sản phẩm; Modal Lightbox phóng to ảnh độ phân giải gốc; Nút xóa ảnh an toàn.
+    - Tích hợp điều hướng trực tiếp trên Sidebar Admin (`AdminSidebar.tsx`).
+    - Hệ thống REST APIs media: `GET /api/admin/media`, `POST /api/admin/media`, `DELETE /api/admin/media/[id]`.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
