@@ -24,6 +24,8 @@ import {
   ShoppingBag,
   Tag,
   CheckCircle,
+  Award,
+  Coins,
 } from "lucide-react";
 
 interface CheckoutClientProps {
@@ -32,6 +34,8 @@ interface CheckoutClientProps {
     name: string;
     email: string;
     phone?: string;
+    loyaltyPoints?: number;
+    membershipTier?: string;
     defaultAddress?: {
       province: string;
       district: string;
@@ -68,6 +72,32 @@ export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Loyalty Points State
+  const [usePoints, setUsePoints] = useState(false);
+  const availablePoints = user.loyaltyPoints || 0;
+  const isDiamond = user.membershipTier === "DIAMOND";
+
+  const calculatedSub = subtotal();
+  const baseShipping = shippingFee();
+  // Đặc quyền Kim Cương: Miễn phí vận chuyển toàn quốc trọn đời
+  const calculatedShip = isDiamond ? 0 : baseShipping;
+  const calculatedDiscount = discountAmount();
+
+  // Tối đa 50% số tiền còn lại sau voucher
+  const remainingSubtotal = Math.max(0, calculatedSub - calculatedDiscount);
+  const maxAllowedPointsDiscount = Math.floor(remainingSubtotal * 0.5);
+  const maxRedeemablePoints = Math.floor(maxAllowedPointsDiscount / 100);
+  const cappedPoints = Math.min(availablePoints, maxRedeemablePoints);
+
+  const [pointsToRedeem, setPointsToRedeem] = useState<number>(0);
+
+  const effectivePointsToRedeem = usePoints ? Math.min(pointsToRedeem, cappedPoints) : 0;
+  const pointsDiscount = effectivePointsToRedeem * 100;
+  const finalTotal = Math.max(
+    0,
+    calculatedSub - calculatedDiscount + calculatedShip - pointsDiscount
+  );
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -102,11 +132,6 @@ export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
       </div>
     );
   }
-
-  const calculatedSub = subtotal();
-  const calculatedShip = shippingFee();
-  const calculatedDiscount = discountAmount();
-  const finalTotal = totalPrice();
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,6 +168,7 @@ export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
         note: note.trim() || undefined,
         paymentMethod,
         voucherCode: appliedVoucher?.code || undefined,
+        pointsToRedeem: effectivePointsToRedeem > 0 ? effectivePointsToRedeem : undefined,
         items: items.map((it) => ({
           variantId: it.variantId,
           quantity: it.quantity,
@@ -397,6 +423,72 @@ export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
                 </div>
               )}
 
+              {/* Điểm Tích Lũy THUYNGA Club */}
+              {availablePoints > 0 && (
+                <div className="mb-4 p-3.5 bg-gradient-to-r from-amber-50/70 to-rose-50/40 rounded-2xl border border-amber-200/90 text-xs space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Award className="w-4 h-4 text-[#800028]" />
+                      <div>
+                        <span className="font-bold text-slate-800">
+                          THUYNGA Club: {availablePoints.toLocaleString("vi-VN")} điểm
+                        </span>
+                        <p className="text-[10px] text-slate-500">
+                          ≈ {(availablePoints * 100).toLocaleString("vi-VN")}₫ giảm trừ
+                        </p>
+                      </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={usePoints}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setUsePoints(checked);
+                          if (checked) {
+                            setPointsToRedeem(cappedPoints);
+                          } else {
+                            setPointsToRedeem(0);
+                          }
+                        }}
+                        className="sr-only peer"
+                      />
+                      <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#800028]" />
+                    </label>
+                  </div>
+
+                  {usePoints && (
+                    <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-600">Áp dụng:</span>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          min={1}
+                          max={cappedPoints}
+                          value={pointsToRedeem}
+                          onChange={(e) => {
+                            const val = Math.min(
+                              cappedPoints,
+                              Math.max(0, Number(e.target.value))
+                            );
+                            setPointsToRedeem(val);
+                          }}
+                          className="w-20 px-2 py-0.5 rounded border border-amber-300 text-center font-mono font-bold text-xs"
+                        />
+                        <span className="text-slate-500">điểm</span>
+                        <button
+                          type="button"
+                          onClick={() => setPointsToRedeem(cappedPoints)}
+                          className="text-[10px] font-bold text-[#800028] hover:underline"
+                        >
+                          Tối đa
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Bảng tính chi phí */}
               <div className="space-y-2.5 pt-3 border-t border-neutral-100 text-xs text-neutral-600">
                 <div className="flex justify-between">
@@ -409,7 +501,11 @@ export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
                 <div className="flex justify-between">
                   <span>Phí vận chuyển toàn quốc:</span>
                   <span className="font-semibold text-neutral-900">
-                    {calculatedShip === 0 ? (
+                    {isDiamond ? (
+                      <span className="text-purple-700 font-bold">
+                        MIỄN PHÍ (Hội Viên Kim Cương)
+                      </span>
+                    ) : calculatedShip === 0 ? (
                       <span className="text-emerald-600 font-bold">MIỄN PHÍ</span>
                     ) : (
                       `${calculatedShip.toLocaleString("vi-VN")}₫`
@@ -421,6 +517,15 @@ export const CheckoutClient: React.FC<CheckoutClientProps> = ({ user }) => {
                   <div className="flex justify-between text-emerald-700 font-medium">
                     <span>Giảm giá từ ưu đãi:</span>
                     <span>-{calculatedDiscount.toLocaleString("vi-VN")}₫</span>
+                  </div>
+                )}
+
+                {pointsDiscount > 0 && (
+                  <div className="flex justify-between text-rose-700 font-medium">
+                    <span>
+                      Trừ điểm THUYNGA Club ({effectivePointsToRedeem} pts):
+                    </span>
+                    <span>-{pointsDiscount.toLocaleString("vi-VN")}₫</span>
                   </div>
                 )}
 

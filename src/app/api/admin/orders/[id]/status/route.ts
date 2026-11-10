@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { updateOrderStatusSchema } from "@/lib/validations/order";
+import { MEMBERSHIP_TIER_CONFIG } from "@/lib/validations/loyalty";
+import type { MembershipTier } from "@prisma/client";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -118,6 +120,119 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
           orderStatus: newStatus,
         },
       });
+
+      // Trường hợp C: Giao hàng thành công (DELIVERED) -> Tự động tích điểm & nâng hạng thành viên
+      if (newStatus === "DELIVERED" && currentStatus !== "DELIVERED" && order.userId) {
+        if (!order.pointsEarned || order.pointsEarned === 0) {
+          const customer = await tx.user.findUnique({
+            where: { id: order.userId },
+            select: {
+              id: true,
+              loyaltyPoints: true,
+              totalPointsEarned: true,
+              membershipTier: true,
+            },
+          });
+
+          if (customer) {
+            const currentTier = customer.membershipTier || "BRONZE";
+            const ratePercent =
+              MEMBERSHIP_TIER_CONFIG[currentTier]?.pointRatePercent || 1.0;
+            // 1 điểm = 100₫ (1% của 100.000₫ = 1.000₫ = 10 điểm)
+            const pointsToAward = Math.round(
+              (Number(order.total) * (ratePercent / 100)) / 100
+            );
+
+            if (pointsToAward > 0) {
+              const newPointsBalance = customer.loyaltyPoints + pointsToAward;
+
+              // Cộng điểm cho khách hàng
+              await tx.user.update({
+                where: { id: customer.id },
+                data: {
+                  loyaltyPoints: { increment: pointsToAward },
+                  totalPointsEarned: { increment: pointsToAward },
+                },
+              });
+
+              // Cập nhật số điểm đã tích vào đơn hàng
+              await tx.order.update({
+                where: { id: order.id },
+                data: {
+                  pointsEarned: pointsToAward,
+                },
+              });
+
+              // Ghi vào sổ cái giao dịch
+              await tx.loyaltyTransaction.create({
+                data: {
+                  userId: customer.id,
+                  orderId: order.id,
+                  points: pointsToAward,
+                  type: "EARN_ORDER",
+                  description: `Tích ${pointsToAward} điểm từ đơn hàng #${order.orderNumber} (Hoàn ${ratePercent}%)`,
+                  balanceAfter: newPointsBalance,
+                },
+              });
+
+              // Kiểm tra tự động thăng hạng VIP dựa trên tổng chi tiêu đơn giao thành công
+              const userDeliveredSpent = await tx.order.aggregate({
+                _sum: { total: true },
+                where: {
+                  userId: customer.id,
+                  orderStatus: "DELIVERED",
+                },
+              });
+
+              const totalDelivered = Number(userDeliveredSpent._sum.total || 0);
+              let upgradedTier: MembershipTier = customer.membershipTier;
+
+              if (totalDelivered >= MEMBERSHIP_TIER_CONFIG.DIAMOND.minSpent) {
+                upgradedTier = "DIAMOND";
+              } else if (totalDelivered >= MEMBERSHIP_TIER_CONFIG.GOLD.minSpent) {
+                upgradedTier = "GOLD";
+              } else if (totalDelivered >= MEMBERSHIP_TIER_CONFIG.SILVER.minSpent) {
+                upgradedTier = "SILVER";
+              }
+
+              if (upgradedTier !== customer.membershipTier) {
+                await tx.user.update({
+                  where: { id: customer.id },
+                  data: { membershipTier: upgradedTier },
+                });
+              }
+            }
+          }
+        }
+      }
+
+      // Trường hợp D: Hủy đơn hàng (CANCELLED) sau khi khách đã dùng điểm -> Hoàn lại điểm đã trừ
+      if (newStatus === "CANCELLED" && currentStatus !== "CANCELLED" && order.userId) {
+        if (order.pointsRedeemed && order.pointsRedeemed > 0) {
+          const customer = await tx.user.findUnique({
+            where: { id: order.userId },
+            select: { id: true, loyaltyPoints: true },
+          });
+
+          if (customer) {
+            await tx.user.update({
+              where: { id: customer.id },
+              data: { loyaltyPoints: { increment: order.pointsRedeemed } },
+            });
+
+            await tx.loyaltyTransaction.create({
+              data: {
+                userId: customer.id,
+                orderId: order.id,
+                points: order.pointsRedeemed,
+                type: "ADMIN_ADJUST",
+                description: `Hoàn ${order.pointsRedeemed} điểm do hủy đơn hàng #${order.orderNumber}`,
+                balanceAfter: customer.loyaltyPoints + order.pointsRedeemed,
+              },
+            });
+          }
+        }
+      }
 
       return updated;
     });

@@ -678,7 +678,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ logic thêm vào giỏ từ cả trang chủ (`FlashSaleSection.tsx`) lẫn Hub chuyên biệt (`FlashSaleDealCard.tsx`).
   - Nâng cấp API đặt hàng bảo mật (`src/app/api/orders/route.ts`): Tự động kiểm tra thời gian thực xem biến thể có đang nằm trong chiến dịch Flash Sale hợp lệ hay không; Áp dụng giá `salePrice` chuẩn xác từ máy chủ (chống thao túng giá phía Client); Kiểm soát giới hạn mua mỗi khách (`limitPerUser`) và tự động tăng số lượng đã bán `soldCount` trong cơ sở dữ liệu.
 
-### 💎 Giai đoạn 10: Hệ Thống Khách Hàng Thân Thiết & Tích Điểm Đổi Thưởng (THUYNGA Club - ĐANG TRIỂN KHAI)
+### 💎 Giai đoạn 10: Hệ Thống Khách Hàng Thân Thiết & Tích Điểm Đổi Thưởng (THUYNGA Club - HOÀN THÀNH 100%)
 - [x] **Giai đoạn 10.1: Nâng cấp Schema User & Order, Zod Validations & Seed Hạng Thành Viên** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung trường `loyaltyPoints`, `totalPointsEarned`, `membershipTier` (`BRONZE`, `SILVER`, `GOLD`, `DIAMOND`) vào model `User` trong `prisma/schema.prisma`.
   - Bổ sung trường `pointsEarned`, `pointsRedeemed`, `pointsDiscount` vào model `Order`.
@@ -722,7 +722,21 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Hộp thoại nhận voucher thành công tích hợp nút "Sao Chép Mã" và chuyển hướng nhanh sang mua sắm.
   - Sổ theo dõi lịch sử điểm thưởng (`MemberPointsHistory.tsx`): Bộ lọc Tabs (Tất cả, Điểm cộng, Đã đổi), ngày giờ chuẩn hóa tiếng Việt, huy hiệu và số dư sau giao dịch.
   - Trang Server Component [`/tai-khoan/tich-diem`](/tai-khoan/tich-diem): Kiểm soát phiên đăng nhập an toàn (Auth Guard), tính toán SSR siêu tốc và điều phối với `LoyaltyHubClient.tsx`.
-- [ ] **Giai đoạn 10.5: Tự Động Tích Điểm Khi Hoàn Tất Đơn Hàng & Đổi Điểm Trực Tiếp Khi Checkout**: Tích hợp giảm trừ trực tiếp điểm tại Checkout và cộng điểm khi giao hàng thành công.
+- [x] **Giai đoạn 10.5: Tự Động Tích Điểm Khi Hoàn Tất Đơn Hàng & Đổi Điểm Trực Tiếp Khi Checkout** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp động cơ Đổi Điểm Trực Tiếp tại trang Thanh toán (`CheckoutClient.tsx`):
+    - Tự động hiển thị khối THUYNGA Club nếu khách hàng có số dư điểm khả dụng (`availablePoints > 0`).
+    - Công tắc chuyển đổi (Switch Toggle) kích hoạt sử dụng điểm tích lũy kèm nút chọn "Tối đa" 1-chạm.
+    - Cơ chế an toàn nghiệp vụ: Cố định mức giảm tối đa 50% giá trị giỏ hàng sau khi đã trừ voucher, chống tiêu cực hoặc lạm dụng.
+    - Hiển thị trực quan dòng giảm trừ điểm trong bảng tính chi phí đơn hàng (`-XX.XXX₫`).
+  - Đặc quyền Freeship trọn đời cho Hội viên Kim Cương (`DIAMOND`): Hệ thống tự động phát hiện hạng Kim Cương và miễn 100% phí vận chuyển toàn quốc (`shippingFee = 0₫`) tại cả giao diện người dùng và máy chủ backend.
+  - Xử lý giao dịch đặt hàng nguyên tử (`src/app/api/orders/route.ts`):
+    - Nhận diện `pointsToRedeem`, kiểm tra số dư điểm thực tế trên máy chủ, trừ điểm tích lũy an toàn và lưu `pointsRedeemed`, `pointsDiscount` vào bản ghi đơn hàng.
+    - Tự động tạo bản ghi giao dịch âm trong sổ cái `LoyaltyTransaction` (`type: "REDEEM_ORDER"`).
+  - Tự động tích điểm & thăng hạng khi giao hàng thành công (`src/app/api/admin/orders/[id]/status/route.ts`):
+    - Khi trạng thái đơn hàng chuyển sang `DELIVERED`, hệ thống tự động tính điểm thưởng theo tỷ lệ hạng của khách (Đồng 1%, Bạc 1.5%, Vàng 2%, Kim Cương 3%).
+    - Cộng điểm vào `loyaltyPoints` và `totalPointsEarned`, cập nhật `pointsEarned` trên đơn hàng và ghi sổ cái `type: "EARN_ORDER"`.
+    - **Cơ chế Tự Động Thăng Hạng VIP (Auto Tier Upgrade Engine)**: Tính toán tổng chi tiêu các đơn giao thành công, tự động nâng hạng khách hàng (Đồng ➔ Bạc ➔ Vàng ➔ Kim Cương) ngay khi đạt ngưỡng.
+  - Cơ chế hoàn điểm khi hủy đơn: Nếu đơn hàng có sử dụng điểm bị chuyển sang `CANCELLED`, hệ thống tự động hoàn trả đầy đủ điểm đã trừ vào tài khoản khách và ghi nhật ký sổ cái (`type: "ADMIN_ADJUST"`).
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.

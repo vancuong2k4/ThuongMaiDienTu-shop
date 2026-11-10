@@ -30,6 +30,8 @@ export default async function CheckoutPage() {
       name: true,
       email: true,
       phone: true,
+      loyaltyPoints: true,
+      membershipTier: true,
       addresses: {
         where: { isDefault: true },
         take: 1,
@@ -46,6 +48,8 @@ export default async function CheckoutPage() {
         name: user?.name || session.user.name || "",
         email: user?.email || session.user.email || "",
         phone: user?.phone || "",
+        loyaltyPoints: user?.loyaltyPoints || 0,
+        membershipTier: user?.membershipTier || "BRONZE",
         defaultAddress: defaultAddress
           ? {
               province: defaultAddress.province,

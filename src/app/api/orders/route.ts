@@ -23,6 +23,7 @@ interface CreateOrderBody {
   note?: string;
   paymentMethod: PaymentMethod;
   voucherCode?: string;
+  pointsToRedeem?: number;
   items: OrderItemRequest[];
 }
 
@@ -63,6 +64,7 @@ export async function POST(req: NextRequest) {
       note,
       paymentMethod,
       voucherCode,
+      pointsToRedeem,
       items,
     } = body;
 
@@ -293,9 +295,50 @@ export async function POST(req: NextRequest) {
           });
         }
 
+        // 3.5. Xử lý Điểm Thưởng & Hạng Hội Viên THUYNGA Club
+        const userRecord = await tx.user.findUnique({
+          where: { id: currentUserId },
+          select: { loyaltyPoints: true, membershipTier: true },
+        });
+
+        // Đặc quyền Hạng Kim Cương: Miễn phí vận chuyển toàn quốc trọn đời
+        if (userRecord?.membershipTier === "DIAMOND") {
+          finalShippingFee = 0;
+        }
+
+        let pointsDiscountAmount = 0;
+        let pointsRedeemedCount = 0;
+
+        if (pointsToRedeem && pointsToRedeem > 0) {
+          const currentPoints = userRecord?.loyaltyPoints || 0;
+          if (pointsToRedeem > currentPoints) {
+            throw new Error(
+              `Số điểm sử dụng (${pointsToRedeem}) vượt quá số dư tích lũy hiện có (${currentPoints} điểm).`
+            );
+          }
+
+          // 1 điểm = 100₫. Tối đa giảm 50% số tiền còn lại sau voucher
+          const remainingSubtotal = Math.max(0, calculatedSubtotal - calculatedDiscount);
+          const maxAllowedPointsDiscount = Math.floor(remainingSubtotal * 0.5);
+          const requestedDiscount = Math.floor(pointsToRedeem * 100);
+
+          pointsDiscountAmount = Math.min(requestedDiscount, maxAllowedPointsDiscount);
+          pointsRedeemedCount = Math.ceil(pointsDiscountAmount / 100);
+
+          if (pointsRedeemedCount > 0) {
+            // Trừ điểm tích lũy của khách hàng
+            await tx.user.update({
+              where: { id: currentUserId },
+              data: {
+                loyaltyPoints: { decrement: pointsRedeemedCount },
+              },
+            });
+          }
+        }
+
         const calculatedTotal = Math.max(
           0,
-          calculatedSubtotal - calculatedDiscount + finalShippingFee
+          calculatedSubtotal - calculatedDiscount + finalShippingFee - pointsDiscountAmount
         );
 
         // 4. Sinh mã đơn hàng độc nhất
@@ -332,6 +375,9 @@ export async function POST(req: NextRequest) {
             subtotal: calculatedSubtotal,
             shippingFee: finalShippingFee,
             discountAmount: calculatedDiscount,
+            pointsEarned: 0,
+            pointsRedeemed: pointsRedeemedCount,
+            pointsDiscount: pointsDiscountAmount,
             total: calculatedTotal,
             paymentMethod,
             paymentStatus: "PENDING",
@@ -372,6 +418,20 @@ export async function POST(req: NextRequest) {
             createdAt: true,
           },
         });
+
+        // 6. Ghi nhận sổ cái LoyaltyTransaction nếu có sử dụng điểm
+        if (pointsRedeemedCount > 0) {
+          await tx.loyaltyTransaction.create({
+            data: {
+              userId: currentUserId,
+              orderId: newOrder.id,
+              points: -pointsRedeemedCount,
+              type: "REDEEM_ORDER",
+              description: `Trừ ${pointsRedeemedCount} điểm thanh toán đơn hàng #${orderNumber} (-${pointsDiscountAmount.toLocaleString("vi-VN")}₫)`,
+              balanceAfter: (userRecord?.loyaltyPoints || 0) - pointsRedeemedCount,
+            },
+          });
+        }
 
         return newOrder;
       },
