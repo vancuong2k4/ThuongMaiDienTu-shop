@@ -678,6 +678,19 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ logic thêm vào giỏ từ cả trang chủ (`FlashSaleSection.tsx`) lẫn Hub chuyên biệt (`FlashSaleDealCard.tsx`).
   - Nâng cấp API đặt hàng bảo mật (`src/app/api/orders/route.ts`): Tự động kiểm tra thời gian thực xem biến thể có đang nằm trong chiến dịch Flash Sale hợp lệ hay không; Áp dụng giá `salePrice` chuẩn xác từ máy chủ (chống thao túng giá phía Client); Kiểm soát giới hạn mua mỗi khách (`limitPerUser`) và tự động tăng số lượng đã bán `soldCount` trong cơ sở dữ liệu.
 
+### 💎 Giai đoạn 10: Hệ Thống Khách Hàng Thân Thiết & Tích Điểm Đổi Thưởng (THUYNGA Club - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 10.1: Nâng cấp Schema User & Order, Zod Validations & Seed Hạng Thành Viên** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung trường `loyaltyPoints`, `totalPointsEarned`, `membershipTier` (`BRONZE`, `SILVER`, `GOLD`, `DIAMOND`) vào model `User` trong `prisma/schema.prisma`.
+  - Bổ sung trường `pointsEarned`, `pointsRedeemed`, `pointsDiscount` vào model `Order`.
+  - Tạo mới model sổ cái giao dịch điểm tích lũy `LoyaltyTransaction` (`id`, `userId`, `orderId`, `points`, `type`, `description`, `balanceAfter`, `createdAt`).
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện & cấu hình đặc quyền 4 hạng thành viên (`src/lib/validations/loyalty.ts`): Cấu hình tỷ lệ hoàn điểm (1% ➔ 3%), danh mục đổi thưởng Voucher 50k, 100k, 250k.
+  - Kịch bản nạp dữ liệu mẫu thực tế (`prisma/seed-loyalty.ts`): Phân bổ hạng VIP và lịch sử giao dịch tích lũy điểm sinh động cho các khách hàng thân thiết.
+- [ ] **Giai đoạn 10.2: Hệ thống REST APIs Quản lý Điểm Tích Lũy & Hạng Thành Viên**: Tra cứu số dư, lịch sử giao dịch, đổi thưởng voucher và điều chỉnh điểm.
+- [ ] **Giai đoạn 10.3: Giao diện Quản trị Khách Hàng Thân Thiết Admin CMS (`/admin/khach-hang/tich-diem`)**: Thống kê KPI điểm, sổ cái giao dịch, modal cộng/trừ điểm thủ công.
+- [ ] **Giai đoạn 10.4: Giao diện Storefront Trung Tâm Thành Viên THUYNGA Club (`/tai-khoan/tich-diem`)**: Thẻ VIP điện tử sang trọng, bảng quyền lợi hạng, gian hàng đổi voucher.
+- [ ] **Giai đoạn 10.5: Tự Động Tích Điểm Khi Hoàn Tất Đơn Hàng & Đổi Điểm Trực Tiếp Khi Checkout**: Tích hợp giảm trừ trực tiếp điểm tại Checkout và cộng điểm khi giao hàng thành công.
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.

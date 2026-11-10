@@ -56,6 +56,21 @@ enum ReviewStatus {
   REJECTED
 }
 
+enum MembershipTier {
+  BRONZE      // Đồng (Mặc định khi đăng ký)
+  SILVER      // Bạc (Chi tiêu từ 3.000.000₫)
+  GOLD        // Vàng (Chi tiêu từ 10.000.000₫)
+  DIAMOND     // Kim Cương (Chi tiêu từ 25.000.000₫)
+}
+
+enum LoyaltyType {
+  EARN_ORDER      // Tích điểm từ đơn hàng giao thành công
+  REDEEM_ORDER    // Trừ điểm giảm giá trực tiếp lúc thanh toán
+  REDEEM_VOUCHER  // Đổi điểm lấy mã giảm giá độc quyền
+  ADMIN_ADJUST    // Admin điều chỉnh (thưởng/bù điểm)
+  SIGNUP_BONUS    // Điểm thưởng khi đăng ký tài khoản mới
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -70,17 +85,24 @@ model User {
   role          Role      @default(CUSTOMER)
   avatar        String?
   isActive      Boolean   @default(true)
+  
+  // Loyalty & Membership (THUYNGA Club)
+  loyaltyPoints       Int                   @default(0)       // Điểm khả dụng hiện tại
+  totalPointsEarned   Int                   @default(0)       // Tổng điểm tích lũy trọn đời
+  membershipTier      MembershipTier        @default(BRONZE)  // Hạng thành viên hiện tại
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   // Relations
-  accounts      Account[]
-  sessions      Session[]
-  orders        Order[]
-  reviews       Review[]
-  wishlist      Wishlist[]
-  addresses     Address[]
-  cart          Cart?
+  accounts            Account[]
+  sessions            Session[]
+  orders              Order[]
+  reviews             Review[]
+  wishlist            Wishlist[]
+  addresses           Address[]
+  cart                Cart?
+  loyaltyTransactions LoyaltyTransaction[]
 
   @@index([email])
   @@index([phone])
@@ -409,7 +431,13 @@ model Order {
   subtotal        Decimal       @db.Decimal(12, 0)  // Tổng trước giảm
   shippingFee     Decimal       @db.Decimal(12, 0)  @default(0)
   discountAmount  Decimal       @db.Decimal(12, 0)  @default(0)
-  total           Decimal       @db.Decimal(12, 0)  // Tổng thanh toán
+  
+  // Điểm tích lũy & Giảm giá điểm (THUYNGA Club)
+  pointsEarned    Int           @default(0)         // Điểm tích lũy nhận được từ đơn
+  pointsRedeemed  Int           @default(0)         // Điểm dùng để thanh toán
+  pointsDiscount  Decimal       @db.Decimal(12, 0)  @default(0) // Số tiền giảm từ điểm
+  
+  total           Decimal       @db.Decimal(12, 0)  // Tổng thanh toán cuối cùng
 
   paymentMethod   PaymentMethod
   paymentStatus   PaymentStatus @default(PENDING)
@@ -426,11 +454,12 @@ model Order {
   updatedAt       DateTime      @updatedAt
 
   // Relations
-  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  address         Address?      @relation(fields: [addressId], references: [id], onDelete: SetNull)
-  voucher         Voucher?      @relation(fields: [voucherId], references: [id], onDelete: SetNull)
-  items           OrderItem[]
-  statusHistory   OrderStatusHistory[]
+  user                User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  address             Address?              @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  voucher             Voucher?              @relation(fields: [voucherId], references: [id], onDelete: SetNull)
+  items               OrderItem[]
+  statusHistory       OrderStatusHistory[]
+  loyaltyTransactions LoyaltyTransaction[]
 
   @@index([userId])
   @@index([orderNumber])
@@ -470,6 +499,28 @@ model OrderStatusHistory {
 
   @@index([orderId])
   @@map("order_status_history")
+}
+
+// ============================================================
+// LOYALTY & REWARDS (THUYNGA Club)
+// ============================================================
+
+model LoyaltyTransaction {
+  id           String      @id @default(cuid())
+  userId       String
+  orderId      String?
+  points       Int         // Dương = Cộng điểm, Âm = Trừ điểm
+  type         LoyaltyType
+  description  String
+  balanceAfter Int         // Số dư điểm sau khi thực hiện giao dịch
+  createdAt    DateTime    @default(now())
+
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order        Order?      @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("loyalty_transactions")
 }
 
 // ============================================================
