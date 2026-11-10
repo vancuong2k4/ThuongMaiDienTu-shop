@@ -708,7 +708,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Nhập lý do/diễn giải kiểm toán chi tiết bắt buộc.
     - Xử lý thông báo thành công và cập nhật lại dữ liệu ngay lập tức.
   - Trang Server Component [`/admin/khach-hang/tich-diem`](/admin/khach-hang/tich-diem): Pre-fetch SSR siêu tốc và điều phối trạng thái với `LoyaltyManager.tsx`.
-- [ ] **Giai đoạn 10.4: Giao diện Storefront Trung Tâm Thành Viên THUYNGA Club (`/tai-khoan/tich-diem`)**: Thẻ VIP điện tử sang trọng, bảng quyền lợi hạng, gian hàng đổi voucher.
+- [x] **Giai đoạn 10.4: Giao diện Storefront Trung Tâm Thành Viên THUYNGA Club (`/tai-khoan/tich-diem`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp lối tắt truy cập nhanh "THUYNGA Club (Tích điểm)" tại Dropdown Menu Header (`UserAccountMenu.tsx`) và Thanh điều hướng tài khoản (`AccountSidebar.tsx`).
+  - Thẻ Hội viên VIP điện tử chuẩn Luxury (`VIPMembershipCard.tsx`):
+    - Đồ họa thẻ 3D kim loại sang trọng với gradient chuyên biệt theo từng hạng: Đồng (Hổ phách đồng), Bạc (Bạch kim chrome), Vàng (Hoàng kim sâm-panh), Kim Cương (Thạch anh tím & Obsidian huyền bí).
+    - Họa tiết phôi chip vi mạch EMV, sóng thanh toán không tiếp xúc Contactless và chìm biểu tượng vương miện `Crown`.
+    - Hiển thị số dư điểm khả dụng thời gian thực kèm giá trị tiền mặt quy đổi tương đương (`≈ XX.XXX ₫`).
+    - Thanh đo tiến độ thăng hạng tiếp theo (Next Tier Progress Bar): Đo lường chính xác số tiền chi tiêu còn thiếu và phần trăm hoàn thành chặng đường.
+  - Bảng so sánh đặc quyền 4 hạng hội viên (`TierPrivilegesTable.tsx`): Trực quan hóa tỷ lệ hoàn điểm (1% ➔ 3%), quà tặng sinh nhật (100k ➔ 500k), miễn phí vận chuyển toàn quốc trọn đời và Hotline Dược sĩ VIP 1:1, tự động highlight "Hạng Hiện Tại Của Bạn".
+  - Gian hàng đổi thưởng điểm tích lũy (`LoyaltyRedemptionShop.tsx`):
+    - 3 Mức Voucher độc quyền: 50.000₫ (500 pts), 100.000₫ (900 pts - Tiết kiệm 100 pts), 250.000₫ VIP (2.000 pts - Tiết kiệm 500 pts).
+    - Động cơ đổi thưởng 1-chạm kết nối trực tiếp API `/api/user/loyalty/redeem`, sinh mã voucher cá nhân định dạng `CLUB-XXXX`, tự động trừ điểm và cập nhật số dư tức thì không cần reload.
+    - Hộp thoại nhận voucher thành công tích hợp nút "Sao Chép Mã" và chuyển hướng nhanh sang mua sắm.
+  - Sổ theo dõi lịch sử điểm thưởng (`MemberPointsHistory.tsx`): Bộ lọc Tabs (Tất cả, Điểm cộng, Đã đổi), ngày giờ chuẩn hóa tiếng Việt, huy hiệu và số dư sau giao dịch.
+  - Trang Server Component [`/tai-khoan/tich-diem`](/tai-khoan/tich-diem): Kiểm soát phiên đăng nhập an toàn (Auth Guard), tính toán SSR siêu tốc và điều phối với `LoyaltyHubClient.tsx`.
 - [ ] **Giai đoạn 10.5: Tự Động Tích Điểm Khi Hoàn Tất Đơn Hàng & Đổi Điểm Trực Tiếp Khi Checkout**: Tích hợp giảm trừ trực tiếp điểm tại Checkout và cộng điểm khi giao hàng thành công.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production

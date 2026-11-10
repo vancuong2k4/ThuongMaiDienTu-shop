@@ -13,6 +13,7 @@ import {
   User,
   Package,
   Heart,
+  Award,
   LogOut,
   ShieldCheck,
   ChevronRight,
@@ -46,6 +47,12 @@ export const AccountSidebar: React.FC<AccountSidebarProps> = ({ user }) => {
       label: "Sản phẩm yêu thích",
       href: "/tai-khoan/yeu-thich",
       icon: Heart,
+      exact: false,
+    },
+    {
+      label: "THUYNGA Club (Tích điểm)",
+      href: "/tai-khoan/tich-diem",
+      icon: Award,
       exact: false,
     },
   ];
