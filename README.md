@@ -603,7 +603,14 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và phát sinh lại Prisma Client.
   - Bộ dữ liệu mẫu y khoa thực tế (`prisma/seed-blogs.ts`): Nạp 6 bài viết cẩm nang sức khỏe chuyên sâu (cách dùng hồng sâm người cao tuổi, so sánh sữa Aptamil Úc/Anh, cách chọn cherry size 9.0 hàng bay, mẹo phân biệt tảo xoắn thật giả, vai trò D3K2MK7, cam kết vận chuyển Air Cargo).
   - Validation schema nghiêm ngặt: `src/lib/validations/blog.ts` kiểm thực tiêu đề, slug, tóm tắt, nội dung, chuyên mục, thời gian đọc và cấu hình SEO.
-- [ ] **Giai đoạn 8.2: Hệ Thống REST APIs Quản Trị Bài Viết Admin CMS**: CRUD bài viết, tự động tính readingTime, toggle xuất bản/ghim nổi bật.
+- [x] **Giai đoạn 8.2: Hệ Thống REST APIs Quản Trị Bài Viết Admin CMS** *(Đã hoàn thành & Đã kiểm thử)*:
+  - `GET /api/admin/blogs`: Lấy danh sách bài viết phân trang, tìm kiếm đa năng (tiêu đề, tóm tắt, nội dung), lọc theo chuyên mục (`category`), trạng thái (`PUBLISHED` / `DRAFT`), bài nổi bật (`isFeatured`), sắp xếp theo ngày/lượt xem/tên, và tổng hợp 4 chỉ số KPI (Tổng bài, Đã xuất bản, Bản nháp, Tổng lượt xem).
+  - `POST /api/admin/blogs`: Tạo bài viết mới, tự động tạo slug tiếng Việt chuẩn SEO từ tiêu đề, tự động tính toán thời gian đọc (`readingTime`) dựa trên độ dài nội dung, tự gán ngày xuất bản `publishedAt`.
+  - `GET /api/admin/blogs/[id]`: Truy vấn chi tiết bài viết phục vụ màn hình chỉnh sửa.
+  - `PUT /api/admin/blogs/[id]`: Cập nhật toàn diện nội dung, chuyên mục, ảnh cover, thẻ Meta SEO và kiểm tra chống trùng lặp slug với bài viết khác.
+  - `PATCH /api/admin/blogs/[id]/publish`: Bật/tắt nhanh trạng thái xuất bản bài viết với Optimistic UI, tự động cập nhật thời gian xuất bản khi bài được duyệt lên sóng.
+  - `PATCH /api/admin/blogs/[id]/feature`: Bật/tắt ghim bài viết tiêu điểm nổi bật (Featured Hero Story).
+  - `DELETE /api/admin/blogs/[id]`: Xóa vĩnh viễn bài viết khỏi hệ thống.
 - [ ] **Giai đoạn 8.3: Giao Diện Quản Trị Bài Viết Admin CMS (`/admin/bai-viet`)**: Sidebar menu, bảng quản lý, trình soạn thảo bài viết & SERP simulator.
 - [ ] **Giai đoạn 8.4: Giao Diện Storefront Danh Sách Cẩm Nang (`/tin-tuc`)**: Hero banner, bộ lọc chuyên mục, thẻ bài viết chuẩn tạp chí & SEO JSON-LD.
 - [ ] **Giai đoạn 8.5: Trang Chi Tiết Bài Viết & Ghim Sản Phẩm Mua Ngay (`/tin-tuc/[slug]`)**: Mục lục tự động TOC trượt mượt mà, khối ghim sản phẩm liên quan và bài viết gợi ý.
