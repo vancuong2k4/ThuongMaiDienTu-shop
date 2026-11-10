@@ -299,10 +299,13 @@ model ProductTag {
 model FlashSale {
   id          String    @id @default(cuid())
   name        String
+  description String?
+  bannerImage String?
   startTime   DateTime
   endTime     DateTime
   isActive    Boolean   @default(true)
   createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
 
   items       FlashSaleItem[]
 

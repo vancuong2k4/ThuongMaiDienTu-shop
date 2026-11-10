@@ -642,6 +642,17 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Thanh bài viết cùng chuyên mục liên quan (`RelatedArticles.tsx`): Gợi ý 3 bài cẩm nang cùng chủ đề giúp giữ chân khách hàng và tối ưu luồng đọc.
   - Sidebar cố định (Sticky Sidebar): Tích hợp hộp thoại liên hệ Hotline Dược sĩ và tư vấn Chat Zalo trực tiếp 1:1.
 
+### ⚡ Giai đoạn 9: Phân Hệ Quản Lý Chiến Dịch Flash Sale & Săn Deal Giờ Vàng (ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 9.1: Nâng cấp Schema FlashSale, Zod Validation & Seed chiến dịch Giờ Vàng hoạt động** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung `bannerImage`, `description`, `updatedAt` vào model `FlashSale` trong `prisma/schema.prisma`.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện (`src/lib/validations/flash-sale.ts`): Kiểm tra tên chiến dịch, thời lượng hợp lệ (`startTime < endTime`), giá Flash Sale sốc, số lượng phân bổ và giới hạn mỗi khách mua.
+  - Kịch bản nạp dữ liệu mẫu thực tế (`prisma/seed-flash-sales.ts`): Nạp chiến dịch đang diễn ra "⚡ ĐẠI TIỆC GIỜ VÀNG – HÀNG BAY AIR CARGO & VITAMIN ÚC" kèm 5 deal sản phẩm thực tế (Cherry Đỏ Mỹ, Ginkgo Biloba, Collagen DHC, Nho Mẫu Đơn, Hồng Sâm KGC) với số lượng và tiến độ cháy hàng sinh động, cùng chiến dịch sắp diễn ra "🔥 ĐÊM HỘI SĂN DEAL – CHĂM SÓC MẸ & BÉ".
+- [ ] **Giai đoạn 9.2: Hệ thống REST APIs Admin Quản Lý Chiến Dịch & Sản Phẩm Flash Sale**: Quản lý chiến dịch, bật/tắt kích hoạt, thêm/bớt sản phẩm deal.
+- [ ] **Giai đoạn 9.3: Giao diện Quản trị Flash Sale Admin CMS (`/admin/flash-sale`)**: KPI thống kê, bảng danh sách, modal chọn sản phẩm & phân bổ deal.
+- [ ] **Giai đoạn 9.4: Giao diện Storefront Săn Deal Giờ Vàng (`/flash-sale`)**: Đồng hồ đếm ngược số LED sang trọng, thanh đo độ cháy hàng, tab khung giờ.
+- [ ] **Giai đoạn 9.5: Đồng bộ Giá Flash Sale Với Giỏ Hàng & Checkout Storefront**: Tự động áp dụng giá giờ vàng và kiểm soát giới hạn tồn kho.
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
