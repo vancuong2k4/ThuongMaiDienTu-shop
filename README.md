@@ -658,7 +658,14 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - `POST /api/admin/flash-sales/[id]/items`: Thêm hoặc cập nhật biến thể sản phẩm vào chiến dịch với giá sốc, số lượng phân bổ và giới hạn mỗi khách (`limitPerUser`).
   - `PUT /api/admin/flash-sales/[id]/items/[itemId]`: Điều chỉnh giá sale, số lượng mở bán hoặc số lượng đã bán.
   - `DELETE /api/admin/flash-sales/[id]/items/[itemId]`: Gỡ bỏ sản phẩm khỏi chiến dịch giờ vàng.
-- [ ] **Giai đoạn 9.3: Giao diện Quản trị Flash Sale Admin CMS (`/admin/flash-sale`)**: KPI thống kê, bảng danh sách, modal chọn sản phẩm & phân bổ deal.
+- [x] **Giai đoạn 9.3: Giao diện Quản trị Flash Sale Admin CMS (`/admin/flash-sale`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp mục "Flash Sale" kèm biểu tượng tia chớp `Zap` trên thanh điều hướng `AdminSidebar.tsx`.
+  - 4 Thẻ KPI thống kê chuyên sâu (`FlashSaleStats.tsx`): Đang diễn ra, Sắp diễn ra, Lượt mua Flash Sale tích lũy, và Doanh thu giờ vàng.
+  - Thanh công cụ lọc & tìm kiếm đa năng (`FlashSaleFilters.tsx`): Tabs lọc trạng thái (`ACTIVE`, `UPCOMING`, `ENDED`), tìm kiếm theo tên chiến dịch và sắp xếp linh hoạt.
+  - Bảng danh sách chiến dịch chuẩn Luxury (`FlashSaleTable.tsx`): Hiển thị thumbnail banner, mốc thời gian bắt đầu - kết thúc, nhãn trạng thái động, thanh đo mức độ cháy hàng trực quan theo phần trăm, công tắc gạt kích hoạt `isActive` với Optimistic UI và menu thao tác.
+  - Modal tạo mới & cập nhật chiến dịch (`FlashSaleCampaignModal.tsx`): Hỗ trợ nhập tên, mô tả, ảnh banner xem trước tỉ lệ 21:9, chọn mốc thời gian bắt đầu - kết thúc với kiểm thực logic thời gian tự động.
+  - Modal Quản lý deal sản phẩm chuyên sâu (`FlashSaleItemModal.tsx`): Tìm kiếm sản phẩm trong kho hàng, chọn biến thể/quy cách, tự động tính phần trăm giảm giá theo thời gian thực khi nhập giá Flash Sale, phân bổ số lượng mở bán, thiết lập giới hạn mua mỗi khách và gỡ deal an toàn.
+  - Trang Server Component [`/admin/flash-sale`](/admin/flash-sale): Pre-fetch SSR siêu tốc và điều phối trạng thái với `FlashSaleManager.tsx`.
 - [ ] **Giai đoạn 9.4: Giao diện Storefront Săn Deal Giờ Vàng (`/flash-sale`)**: Đồng hồ đếm ngược số LED sang trọng, thanh đo độ cháy hàng, tab khung giờ.
 - [ ] **Giai đoạn 9.5: Đồng bộ Giá Flash Sale Với Giỏ Hàng & Checkout Storefront**: Tự động áp dụng giá giờ vàng và kiểm soát giới hạn tồn kho.
 

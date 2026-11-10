@@ -20,6 +20,7 @@ import {
   Settings,
   Image as ImageIcon,
   BookOpen,
+  Zap,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -90,6 +91,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Mã giảm giá",
       href: "/admin/voucher",
       icon: Tag,
+    },
+    {
+      label: "Flash Sale",
+      href: "/admin/flash-sale",
+      icon: Zap,
     },
     {
       label: "Khách hàng",
