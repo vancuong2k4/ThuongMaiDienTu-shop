@@ -19,6 +19,7 @@ import {
   Star,
   Settings,
   Image as ImageIcon,
+  BookOpen,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -101,6 +102,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       icon: Star,
       badge: pendingReviewsCount,
       badgeColor: "bg-rose-500 text-white",
+    },
+    {
+      label: "Bài viết",
+      href: "/admin/bai-viet",
+      icon: BookOpen,
     },
     {
       label: "Kho Media",

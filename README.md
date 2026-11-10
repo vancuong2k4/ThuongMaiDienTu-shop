@@ -611,7 +611,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - `PATCH /api/admin/blogs/[id]/publish`: Bật/tắt nhanh trạng thái xuất bản bài viết với Optimistic UI, tự động cập nhật thời gian xuất bản khi bài được duyệt lên sóng.
   - `PATCH /api/admin/blogs/[id]/feature`: Bật/tắt ghim bài viết tiêu điểm nổi bật (Featured Hero Story).
   - `DELETE /api/admin/blogs/[id]`: Xóa vĩnh viễn bài viết khỏi hệ thống.
-- [ ] **Giai đoạn 8.3: Giao Diện Quản Trị Bài Viết Admin CMS (`/admin/bai-viet`)**: Sidebar menu, bảng quản lý, trình soạn thảo bài viết & SERP simulator.
+- [x] **Giai đoạn 8.3: Giao Diện Quản Trị Bài Viết Admin CMS (`/admin/bai-viet`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp mục "Bài viết" với icon `BookOpen` trên thanh điều hướng `AdminSidebar.tsx`.
+  - 4 Thẻ KPI thống kê chuyên sâu (`BlogStats.tsx`): Tổng bài cẩm nang, Đã xuất bản, Bản nháp, và Tổng lượt đọc tích lũy.
+  - Thanh công cụ lọc & tìm kiếm đa năng (`BlogFilters.tsx`): Lọc theo chuyên mục danh mục E-E-A-T dạng tab trượt, trạng thái xuất bản, tìm kiếm thời gian thực, sắp xếp linh hoạt.
+  - Bảng danh sách bài viết chuẩn Luxury (`BlogTable.tsx`): Ảnh bìa cover, tiêu đề kèm badge danh mục, tác giả, thời gian đọc, thống kê lượt xem, nút ghim bài viết tiêu điểm dạng sao vàng, công tắc gạt xuất bản/bản nháp Optimistic UI tức thì, cùng menu hành động & phân trang thông minh.
+  - Bộ điều phối giao diện quản trị Client (`BlogManager.tsx`): Xử lý tải dữ liệu thời gian thực, cập nhật giao diện lạc quan (Optimistic Updates), tự động hoàn tác khi có sự cố, hộp thoại xác nhận xóa bài viết bảo mật và thông báo Toast trạng thái.
+  - Trình soạn thảo & tối ưu hóa bài viết chuyên sâu (`BlogForm.tsx`):
+    - Hỗ trợ cả 2 chế độ Tạo mới (`/admin/bai-viet/tao-moi`) và Chỉnh sửa (`/admin/bai-viet/[id]`).
+    - Bộ sinh slug tự động loại bỏ dấu tiếng Việt chuẩn URL SEO với tính năng khóa/mở khóa tùy biến.
+    - Thanh công cụ định dạng Markdown nhanh (H2, H3, Bold, Italic, List, Trích dẫn chuyên gia, Bảng dữ liệu, Chèn link).
+    - Tab chuyển đổi giữa "Soạn Thảo" và "Xem Trước (Live Preview)" chuẩn typo cẩm nang y khoa.
+    - Bộ mô phỏng kết quả tìm kiếm Google SERP Simulator (xem trước giao diện Google Desktop & Mobile kèm Title, URL breadcrumb, Snippet mô tả).
+    - Tự động ước lượng thời gian đọc dựa trên số lượng từ ngữ chuyên môn.
+    - Xem trước trực tiếp ảnh bìa (Cover Image) với tỷ lệ chuẩn 16:9.
 - [ ] **Giai đoạn 8.4: Giao Diện Storefront Danh Sách Cẩm Nang (`/tin-tuc`)**: Hero banner, bộ lọc chuyên mục, thẻ bài viết chuẩn tạp chí & SEO JSON-LD.
 - [ ] **Giai đoạn 8.5: Trang Chi Tiết Bài Viết & Ghim Sản Phẩm Mua Ngay (`/tin-tuc/[slug]`)**: Mục lục tự động TOC trượt mượt mà, khối ghim sản phẩm liên quan và bài viết gợi ý.
 
