@@ -597,7 +597,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Tích hợp điều hướng trực tiếp trên Sidebar Admin (`AdminSidebar.tsx`).
     - Hệ thống REST APIs media: `GET /api/admin/media`, `POST /api/admin/media`, `DELETE /api/admin/media/[id]`.
 
-### 📚 Giai đoạn 8: Phân Hệ Cẩm Nang Sức Khỏe & Blog Tin Tức Chuẩn SEO (ĐANG TRIỂN KHAI)
+### 📚 Giai đoạn 8: Phân Hệ Cẩm Nang Sức Khỏe & Blog Tin Tức Chuẩn SEO (HOÀN THÀNH 100%)
 - [x] **Giai đoạn 8.1: Schema Update, Seed Data Y Khoa & Zod Validation Layer** *(Đã hoàn thành & Đã kiểm thử)*:
   - Nâng cấp model `BlogPost` trong `prisma/schema.prisma` với các trường chuẩn Google E-E-A-T: `category`, `authorName`, `readingTime`, `viewCount`, `isFeatured`, `seoKeywords`.
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và phát sinh lại Prisma Client.
@@ -632,7 +632,15 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Thẻ bài viết cẩm nang chuẩn tạp chí (`BlogCard.tsx`): Tỷ lệ khung hình 16:9, nhãn chuyên mục, số lượt đọc, thời gian đọc, thông tin tác giả và hiệu ứng chuyển màu thương hiệu sang trọng.
   - Bộ điều phối danh sách bài viết Client (`BlogListClient.tsx`): Lọc kết hợp đa tiêu chí (danh mục + từ khóa tìm kiếm), sắp xếp theo Mới nhất / Lượt đọc nhiều nhất, phân trang 9 bài/trang mượt mà và giao diện trạng thái trống (Empty State) tinh tế.
   - Khối cam kết chuyên môn y khoa & Hotline Dược sĩ (`BlogExpertBanner.tsx`): Khẳng định cam kết hàng bay Air Cargo, nguyên tắc vàng không kinh doanh thuốc kê đơn, nút gọi Hotline và Chat Zalo tư vấn 1:1.
-- [ ] **Giai đoạn 8.5: Trang Chi Tiết Bài Viết & Ghim Sản Phẩm Mua Ngay (`/tin-tuc/[slug]`)**: Mục lục tự động TOC trượt mượt mà, khối ghim sản phẩm liên quan và bài viết gợi ý.
+- [x] **Giai đoạn 8.5: Trang Chi Tiết Bài Viết & Ghim Sản Phẩm Mua Ngay (`/tin-tuc/[slug]`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Trang Server Component `/tin-tuc/[slug]` tích hợp dynamic `generateMetadata`: Tối ưu hóa toàn diện thẻ Meta SEO, OpenGraph image, canonical URL và Schema.org `Article` JSON-LD tự động gắn thông tin Dược sĩ chuyên môn E-E-A-T.
+  - Tự động tăng số lượt đọc `viewCount` theo phương thức atomic increment an toàn và bảo toàn hiệu năng.
+  - Mục lục bài viết thông minh Scrollspy (`TableOfContents.tsx`): Tự động trích xuất cấu trúc đề mục H2, H3, đồng bộ anchor URL, hỗ trợ thu gọn accordion trên thiết bị di động và cuộn mượt mà (smooth scrolling) tới từng phần.
+  - Thanh chia sẻ đa kênh & Chỉ báo tiến độ đọc (`ArticleShareBar.tsx`): Pinned reading progress bar chuyển màu gradient ở đầu màn hình, sao chép liên kết 1 chạm, chia sẻ nhanh lên Facebook, Zalo và in bài viết.
+  - Trình hiển thị nội dung y khoa chuẩn Typo (`ArticleContent.tsx`): Tự động định dạng đề mục có gắn ID neo, trích dẫn lời khuyên chuyên gia (Expert Callout Quote), danh sách tiện ích và thẻ Khuyến cáo y khoa bắt buộc (Medical Disclaimer).
+  - Khối ghim sản phẩm khuyên dùng Shop The Story (`ArticleProductMentions.tsx`): Kết nối trực tiếp cơ sở dữ liệu hàng ngoại nhập chính hãng, hiển thị ảnh, thương hiệu, xuất xứ, giá bán ưu đãi, phần trăm giảm giá và nút xem chi tiết mua ngay.
+  - Thanh bài viết cùng chuyên mục liên quan (`RelatedArticles.tsx`): Gợi ý 3 bài cẩm nang cùng chủ đề giúp giữ chân khách hàng và tối ưu luồng đọc.
+  - Sidebar cố định (Sticky Sidebar): Tích hợp hộp thoại liên hệ Hotline Dược sĩ và tư vấn Chat Zalo trực tiếp 1:1.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
