@@ -746,7 +746,13 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện (`src/lib/validations/notification.ts`): Schemas cho tạo thông báo đơn lẻ, phát sóng broadcast toàn sàn, lọc danh sách phân trang và từ điển cấu hình nhãn badge theo loại thông báo.
   - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-notifications.ts`): Nạp 48 thông báo thực tế cho khách hàng (thông báo đơn hàng đang giao, Flash Sale sốc 35%, chúc mừng thăng hạng Kim Cương, quà sinh nhật và cập nhật bảo mật).
-- [ ] **Giai đoạn 11.2: Hệ Thống REST APIs Quản Lý Thông Báo & Helper Service Phát Thông Báo Server-Side**: Endpoints xem, lọc, đánh dấu đã đọc 1-chạm hoặc toàn bộ, xóa và helper kích hoạt sự kiện tự động.
+- [x] **Giai đoạn 11.2: Hệ Thống REST APIs Quản Lý Thông Báo & Helper Service Phát Thông Báo Server-Side** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng module điều phối thông báo độc lập (`src/lib/notifications.ts`): Cung cấp hàm `createInAppNotification` tạo thông báo mục tiêu và `broadcastInAppNotification` phát sóng hàng loạt theo vai trò hoặc nhóm khách hàng VIP (`createMany`).
+  - `GET /api/notifications`: Truy vấn thông báo phân trang của người dùng hiện tại, tính toán số lượng chưa đọc thời gian thực (`unreadCount`), hỗ trợ bộ lọc đa dạng theo loại thông báo (`ORDER_STATUS`, `PROMOTION`, `LOYALTY_TIER`, `SYSTEM`) và trạng thái đọc (`UNREAD`, `READ`, `ALL`).
+  - `PATCH /api/notifications/[id]/read`: Đánh dấu đọc thông báo đơn lẻ, cập nhật `readAt` và tính lại số thông báo chưa đọc còn lại tức thì.
+  - `POST /api/notifications/read-all`: Đánh dấu tất cả thông báo của người dùng là đã đọc 1-chạm (`updateMany`).
+  - `DELETE /api/notifications/[id]`: Xóa thông báo khỏi danh sách cá nhân an toàn có kiểm tra quyền sở hữu.
+  - `POST /api/admin/notifications/broadcast`: Endpoint Admin phát sóng chiến dịch khuyến mãi hoặc thông báo bảo trì toàn sàn với kiểm soát RBAC chặt chẽ.
 - [ ] **Giai đoạn 11.3: Giao diện Chuông Báo Đẩy Real-time (Notification Bell Dropdown Popover)**: Chuông rung với badge số lượng chưa đọc, popup đa tab (Đơn hàng, Ưu đãi, Hội viên) và đánh dấu đọc tức thì.
 - [ ] **Giai đoạn 11.4: Giao diện Storefront Trung Tâm Thông Báo Chuyên Sâu (`/tai-khoan/thong-bao`)**: Trang thông báo đầy đủ tính năng trong menu tài khoản.
 - [ ] **Giai đoạn 11.5: Tích Hợp Kích Hoạt Sự Kiện Tự Động (Auto Event Triggers)**: Tự động gửi thông báo khi đặt hàng, thay đổi trạng thái đơn, thăng hạng VIP và tính năng Admin Broadcast.
