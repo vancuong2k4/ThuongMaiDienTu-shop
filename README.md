@@ -666,7 +666,12 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Modal tạo mới & cập nhật chiến dịch (`FlashSaleCampaignModal.tsx`): Hỗ trợ nhập tên, mô tả, ảnh banner xem trước tỉ lệ 21:9, chọn mốc thời gian bắt đầu - kết thúc với kiểm thực logic thời gian tự động.
   - Modal Quản lý deal sản phẩm chuyên sâu (`FlashSaleItemModal.tsx`): Tìm kiếm sản phẩm trong kho hàng, chọn biến thể/quy cách, tự động tính phần trăm giảm giá theo thời gian thực khi nhập giá Flash Sale, phân bổ số lượng mở bán, thiết lập giới hạn mua mỗi khách và gỡ deal an toàn.
   - Trang Server Component [`/admin/flash-sale`](/admin/flash-sale): Pre-fetch SSR siêu tốc và điều phối trạng thái với `FlashSaleManager.tsx`.
-- [ ] **Giai đoạn 9.4: Giao diện Storefront Săn Deal Giờ Vàng (`/flash-sale`)**: Đồng hồ đếm ngược số LED sang trọng, thanh đo độ cháy hàng, tab khung giờ.
+- [x] **Giai đoạn 9.4: Giao diện Storefront Săn Deal Giờ Vàng (`/flash-sale`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Trang Server Component [`/flash-sale`](/flash-sale) tối ưu hóa SEO với Meta Tags, OpenGraph, Canonical URL và Schema.org `SaleEvent` JSON-LD tự động gắn lịch trình sự kiện giờ vàng.
+  - Đồng hồ đếm ngược thời gian thực dạng Flip/LED sang trọng (`FlashSaleCountdown.tsx`): Hiển thị Ngày, Giờ, Phút, Giây kèm hiệu ứng đổi màu cảnh báo khi gần hết giờ.
+  - Thẻ sản phẩm deal sốc tương tác cao (`FlashSaleDealCard.tsx`): Tỷ lệ vuông sắc nét, nhãn giảm giá đỏ rượu `-XX%`, xuất xứ chính ngạch, thanh đo mức độ cháy hàng (Urgency Bar) `SẮP CHÁY HÀNG • ĐÃ BÁN XX%`, nhãn giới hạn mua và nút "Săn Ngay Deal Này" tích hợp trực tiếp `useCartStore` với phản hồi tức thì.
+  - Thanh chọn khung giờ săn deal (`FlashSaleTimeSlots.tsx`): Chuyển đổi linh hoạt giữa phiên "⚡ Đang diễn ra" và phiên "⏳ Sắp diễn ra" để khách hàng xem trước ưu đãi.
+  - Bộ điều phối săn deal Client (`FlashSaleClient.tsx`): Lọc deal theo ngành hàng (Trái cây bay, TPCN, Mẹ & bé), tìm kiếm thời gian thực và khối Cam kết 3 không của THUYNGA Shop.
 - [ ] **Giai đoạn 9.5: Đồng bộ Giá Flash Sale Với Giỏ Hàng & Checkout Storefront**: Tự động áp dụng giá giờ vàng và kiểm soát giới hạn tồn kho.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
