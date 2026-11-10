@@ -686,7 +686,11 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện & cấu hình đặc quyền 4 hạng thành viên (`src/lib/validations/loyalty.ts`): Cấu hình tỷ lệ hoàn điểm (1% ➔ 3%), danh mục đổi thưởng Voucher 50k, 100k, 250k.
   - Kịch bản nạp dữ liệu mẫu thực tế (`prisma/seed-loyalty.ts`): Phân bổ hạng VIP và lịch sử giao dịch tích lũy điểm sinh động cho các khách hàng thân thiết.
-- [ ] **Giai đoạn 10.2: Hệ thống REST APIs Quản lý Điểm Tích Lũy & Hạng Thành Viên**: Tra cứu số dư, lịch sử giao dịch, đổi thưởng voucher và điều chỉnh điểm.
+- [x] **Giai đoạn 10.2: Hệ thống REST APIs Quản lý Điểm Tích Lũy & Hạng Thành Viên** *(Đã hoàn thành & Đã kiểm thử)*:
+  - `GET /api/user/loyalty`: Truy vấn số dư điểm khả dụng, tổng điểm tích lũy trọn đời, thông tin hạng thành viên VIP hiện tại, tiến trình thăng hạng kế tiếp (% hoàn thành, số tiền chi tiêu còn thiếu), danh sách quyền lợi và 30 giao dịch gần nhất.
+  - `POST /api/user/loyalty/redeem`: Động cơ đổi điểm lấy Voucher (`VOUCHER_50K`, `VOUCHER_100K`, `VOUCHER_250K`); Tự động sinh mã voucher độc quyền định dạng `CLUB-XXXX`, kiểm tra số dư điểm, trừ điểm an toàn qua transaction và cập nhật sổ cái `LoyaltyTransaction`.
+  - `GET /api/admin/loyalty`: Sổ cái tích điểm toàn hệ thống dành cho Admin; Lọc theo loại giao dịch (`Tích điểm đơn hàng`, `Đổi voucher`, `Admin thưởng`), lọc theo hạng thành viên (`BRONZE`, `SILVER`, `GOLD`, `DIAMOND`), tìm kiếm khách hàng và thống kê 5 chỉ số KPI chuyên sâu (Điểm lưu hành, Điểm đã quy đổi, Giá trị tiền tệ tương đương, Phân bổ 4 hạng thành viên).
+  - `POST /api/admin/loyalty/adjust`: Admin điều chỉnh cộng/trừ điểm thủ công cho khách hàng có lý do rõ ràng, kiểm tra chống âm điểm và tự động ghi log vào sổ cái.
 - [ ] **Giai đoạn 10.3: Giao diện Quản trị Khách Hàng Thân Thiết Admin CMS (`/admin/khach-hang/tich-diem`)**: Thống kê KPI điểm, sổ cái giao dịch, modal cộng/trừ điểm thủ công.
 - [ ] **Giai đoạn 10.4: Giao diện Storefront Trung Tâm Thành Viên THUYNGA Club (`/tai-khoan/tich-diem`)**: Thẻ VIP điện tử sang trọng, bảng quyền lợi hạng, gian hàng đổi voucher.
 - [ ] **Giai đoạn 10.5: Tự Động Tích Điểm Khi Hoàn Tất Đơn Hàng & Đổi Điểm Trực Tiếp Khi Checkout**: Tích hợp giảm trừ trực tiếp điểm tại Checkout và cộng điểm khi giao hàng thành công.
