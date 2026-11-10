@@ -738,6 +738,19 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - **Cơ chế Tự Động Thăng Hạng VIP (Auto Tier Upgrade Engine)**: Tính toán tổng chi tiêu các đơn giao thành công, tự động nâng hạng khách hàng (Đồng ➔ Bạc ➔ Vàng ➔ Kim Cương) ngay khi đạt ngưỡng.
   - Cơ chế hoàn điểm khi hủy đơn: Nếu đơn hàng có sử dụng điểm bị chuyển sang `CANCELLED`, hệ thống tự động hoàn trả đầy đủ điểm đã trừ vào tài khoản khách và ghi nhật ký sổ cái (`type: "ADMIN_ADJUST"`).
 
+### 🔔 Giai đoạn 11: Phân Hệ Trung Tâm Thông Báo Đẩy Thời Gian Thực (In-App Notification Center - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 11.1: Nâng cấp Schema Notification, Zod Validations & Seed Dữ Liệu Thông Báo Mẫu** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Khởi tạo enum `NotificationType` (`ORDER_STATUS`, `PROMOTION`, `LOYALTY_TIER`, `SYSTEM`) trong `prisma/schema.prisma`.
+  - Thiết lập model `Notification` (`id`, `userId`, `title`, `message`, `type`, `link`, `isRead`, `readAt`, `createdAt`) kèm chỉ mục kép hiệu năng cao `[userId, isRead]` và `[userId, createdAt]`.
+  - Mở rộng model `User` liên kết 1-N với `Notification` (`onDelete: Cascade`).
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện (`src/lib/validations/notification.ts`): Schemas cho tạo thông báo đơn lẻ, phát sóng broadcast toàn sàn, lọc danh sách phân trang và từ điển cấu hình nhãn badge theo loại thông báo.
+  - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-notifications.ts`): Nạp 48 thông báo thực tế cho khách hàng (thông báo đơn hàng đang giao, Flash Sale sốc 35%, chúc mừng thăng hạng Kim Cương, quà sinh nhật và cập nhật bảo mật).
+- [ ] **Giai đoạn 11.2: Hệ Thống REST APIs Quản Lý Thông Báo & Helper Service Phát Thông Báo Server-Side**: Endpoints xem, lọc, đánh dấu đã đọc 1-chạm hoặc toàn bộ, xóa và helper kích hoạt sự kiện tự động.
+- [ ] **Giai đoạn 11.3: Giao diện Chuông Báo Đẩy Real-time (Notification Bell Dropdown Popover)**: Chuông rung với badge số lượng chưa đọc, popup đa tab (Đơn hàng, Ưu đãi, Hội viên) và đánh dấu đọc tức thì.
+- [ ] **Giai đoạn 11.4: Giao diện Storefront Trung Tâm Thông Báo Chuyên Sâu (`/tai-khoan/thong-bao`)**: Trang thông báo đầy đủ tính năng trong menu tài khoản.
+- [ ] **Giai đoạn 11.5: Tích Hợp Kích Hoạt Sự Kiện Tự Động (Auto Event Triggers)**: Tự động gửi thông báo khi đặt hàng, thay đổi trạng thái đơn, thăng hạng VIP và tính năng Admin Broadcast.
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
