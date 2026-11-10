@@ -691,7 +691,23 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - `POST /api/user/loyalty/redeem`: Động cơ đổi điểm lấy Voucher (`VOUCHER_50K`, `VOUCHER_100K`, `VOUCHER_250K`); Tự động sinh mã voucher độc quyền định dạng `CLUB-XXXX`, kiểm tra số dư điểm, trừ điểm an toàn qua transaction và cập nhật sổ cái `LoyaltyTransaction`.
   - `GET /api/admin/loyalty`: Sổ cái tích điểm toàn hệ thống dành cho Admin; Lọc theo loại giao dịch (`Tích điểm đơn hàng`, `Đổi voucher`, `Admin thưởng`), lọc theo hạng thành viên (`BRONZE`, `SILVER`, `GOLD`, `DIAMOND`), tìm kiếm khách hàng và thống kê 5 chỉ số KPI chuyên sâu (Điểm lưu hành, Điểm đã quy đổi, Giá trị tiền tệ tương đương, Phân bổ 4 hạng thành viên).
   - `POST /api/admin/loyalty/adjust`: Admin điều chỉnh cộng/trừ điểm thủ công cho khách hàng có lý do rõ ràng, kiểm tra chống âm điểm và tự động ghi log vào sổ cái.
-- [ ] **Giai đoạn 10.3: Giao diện Quản trị Khách Hàng Thân Thiết Admin CMS (`/admin/khach-hang/tich-diem`)**: Thống kê KPI điểm, sổ cái giao dịch, modal cộng/trừ điểm thủ công.
+- [x] **Giai đoạn 10.3: Giao diện Quản trị Khách Hàng Thân Thiết Admin CMS (`/admin/khach-hang/tich-diem`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp mục "Tích điểm & VIP" kèm biểu tượng huân chương `Award` trên thanh điều hướng `AdminSidebar.tsx`.
+  - 4 Thẻ KPI thống kê điểm & thành viên chuyên sâu (`LoyaltyStats.tsx`): Điểm đang lưu hành (kèm giá trị quy đổi VNĐ tương đương `≈ XX.XXX.XXX ₫`), Điểm đã đổi thưởng voucher, Tổng điểm tích trọn đời, và Phân bổ số lượng 4 hạng thành viên Đồng / Bạc / Vàng / Kim Cương.
+  - Thanh công cụ lọc & tìm kiếm đa năng (`LoyaltyFilters.tsx`): Tabs phân loại theo 6 loại giao dịch (Tất cả, Tích điểm đơn, Đổi voucher, Trừ điểm checkout, Admin điều chỉnh, Thưởng chào mừng), Dropdown lọc theo hạng VIP, ô tìm kiếm khách hàng theo tên, email, SĐT hoặc nội dung giao dịch.
+  - Bảng sổ cái kiểm toán minh bạch (`LoyaltyTable.tsx`):
+    - Cột thời gian chuẩn hóa tiếng Việt `DD/MM/YYYY HH:mm`.
+    - Thông tin khách hàng: Avatar/Initials, tên kèm liên kết đến hồ sơ khách, email, badge hạng VIP (Đồng, Bạc, Vàng, Kim Cương).
+    - Huy hiệu phân loại giao dịch kèm màu sắc và icon nhận diện.
+    - Cột biến động điểm: Hiển thị nổi bật `+XX điểm` (xanh lá) hoặc `-XX điểm` (đỏ rượu).
+    - Cột số dư sau giao dịch (balanceAfter pts) và Diễn giải chi tiết kèm link trực tiếp đến đơn hàng liên quan nếu có.
+    - Phân trang dữ liệu thông minh.
+  - Modal Điều chỉnh điểm thủ công (`AdjustPointsModal.tsx`):
+    - Tìm kiếm và chọn nhanh khách hàng cần thưởng/phạt điểm với debounce thời gian thực.
+    - Nhập số điểm (dương để cộng, âm để trừ) kèm các nút bấm nhanh: `+100`, `+500`, `+1,000`, `-100`, `-500`.
+    - Nhập lý do/diễn giải kiểm toán chi tiết bắt buộc.
+    - Xử lý thông báo thành công và cập nhật lại dữ liệu ngay lập tức.
+  - Trang Server Component [`/admin/khach-hang/tich-diem`](/admin/khach-hang/tich-diem): Pre-fetch SSR siêu tốc và điều phối trạng thái với `LoyaltyManager.tsx`.
 - [ ] **Giai đoạn 10.4: Giao diện Storefront Trung Tâm Thành Viên THUYNGA Club (`/tai-khoan/tich-diem`)**: Thẻ VIP điện tử sang trọng, bảng quyền lợi hạng, gian hàng đổi voucher.
 - [ ] **Giai đoạn 10.5: Tự Động Tích Điểm Khi Hoàn Tất Đơn Hàng & Đổi Điểm Trực Tiếp Khi Checkout**: Tích hợp giảm trừ trực tiếp điểm tại Checkout và cộng điểm khi giao hàng thành công.
 

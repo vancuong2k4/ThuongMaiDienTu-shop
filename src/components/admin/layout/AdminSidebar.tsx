@@ -21,6 +21,7 @@ import {
   Image as ImageIcon,
   BookOpen,
   Zap,
+  Award,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -103,6 +104,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       icon: Users,
     },
     {
+      label: "Tích điểm & VIP",
+      href: "/admin/khach-hang/tich-diem",
+      icon: Award,
+    },
+    {
       label: "Đánh giá",
       href: "/admin/danh-gia",
       icon: Star,
@@ -129,6 +135,13 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const isLinkActive = (href: string) => {
     if (href === "/admin/dashboard") {
       return pathname === "/admin/dashboard" || pathname === "/admin";
+    }
+    if (href === "/admin/khach-hang") {
+      return (
+        pathname === "/admin/khach-hang" ||
+        (pathname.startsWith("/admin/khach-hang/") &&
+          !pathname.startsWith("/admin/khach-hang/tich-diem"))
+      );
     }
     return pathname.startsWith(href);
   };
