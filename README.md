@@ -648,7 +648,16 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện (`src/lib/validations/flash-sale.ts`): Kiểm tra tên chiến dịch, thời lượng hợp lệ (`startTime < endTime`), giá Flash Sale sốc, số lượng phân bổ và giới hạn mỗi khách mua.
   - Kịch bản nạp dữ liệu mẫu thực tế (`prisma/seed-flash-sales.ts`): Nạp chiến dịch đang diễn ra "⚡ ĐẠI TIỆC GIỜ VÀNG – HÀNG BAY AIR CARGO & VITAMIN ÚC" kèm 5 deal sản phẩm thực tế (Cherry Đỏ Mỹ, Ginkgo Biloba, Collagen DHC, Nho Mẫu Đơn, Hồng Sâm KGC) với số lượng và tiến độ cháy hàng sinh động, cùng chiến dịch sắp diễn ra "🔥 ĐÊM HỘI SĂN DEAL – CHĂM SÓC MẸ & BÉ".
-- [ ] **Giai đoạn 9.2: Hệ thống REST APIs Admin Quản Lý Chiến Dịch & Sản Phẩm Flash Sale**: Quản lý chiến dịch, bật/tắt kích hoạt, thêm/bớt sản phẩm deal.
+- [x] **Giai đoạn 9.2: Hệ thống REST APIs Admin Quản Lý Chiến Dịch & Sản Phẩm Flash Sale** *(Đã hoàn thành & Đã kiểm thử)*:
+  - `GET /api/admin/flash-sales`: Lấy danh sách chiến dịch phân trang, tìm kiếm theo tên/mô tả, lọc theo trạng thái (`ACTIVE` - Đang diễn ra, `UPCOMING` - Sắp tới, `ENDED` - Đã kết thúc) và tổng hợp số liệu 6 chỉ số KPI (Tổng chiến dịch, Đang chạy, Sắp tới, Đã kết thúc, Tổng lượt bán Flash Sale, Tỷ lệ cháy hàng trung bình).
+  - `POST /api/admin/flash-sales`: Tạo chiến dịch Flash Sale mới kèm kiểm thực thời lượng chặt chẽ.
+  - `GET /api/admin/flash-sales/[id]`: Truy vấn thông tin chi tiết chiến dịch và danh sách các sản phẩm deal (giá gốc, giá sale, số lượng, tỷ lệ đã bán).
+  - `PUT /api/admin/flash-sales/[id]`: Cập nhật tên chiến dịch, mô tả, banner và điều chỉnh mốc thời gian giờ vàng.
+  - `DELETE /api/admin/flash-sales/[id]`: Xóa vĩnh viễn chiến dịch (tự động cascade xóa các deal liên kết).
+  - `PATCH /api/admin/flash-sales/[id]/toggle`: Bật/tắt trạng thái kích hoạt chiến dịch (`isActive`).
+  - `POST /api/admin/flash-sales/[id]/items`: Thêm hoặc cập nhật biến thể sản phẩm vào chiến dịch với giá sốc, số lượng phân bổ và giới hạn mỗi khách (`limitPerUser`).
+  - `PUT /api/admin/flash-sales/[id]/items/[itemId]`: Điều chỉnh giá sale, số lượng mở bán hoặc số lượng đã bán.
+  - `DELETE /api/admin/flash-sales/[id]/items/[itemId]`: Gỡ bỏ sản phẩm khỏi chiến dịch giờ vàng.
 - [ ] **Giai đoạn 9.3: Giao diện Quản trị Flash Sale Admin CMS (`/admin/flash-sale`)**: KPI thống kê, bảng danh sách, modal chọn sản phẩm & phân bổ deal.
 - [ ] **Giai đoạn 9.4: Giao diện Storefront Săn Deal Giờ Vàng (`/flash-sale`)**: Đồng hồ đếm ngược số LED sang trọng, thanh đo độ cháy hàng, tab khung giờ.
 - [ ] **Giai đoạn 9.5: Đồng bộ Giá Flash Sale Với Giỏ Hàng & Checkout Storefront**: Tự động áp dụng giá giờ vàng và kiểm soát giới hạn tồn kho.
