@@ -625,7 +625,13 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bộ mô phỏng kết quả tìm kiếm Google SERP Simulator (xem trước giao diện Google Desktop & Mobile kèm Title, URL breadcrumb, Snippet mô tả).
     - Tự động ước lượng thời gian đọc dựa trên số lượng từ ngữ chuyên môn.
     - Xem trước trực tiếp ảnh bìa (Cover Image) với tỷ lệ chuẩn 16:9.
-- [ ] **Giai đoạn 8.4: Giao Diện Storefront Danh Sách Cẩm Nang (`/tin-tuc`)**: Hero banner, bộ lọc chuyên mục, thẻ bài viết chuẩn tạp chí & SEO JSON-LD.
+- [x] **Giai đoạn 8.4: Giao Diện Storefront Danh Sách Cẩm Nang (`/tin-tuc`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Trang Server Component `/tin-tuc` tích hợp bộ dữ liệu SEO đầy đủ: Meta Tags, OpenGraph, Canonical URL và Schema.org `CollectionPage` + `ItemList` JSON-LD.
+  - Banner tiêu điểm nổi bật Magazine Layout (`BlogHeroFeatured.tsx`): Ảnh cover lớn zoom mượt, nhãn sao vàng "Bài Viết Tiêu Điểm", ngày đăng, thời gian đọc, tóm tắt trích dẫn và thông tin xác thực chuyên gia "Dược sĩ Thu Nga".
+  - Thanh chuyển đổi danh mục & tìm kiếm tức thì (`BlogCategoryFilter.tsx`): Tab phân loại chuẩn E-E-A-T kèm huy hiệu đếm số lượng bài viết động, thanh tìm kiếm từ khóa thời gian thực.
+  - Thẻ bài viết cẩm nang chuẩn tạp chí (`BlogCard.tsx`): Tỷ lệ khung hình 16:9, nhãn chuyên mục, số lượt đọc, thời gian đọc, thông tin tác giả và hiệu ứng chuyển màu thương hiệu sang trọng.
+  - Bộ điều phối danh sách bài viết Client (`BlogListClient.tsx`): Lọc kết hợp đa tiêu chí (danh mục + từ khóa tìm kiếm), sắp xếp theo Mới nhất / Lượt đọc nhiều nhất, phân trang 9 bài/trang mượt mà và giao diện trạng thái trống (Empty State) tinh tế.
+  - Khối cam kết chuyên môn y khoa & Hotline Dược sĩ (`BlogExpertBanner.tsx`): Khẳng định cam kết hàng bay Air Cargo, nguyên tắc vàng không kinh doanh thuốc kê đơn, nút gọi Hotline và Chat Zalo tư vấn 1:1.
 - [ ] **Giai đoạn 8.5: Trang Chi Tiết Bài Viết & Ghim Sản Phẩm Mua Ngay (`/tin-tuc/[slug]`)**: Mục lục tự động TOC trượt mượt mà, khối ghim sản phẩm liên quan và bài viết gợi ý.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
