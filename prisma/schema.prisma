@@ -514,21 +514,29 @@ model Wishlist {
 // ============================================================
 
 model BlogPost {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
-  slug        String   @unique
-  excerpt     String?  @db.Text
-  content     String   @db.Text  // Rich text HTML
+  slug        String    @unique
+  excerpt     String?   @db.Text
+  content     String    @db.Text  // Rich text HTML
   coverImage  String?
-  isPublished Boolean  @default(false)
+  category    String    @default("Cẩm nang sức khỏe")
+  authorName  String    @default("Dược sĩ Thu Nga")
+  readingTime Int       @default(5)
+  viewCount   Int       @default(0)
+  isFeatured  Boolean   @default(false)
+  isPublished Boolean   @default(false)
   publishedAt DateTime?
   seoTitle    String?
   seoDesc     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  seoKeywords String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([slug])
   @@index([isPublished, publishedAt])
+  @@index([category])
+  @@index([isFeatured])
   @@map("blog_posts")
 }
 

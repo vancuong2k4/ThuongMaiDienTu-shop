@@ -597,6 +597,17 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Tích hợp điều hướng trực tiếp trên Sidebar Admin (`AdminSidebar.tsx`).
     - Hệ thống REST APIs media: `GET /api/admin/media`, `POST /api/admin/media`, `DELETE /api/admin/media/[id]`.
 
+### 📚 Giai đoạn 8: Phân Hệ Cẩm Nang Sức Khỏe & Blog Tin Tức Chuẩn SEO (ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 8.1: Schema Update, Seed Data Y Khoa & Zod Validation Layer** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Nâng cấp model `BlogPost` trong `prisma/schema.prisma` với các trường chuẩn Google E-E-A-T: `category`, `authorName`, `readingTime`, `viewCount`, `isFeatured`, `seoKeywords`.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và phát sinh lại Prisma Client.
+  - Bộ dữ liệu mẫu y khoa thực tế (`prisma/seed-blogs.ts`): Nạp 6 bài viết cẩm nang sức khỏe chuyên sâu (cách dùng hồng sâm người cao tuổi, so sánh sữa Aptamil Úc/Anh, cách chọn cherry size 9.0 hàng bay, mẹo phân biệt tảo xoắn thật giả, vai trò D3K2MK7, cam kết vận chuyển Air Cargo).
+  - Validation schema nghiêm ngặt: `src/lib/validations/blog.ts` kiểm thực tiêu đề, slug, tóm tắt, nội dung, chuyên mục, thời gian đọc và cấu hình SEO.
+- [ ] **Giai đoạn 8.2: Hệ Thống REST APIs Quản Trị Bài Viết Admin CMS**: CRUD bài viết, tự động tính readingTime, toggle xuất bản/ghim nổi bật.
+- [ ] **Giai đoạn 8.3: Giao Diện Quản Trị Bài Viết Admin CMS (`/admin/bai-viet`)**: Sidebar menu, bảng quản lý, trình soạn thảo bài viết & SERP simulator.
+- [ ] **Giai đoạn 8.4: Giao Diện Storefront Danh Sách Cẩm Nang (`/tin-tuc`)**: Hero banner, bộ lọc chuyên mục, thẻ bài viết chuẩn tạp chí & SEO JSON-LD.
+- [ ] **Giai đoạn 8.5: Trang Chi Tiết Bài Viết & Ghim Sản Phẩm Mua Ngay (`/tin-tuc/[slug]`)**: Mục lục tự động TOC trượt mượt mà, khối ghim sản phẩm liên quan và bài viết gợi ý.
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
