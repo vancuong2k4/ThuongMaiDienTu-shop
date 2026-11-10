@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { PaymentMethod } from "@prisma/client";
+import { createInAppNotification } from "@/lib/notifications";
 
 interface OrderItemRequest {
   variantId: string;
@@ -439,6 +440,17 @@ export async function POST(req: NextRequest) {
         timeout: 10000, // 10 giây transaction timeout
       }
     );
+
+    // Tự động gửi thông báo In-App cho khách hàng
+    await createInAppNotification({
+      userId: currentUserId,
+      title: `📦 Đơn hàng #${resultOrder.orderNumber} đã đặt thành công!`,
+      message: `THUYNGA Shop đã tiếp nhận đơn hàng của bạn với giá trị ${Number(
+        resultOrder.total
+      ).toLocaleString("vi-VN")}₫. Chúng tôi sẽ nhanh chóng đóng gói và giao đến bạn.`,
+      type: "ORDER_STATUS",
+      link: `/tai-khoan/don-hang/${resultOrder.orderNumber}`,
+    });
 
     return NextResponse.json(
       {

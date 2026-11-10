@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { adjustPointsSchema } from "@/lib/validations/loyalty";
 import { LoyaltyType } from "@prisma/client";
+import { createInAppNotification } from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
@@ -79,6 +80,22 @@ export async function POST(req: NextRequest) {
         user: updatedUser,
         transaction,
       };
+    });
+
+    // Gửi thông báo In-App thông báo biến động điểm cho khách hàng
+    await createInAppNotification({
+      userId,
+      title:
+        points > 0
+          ? `🎁 Bạn nhận được +${points} điểm THUYNGA Club!`
+          : `⚖️ Điều chỉnh điểm tích lũy THUYNGA Club`,
+      message: `Tài khoản của bạn vừa được ${
+        points > 0 ? "cộng +" : "khấu trừ "
+      }${Math.abs(points)} điểm (${description.trim()}). Số dư hiện tại: ${
+        result.user.loyaltyPoints
+      } điểm.`,
+      type: "LOYALTY_TIER",
+      link: "/tai-khoan/tich-diem",
     });
 
     return NextResponse.json({

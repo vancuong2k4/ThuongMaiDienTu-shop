@@ -8,6 +8,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redeemRewardSchema, REWARD_CATALOG } from "@/lib/validations/loyalty";
 import { VoucherType, LoyaltyType } from "@prisma/client";
+import { createInAppNotification } from "@/lib/notifications";
 
 function generateRewardVoucherCode(prefix: string): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -123,6 +124,15 @@ export async function POST(req: NextRequest) {
         transaction,
         remainingPoints: newBalance,
       };
+    });
+
+    // Tự động gửi thông báo In-App thông báo mã voucher mới
+    await createInAppNotification({
+      userId,
+      title: `🎟️ Bạn đã đổi thành công ${reward.title}!`,
+      message: `Mã voucher của bạn: ${result.voucher.code} (giảm ${reward.voucherValue.toLocaleString("vi-VN")}₫). Áp dụng ngay tại bước thanh toán cho đơn từ ${reward.minOrderAmount.toLocaleString("vi-VN")}₫.`,
+      type: "LOYALTY_TIER",
+      link: "/tai-khoan/tich-diem",
     });
 
     return NextResponse.json({

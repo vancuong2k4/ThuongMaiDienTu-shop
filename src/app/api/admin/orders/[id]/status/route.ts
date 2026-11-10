@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { updateOrderStatusSchema } from "@/lib/validations/order";
 import { MEMBERSHIP_TIER_CONFIG } from "@/lib/validations/loyalty";
 import type { MembershipTier } from "@prisma/client";
+import { createInAppNotification } from "@/lib/notifications";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -200,6 +201,25 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
                   where: { id: customer.id },
                   data: { membershipTier: upgradedTier },
                 });
+
+                const tierNameMap = {
+                  SILVER: "Hội Viên Bạc (Silver)",
+                  GOLD: "Hội Viên Vàng (Gold)",
+                  DIAMOND: "Hội Viên Kim Cương (Diamond)",
+                };
+
+                await tx.notification.create({
+                  data: {
+                    userId: customer.id,
+                    title: `👑 Chúc mừng bạn đã thăng hạng ${
+                      tierNameMap[upgradedTier as keyof typeof tierNameMap] ||
+                      upgradedTier
+                    }!`,
+                    message: `Tổng chi tiêu của bạn đã đạt mốc mới. Bạn chính thức mở khóa toàn bộ đặc quyền hội viên cao cấp và tỷ lệ hoàn điểm mới tại THUYNGA Club!`,
+                    type: "LOYALTY_TIER",
+                    link: "/tai-khoan/tich-diem",
+                  },
+                });
               }
             }
           }
@@ -236,6 +256,43 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
       return updated;
     });
+
+    // Tự động kích hoạt thông báo In-App gửi đến khách hàng
+    if (order.userId) {
+      if (newStatus === "CONFIRMED") {
+        await createInAppNotification({
+          userId: order.userId,
+          title: `✅ Đơn hàng #${order.orderNumber} đã được xác nhận`,
+          message: `Đơn hàng của bạn đã được kiểm duyệt và chuyển sang bộ phận kho để chuẩn bị đóng gói chuẩn hàng air-cargo.`,
+          type: "ORDER_STATUS",
+          link: `/tai-khoan/don-hang/${order.orderNumber}`,
+        });
+      } else if (newStatus === "SHIPPING") {
+        await createInAppNotification({
+          userId: order.userId,
+          title: `🚚 Đơn hàng #${order.orderNumber} đang trên đường giao đến bạn`,
+          message: `Kiện hàng đã được bàn giao cho đối tác vận chuyển hỏa tốc. Bạn vui lòng chú ý điện thoại để nhận hàng nhé.`,
+          type: "ORDER_STATUS",
+          link: `/tai-khoan/don-hang/${order.orderNumber}`,
+        });
+      } else if (newStatus === "DELIVERED") {
+        await createInAppNotification({
+          userId: order.userId,
+          title: `🎉 Giao hàng thành công: Đơn #${order.orderNumber}`,
+          message: `Đơn hàng của bạn đã được giao thành công. Cảm ơn bạn đã tin tưởng mua sắm hàng chính hãng tại THUYNGA Shop!`,
+          type: "ORDER_STATUS",
+          link: `/tai-khoan/don-hang/${order.orderNumber}`,
+        });
+      } else if (newStatus === "CANCELLED") {
+        await createInAppNotification({
+          userId: order.userId,
+          title: `❌ Đơn hàng #${order.orderNumber} đã bị hủy`,
+          message: `Đơn hàng #${order.orderNumber} đã được cập nhật trạng thái hủy. Điểm tích lũy (nếu có) đã được hoàn lại vào ví hội viên của bạn.`,
+          type: "ORDER_STATUS",
+          link: `/tai-khoan/don-hang/${order.orderNumber}`,
+        });
+      }
+    }
 
     return NextResponse.json({
       success: true,

@@ -738,7 +738,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - **Cơ chế Tự Động Thăng Hạng VIP (Auto Tier Upgrade Engine)**: Tính toán tổng chi tiêu các đơn giao thành công, tự động nâng hạng khách hàng (Đồng ➔ Bạc ➔ Vàng ➔ Kim Cương) ngay khi đạt ngưỡng.
   - Cơ chế hoàn điểm khi hủy đơn: Nếu đơn hàng có sử dụng điểm bị chuyển sang `CANCELLED`, hệ thống tự động hoàn trả đầy đủ điểm đã trừ vào tài khoản khách và ghi nhật ký sổ cái (`type: "ADMIN_ADJUST"`).
 
-### 🔔 Giai đoạn 11: Phân Hệ Trung Tâm Thông Báo Đẩy Thời Gian Thực (In-App Notification Center - ĐANG TRIỂN KHAI)
+### 🔔 Giai đoạn 11: Phân Hệ Trung Tâm Thông Báo Đẩy Thời Gian Thực (In-App Notification Center - HOÀN THÀNH 100%)
 - [x] **Giai đoạn 11.1: Nâng cấp Schema Notification, Zod Validations & Seed Dữ Liệu Thông Báo Mẫu** *(Đã hoàn thành & Đã kiểm thử)*:
   - Khởi tạo enum `NotificationType` (`ORDER_STATUS`, `PROMOTION`, `LOYALTY_TIER`, `SYSTEM`) trong `prisma/schema.prisma`.
   - Thiết lập model `Notification` (`id`, `userId`, `title`, `message`, `type`, `link`, `isRead`, `readAt`, `createdAt`) kèm chỉ mục kép hiệu năng cao `[userId, isRead]` và `[userId, createdAt]`.
@@ -774,7 +774,12 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Các nút thao tác 1-chạm: Đánh dấu đã đọc (`Check`), Mở xem chi tiết trang liên kết (`ExternalLink`), và Xóa thông báo khỏi danh sách (`Trash2`).
     - Phân trang thông minh hỗ trợ duyệt nhiều trang lịch sử thông báo.
   - Trang Server Component [`/tai-khoan/thong-bao`](/tai-khoan/thong-bao): Kiểm soát phiên đăng nhập (Auth Guard), pre-fetch SSR dữ liệu ban đầu siêu tốc và kết nối đồng bộ Client Component.
-- [ ] **Giai đoạn 11.5: Tích Hợp Kích Hoạt Sự Kiện Tự Động (Auto Event Triggers)**: Tự động gửi thông báo khi đặt hàng, thay đổi trạng thái đơn, thăng hạng VIP và tính năng Admin Broadcast.
+- [x] **Giai đoạn 11.5: Tích Hợp Kích Hoạt Sự Kiện Tự Động (Auto Event Triggers)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tự động phát thông báo khi đặt hàng thành công (`src/app/api/orders/route.ts`): Gửi xác nhận đặt hàng tức thì đến khách kèm mã đơn và tổng tiền.
+  - Tự động cập nhật hành trình đơn hàng (`src/app/api/admin/orders/[id]/status/route.ts`): Bắn thông báo tương ứng khi Admin chuyển trạng thái sang `CONFIRMED` (Đã duyệt & đóng gói), `SHIPPING` (Đang giao hỏa tốc), `DELIVERED` (Giao thành công & cộng điểm thưởng), `CANCELLED` (Đã hủy & hoàn điểm).
+  - Tự động kích hoạt thông báo Thăng Hạng Hội Viên VIP: Bắn thông báo chúc mừng kèm đặc quyền mới khi khách hàng đạt mốc Bạc, Vàng hoặc Kim Cương.
+  - Tự động thông báo khi Đổi Voucher thành công (`src/app/api/user/loyalty/redeem/route.ts`): Gửi mã code và hướng dẫn sử dụng voucher về hòm thư thông báo.
+  - Tự động thông báo khi Admin điều chỉnh điểm tích lũy (`src/app/api/admin/loyalty/adjust/route.ts`): Báo số điểm biến động (+/-) và lý do kiểm toán minh bạch.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
