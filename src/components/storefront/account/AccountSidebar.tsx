@@ -14,6 +14,7 @@ import {
   Package,
   Heart,
   Award,
+  Bell,
   LogOut,
   ShieldCheck,
   ChevronRight,
@@ -53,6 +54,12 @@ export const AccountSidebar: React.FC<AccountSidebarProps> = ({ user }) => {
       label: "THUYNGA Club (Tích điểm)",
       href: "/tai-khoan/tich-diem",
       icon: Award,
+      exact: false,
+    },
+    {
+      label: "Thông báo của tôi",
+      href: "/tai-khoan/thong-bao",
+      icon: Bell,
       exact: false,
     },
   ];

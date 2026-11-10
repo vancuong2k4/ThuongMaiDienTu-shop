@@ -763,7 +763,17 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Nhấp thông báo: Tự động đánh dấu đã đọc trên máy chủ, giảm số đếm chưa đọc tức thì và chuyển hướng mượt mà đến trang liên kết (`order`, `flash-sale`, `loyalty`).
     - Chân Popover: Nút mở nhanh trang Trung tâm thông báo chuyên sâu `/tai-khoan/thong-bao`.
   - Cơ chế đồng bộ Polling định kỳ 45 giây/lần tự động cập nhật số thông báo mới mà không gây nặng tải cho server.
-- [ ] **Giai đoạn 11.4: Giao diện Storefront Trung Tâm Thông Báo Chuyên Sâu (`/tai-khoan/thong-bao`)**: Trang thông báo đầy đủ tính năng trong menu tài khoản.
+- [x] **Giai đoạn 11.4: Giao diện Storefront Trung Tâm Thông Báo Chuyên Sâu (`/tai-khoan/thong-bao`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp mục "Thông báo của tôi" kèm biểu tượng `Bell` trên thanh điều hướng `AccountSidebar.tsx` và menu thả xuống Header `UserAccountMenu.tsx`.
+  - Khối Header tổng quan hiển thị số thông báo chưa đọc, huy hiệu nhận diện và nút bấm "Đánh dấu tất cả đã đọc" 1-chạm.
+  - Thanh Tabs điều hướng phân loại 5 danh mục: Tất cả, 📦 Đơn hàng, ⚡ Khuyến mãi & Flash Sale, 👑 THUYNGA Club & VIP, 🛡️ Hệ thống.
+  - Bộ lọc trạng thái đọc: Chuyển đổi linh hoạt giữa "Tất cả thông báo", "Chỉ tin chưa đọc" và "Đã đọc".
+  - Thẻ thông báo chuyên sâu (`NotificationHubClient.tsx`):
+    - Khối icon phân loại nổi bật kèm màu sắc chủ đạo riêng biệt.
+    - Tiêu đề đậm nét, nội dung hiển thị đầy đủ, nhãn ngày giờ định dạng tiếng Việt chi tiết `DD/MM/YYYY HH:mm`.
+    - Các nút thao tác 1-chạm: Đánh dấu đã đọc (`Check`), Mở xem chi tiết trang liên kết (`ExternalLink`), và Xóa thông báo khỏi danh sách (`Trash2`).
+    - Phân trang thông minh hỗ trợ duyệt nhiều trang lịch sử thông báo.
+  - Trang Server Component [`/tai-khoan/thong-bao`](/tai-khoan/thong-bao): Kiểm soát phiên đăng nhập (Auth Guard), pre-fetch SSR dữ liệu ban đầu siêu tốc và kết nối đồng bộ Client Component.
 - [ ] **Giai đoạn 11.5: Tích Hợp Kích Hoạt Sự Kiện Tự Động (Auto Event Triggers)**: Tự động gửi thông báo khi đặt hàng, thay đổi trạng thái đơn, thăng hạng VIP và tính năng Admin Broadcast.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
