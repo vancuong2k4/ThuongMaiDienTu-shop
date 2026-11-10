@@ -49,6 +49,8 @@ export const FlashSaleDealCard: React.FC<FlashSaleDealCardProps> = ({
       image: deal.imageUrl || deal.variant.image,
       quantity: 1,
       stock: deal.variant.stock,
+      isFlashSale: true,
+      originalPrice: deal.regularPrice,
     });
 
     setAdded(true);

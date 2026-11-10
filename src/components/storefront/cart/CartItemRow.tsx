@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2, AlertCircle } from "lucide-react";
+import { Minus, Plus, Trash2, AlertCircle, Flame } from "lucide-react";
 import { formatVND } from "@/lib/utils";
 import type { CartItem } from "@/types";
 
@@ -52,11 +52,23 @@ export function CartItemRow({
             <span className="text-gray-400 font-mono text-[10px]">
               SKU: {item.sku}
             </span>
+            {item.isFlashSale && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-red-600 to-[#800028] text-white text-[10px] font-black uppercase tracking-wider shadow-xs">
+                <Flame className="w-3 h-3 fill-amber-300 text-amber-300" />
+                <span>Giá Flash Sale</span>
+              </span>
+            )}
           </div>
 
           {/* Đơn giá */}
-          <div className="text-xs font-semibold text-gray-700 sm:hidden pt-0.5">
-            Đơn giá: <span className="text-[#800028] font-bold">{formatVND(item.price)}</span>
+          <div className="text-xs font-semibold text-gray-700 sm:hidden pt-0.5 flex items-center gap-2">
+            <span>Đơn giá:</span>
+            <span className="text-[#800028] font-bold">{formatVND(item.price)}</span>
+            {item.originalPrice && item.originalPrice > item.price && (
+              <span className="text-[11px] text-gray-400 line-through">
+                {formatVND(item.originalPrice)}
+              </span>
+            )}
           </div>
 
           {/* Cảnh báo kho */}
@@ -72,11 +84,16 @@ export function CartItemRow({
       {/* ── Bộ điều khiển số lượng & Đơn giá trên Desktop ───────────── */}
       <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-8 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-50">
         {/* Đơn giá ẩn trên mobile */}
-        <div className="hidden sm:block text-right w-24">
+        <div className="hidden sm:block text-right w-28">
           <div className="text-xs text-gray-400 font-medium">Đơn giá</div>
           <div className="text-sm font-bold text-gray-800">
             {formatVND(item.price)}
           </div>
+          {item.originalPrice && item.originalPrice > item.price && (
+            <div className="text-[11px] text-gray-400 line-through">
+              {formatVND(item.originalPrice)}
+            </div>
+          )}
         </div>
 
         {/* Bộ tăng/giảm (+ / -) */}

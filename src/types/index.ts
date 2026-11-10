@@ -86,6 +86,8 @@ export interface CartItem {
   image: string | null;
   quantity: number;
   stock: number; // Để kiểm tra giới hạn tồn kho
+  isFlashSale?: boolean;
+  originalPrice?: number | null;
 }
 
 // ============================================================

@@ -642,7 +642,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Thanh bài viết cùng chuyên mục liên quan (`RelatedArticles.tsx`): Gợi ý 3 bài cẩm nang cùng chủ đề giúp giữ chân khách hàng và tối ưu luồng đọc.
   - Sidebar cố định (Sticky Sidebar): Tích hợp hộp thoại liên hệ Hotline Dược sĩ và tư vấn Chat Zalo trực tiếp 1:1.
 
-### ⚡ Giai đoạn 9: Phân Hệ Quản Lý Chiến Dịch Flash Sale & Săn Deal Giờ Vàng (ĐANG TRIỂN KHAI)
+### ⚡ Giai đoạn 9: Phân Hệ Quản Lý Chiến Dịch Flash Sale & Săn Deal Giờ Vàng (HOÀN THÀNH 100%)
 - [x] **Giai đoạn 9.1: Nâng cấp Schema FlashSale, Zod Validation & Seed chiến dịch Giờ Vàng hoạt động** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung `bannerImage`, `description`, `updatedAt` vào model `FlashSale` trong `prisma/schema.prisma`.
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
@@ -672,7 +672,11 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Thẻ sản phẩm deal sốc tương tác cao (`FlashSaleDealCard.tsx`): Tỷ lệ vuông sắc nét, nhãn giảm giá đỏ rượu `-XX%`, xuất xứ chính ngạch, thanh đo mức độ cháy hàng (Urgency Bar) `SẮP CHÁY HÀNG • ĐÃ BÁN XX%`, nhãn giới hạn mua và nút "Săn Ngay Deal Này" tích hợp trực tiếp `useCartStore` với phản hồi tức thì.
   - Thanh chọn khung giờ săn deal (`FlashSaleTimeSlots.tsx`): Chuyển đổi linh hoạt giữa phiên "⚡ Đang diễn ra" và phiên "⏳ Sắp diễn ra" để khách hàng xem trước ưu đãi.
   - Bộ điều phối săn deal Client (`FlashSaleClient.tsx`): Lọc deal theo ngành hàng (Trái cây bay, TPCN, Mẹ & bé), tìm kiếm thời gian thực và khối Cam kết 3 không của THUYNGA Shop.
-- [ ] **Giai đoạn 9.5: Đồng bộ Giá Flash Sale Với Giỏ Hàng & Checkout Storefront**: Tự động áp dụng giá giờ vàng và kiểm soát giới hạn tồn kho.
+- [x] **Giai đoạn 9.5: Đồng bộ Giá Flash Sale Với Giỏ Hàng & Checkout Storefront** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Mở rộng kiểu dữ liệu giỏ hàng `CartItem` (`src/types/index.ts`): Bổ sung cờ `isFlashSale` và `originalPrice` phục vụ hiển thị nhãn ưu đãi giờ vàng.
+  - Cập nhật giao diện giỏ hàng (`CartItemRow.tsx`): Hiển thị huy hiệu đỏ rượu `Giá Flash Sale`, gạch ngang giá gốc và hiển thị mức giá giờ vàng ưu đãi.
+  - Đồng bộ logic thêm vào giỏ từ cả trang chủ (`FlashSaleSection.tsx`) lẫn Hub chuyên biệt (`FlashSaleDealCard.tsx`).
+  - Nâng cấp API đặt hàng bảo mật (`src/app/api/orders/route.ts`): Tự động kiểm tra thời gian thực xem biến thể có đang nằm trong chiến dịch Flash Sale hợp lệ hay không; Áp dụng giá `salePrice` chuẩn xác từ máy chủ (chống thao túng giá phía Client); Kiểm soát giới hạn mua mỗi khách (`limitPerUser`) và tự động tăng số lượng đã bán `soldCount` trong cơ sở dữ liệu.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.

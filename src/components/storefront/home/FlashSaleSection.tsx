@@ -80,6 +80,8 @@ export function FlashSaleSection({ endTime, items }: FlashSaleSectionProps) {
       image: item.variant.image,
       quantity: 1,
       stock: item.variant.stock,
+      isFlashSale: true,
+      originalPrice: toNumber(item.variant.price),
     });
 
     setAddedVariantId(item.variant.id);

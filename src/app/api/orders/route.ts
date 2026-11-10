@@ -159,7 +159,45 @@ export async function POST(req: NextRequest) {
             );
           }
 
-          const itemPrice = Number(variant.price);
+          // Kiểm tra xem sản phẩm có đang trong chiến dịch Flash Sale hợp lệ không
+          const now = new Date();
+          const activeFlashDeal = await tx.flashSaleItem.findFirst({
+            where: {
+              variantId: variant.id,
+              flashSale: {
+                isActive: true,
+                startTime: { lte: now },
+                endTime: { gte: now },
+              },
+            },
+          });
+
+          let itemPrice = Number(variant.price);
+
+          if (
+            activeFlashDeal &&
+            activeFlashDeal.soldCount < activeFlashDeal.quantity
+          ) {
+            const availableDealQty =
+              activeFlashDeal.quantity - activeFlashDeal.soldCount;
+
+            // Kiểm tra giới hạn mua mỗi khách và số lượng deal còn lại
+            if (
+              it.quantity <= activeFlashDeal.limitPerUser &&
+              it.quantity <= availableDealQty
+            ) {
+              itemPrice = Number(activeFlashDeal.salePrice);
+
+              // Cập nhật số lượng đã bán của Deal Flash Sale
+              await tx.flashSaleItem.update({
+                where: { id: activeFlashDeal.id },
+                data: {
+                  soldCount: { increment: it.quantity },
+                },
+              });
+            }
+          }
+
           calculatedSubtotal += itemPrice * it.quantity;
 
           verifiedItems.push({
