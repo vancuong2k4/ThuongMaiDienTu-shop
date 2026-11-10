@@ -19,6 +19,7 @@ import {
 import { SearchBar } from "./SearchBar";
 import { CartButton } from "./CartButton";
 import { UserAccountMenu } from "./UserAccountMenu";
+import { NotificationBell } from "@/components/storefront/notifications/NotificationBell";
 import { MobileNav } from "./MobileNav";
 
 // Helper lấy tên hiển thị ngắn gọn, cân đối cho thanh menu ngang trên Desktop
@@ -146,6 +147,9 @@ export function Header({ categories }: HeaderProps) {
                   </span>
                 </div>
               </a>
+
+              {/* Notification Bell */}
+              <NotificationBell />
 
               {/* User Account Menu */}
               <UserAccountMenu />

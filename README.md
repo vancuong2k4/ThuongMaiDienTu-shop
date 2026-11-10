@@ -753,7 +753,16 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - `POST /api/notifications/read-all`: Đánh dấu tất cả thông báo của người dùng là đã đọc 1-chạm (`updateMany`).
   - `DELETE /api/notifications/[id]`: Xóa thông báo khỏi danh sách cá nhân an toàn có kiểm tra quyền sở hữu.
   - `POST /api/admin/notifications/broadcast`: Endpoint Admin phát sóng chiến dịch khuyến mãi hoặc thông báo bảo trì toàn sàn với kiểm soát RBAC chặt chẽ.
-- [ ] **Giai đoạn 11.3: Giao diện Chuông Báo Đẩy Real-time (Notification Bell Dropdown Popover)**: Chuông rung với badge số lượng chưa đọc, popup đa tab (Đơn hàng, Ưu đãi, Hội viên) và đánh dấu đọc tức thì.
+- [x] **Giai đoạn 11.3: Giao diện Chuông Báo Đẩy Real-time (Notification Bell Dropdown Popover)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp biểu tượng chuông thông minh `NotificationBell.tsx` trên thanh Header điều hướng cửa hàng (`Header.tsx`) cạnh giỏ hàng và menu tài khoản.
+  - Huy hiệu số lượng chưa đọc nổi bật (Badge vàng hoàng kim trên nền đỏ rượu với hiệu ứng xung nhịp `animate-ping` thu hút sự chú ý khi có thông báo mới).
+  - Cửa sổ Popover thả xuống sang trọng (Dropdown Popover 380px) hiển thị danh sách thông báo mới nhất:
+    - Nút "Đọc tất cả" 1-chạm kích hoạt `POST /api/notifications/read-all`.
+    - Thanh điều hướng Tabs phân loại nhanh: Tất cả, Đơn hàng (`Package`), Ưu đãi (`Tag`), Hội viên THUYNGA Club (`Crown`).
+    - Thẻ thông báo trực quan: Nhận diện trạng thái chưa đọc (nền phớt hồng và chấm đỏ rượu), định dạng thời gian tương đối tiếng Việt thân thiện (`Vừa xong`, `XX phút trước`, `XX giờ trước`).
+    - Nhấp thông báo: Tự động đánh dấu đã đọc trên máy chủ, giảm số đếm chưa đọc tức thì và chuyển hướng mượt mà đến trang liên kết (`order`, `flash-sale`, `loyalty`).
+    - Chân Popover: Nút mở nhanh trang Trung tâm thông báo chuyên sâu `/tai-khoan/thong-bao`.
+  - Cơ chế đồng bộ Polling định kỳ 45 giây/lần tự động cập nhật số thông báo mới mà không gây nặng tải cho server.
 - [ ] **Giai đoạn 11.4: Giao diện Storefront Trung Tâm Thông Báo Chuyên Sâu (`/tai-khoan/thong-bao`)**: Trang thông báo đầy đủ tính năng trong menu tài khoản.
 - [ ] **Giai đoạn 11.5: Tích Hợp Kích Hoạt Sự Kiện Tự Động (Auto Event Triggers)**: Tự động gửi thông báo khi đặt hàng, thay đổi trạng thái đơn, thăng hạng VIP và tính năng Admin Broadcast.
 
