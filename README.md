@@ -879,7 +879,29 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - `PATCH /api/user/subscriptions/[id]/action`: Khách hàng thao tác linh hoạt trên gói: Tạm dừng (`PAUSE`), Kích hoạt lại (`RESUME`), Bỏ qua kỳ tới (`SKIP_NEXT`), Đặt giao ngay hôm nay (`DELIVER_NOW`), Hủy gói (`CANCEL`), hoặc Thay đổi chu kỳ (`UPDATE_FREQUENCY`).
   - `GET /api/admin/subscriptions`: Phân hệ Admin CMS tra cứu phân trang, tìm kiếm đa tiêu chí, lọc theo trạng thái & chu kỳ, và tính toán 5 chỉ số KPIs then chốt (Tổng số gói, Gói hoạt động, Gói tạm dừng, Doanh thu định kỳ ước tính MRR, Tổng số đơn hàng định kỳ đã tạo).
   - `POST /api/admin/subscriptions/[id]/trigger`: Endpoint Admin CMS cho phép kích hoạt tạo đơn hàng định kỳ ngay lập tức theo yêu cầu hỗ trợ khách hàng.
-- [ ] **Giai đoạn 13.3: Giao diện Quản Trị Đơn Hàng Định Kỳ Admin CMS (`/admin/don-hang/dinh-ky`)**: 4 Thẻ KPI MRR & Churn, bảng theo dõi gói định kỳ, lọc trạng thái và nút kích hoạt chu kỳ thủ công.
+- [x] **Giai đoạn 13.3: Giao diện Quản Trị Đơn Hàng Định Kỳ Admin CMS (`/admin/don-hang/dinh-ky`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp mục "Đơn định kỳ" kèm biểu tượng `Repeat` trên thanh điều hướng bên trái Admin CMS (`AdminSidebar.tsx`).
+  - 4 Thẻ KPI vận hành & tài chính thời gian thực (`SubscriptionStats.tsx`):
+    - Doanh thu MRR ước tính: Chuẩn hóa doanh thu định kỳ theo tháng (VNĐ).
+    - Gói đang hoạt động: Số lượng gói ACTIVE kèm tỷ lệ % trên tổng số gói.
+    - Đơn định kỳ đã tạo: Số lượng đơn hàng tự động phát sinh theo chu kỳ.
+    - Gói đang tạm dừng: Số lượng khách hàng tạm hoãn nhận hàng.
+  - Bộ lọc đa năng & tìm kiếm tức thì (`SubscriptionFilters.tsx`):
+    - 4 Tabs trạng thái: Tất cả, 🟢 Đang hoạt động, ⏸️ Tạm dừng, ❌ Đã hủy.
+    - Bộ chọn lọc theo chu kỳ: 2 tuần/lần, 1 tháng/lần, 2 tháng/lần, 3 tháng/lần.
+    - Tìm kiếm debounce theo mã `SUB-...`, tên khách, SĐT hoặc tên sản phẩm đăng ký.
+    - Phím tắt mở xem nhanh trang Storefront Gói định kỳ (`/tai-khoan/dinh-ky`) và nút Xóa bộ lọc.
+  - Bảng theo dõi dữ liệu chi tiết (`SubscriptionTable.tsx`):
+    - Mã gói & Khách hàng: Mã `SUB-2026-XXXX`, Avatar, tên, SĐT/email, huy hiệu hạng hội viên (Đồng/Bạc/Vàng/Kim Cương).
+    - Sản phẩm đăng ký: Danh sách tên mặt hàng kèm số lượng x đơn giá.
+    - Chu kỳ giao hàng: Huy hiệu icon `Calendar` hiển thị tần suất.
+    - Trạng thái gói: Huy hiệu màu sắc trực quan (`CheckCircle2`, `Pause`, `AlertCircle`).
+    - Kỳ giao kế tiếp: Ngày giao định dạng tiếng Việt kèm cảnh báo số ngày còn lại (highlight đỏ nếu còn <= 3 ngày).
+    - Doanh thu chu kỳ: Số tiền mỗi kỳ giao (đã áp dụng -10% trọn đời).
+    - Tiến độ chu kỳ: Số kỳ đã giao & số đơn hàng phát sinh (kèm link kiểm tra).
+    - Nút thao tác Admin "Tạo đơn ngay" 1-chạm: Kích hoạt tạo đơn hàng định kỳ tức thì qua API `/api/admin/subscriptions/[id]/trigger`.
+    - Phân trang dữ liệu thông minh.
+  - Trang Server Component [`/admin/don-hang/dinh-ky`](/admin/don-hang/dinh-ky): Kiểm soát quyền Admin RBAC nghiêm ngặt, pre-fetch SSR dữ liệu siêu tốc và kết nối đồng bộ `SubscriptionManager.tsx`.
 - [ ] **Giai đoạn 13.4: Tích Hợp Bộ Chọn Subscribe & Save Trên Trang Chi Tiết Sản Phẩm & Giỏ Hàng**: Chuyển đổi "Mua một lần" vs "Giao định kỳ - Tiết kiệm 10%", chọn chu kỳ giao và hỗ trợ checkout gói định kỳ.
 - [ ] **Giai đoạn 13.5: Giao diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)**: Danh sách gói đăng ký, thẻ trực quan, lịch giao hàng và các nút thao tác 1-chạm (Đổi chu kỳ, Tạm dừng, Giao ngay, Hủy).
 

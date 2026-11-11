@@ -23,6 +23,7 @@ import {
   Zap,
   Award,
   Share2,
+  Repeat,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -78,6 +79,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       icon: ShoppingBag,
       badge: pendingOrdersCount,
       badgeColor: "bg-amber-500 text-white",
+    },
+    {
+      label: "Đơn định kỳ",
+      href: "/admin/don-hang/dinh-ky",
+      icon: Repeat,
     },
     {
       label: "Sản phẩm",
