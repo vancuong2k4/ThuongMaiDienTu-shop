@@ -78,6 +78,13 @@ enum NotificationType {
   SYSTEM          // Thông báo hệ thống
 }
 
+enum ReferralStatus {
+  PENDING       // Người được mời đã đăng ký, chưa có đơn hàng đầu tiên
+  QUALIFIED     // Đã đặt đơn đầu tiên, đang chờ giao hàng
+  REWARDED      // Đơn đầu tiên giao thành công, đã thưởng điểm cho người mời
+  EXPIRED       // Hết hạn hoặc đơn hàng bị hủy
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -98,6 +105,12 @@ model User {
   totalPointsEarned   Int                   @default(0)       // Tổng điểm tích lũy trọn đời
   membershipTier      MembershipTier        @default(BRONZE)  // Hạng thành viên hiện tại
 
+  // Referral & Affiliate
+  referralCode        String?               @unique           // Mã mời độc quyền (ví dụ TNREF8A9B)
+  referredById        String?                                 // ID người đã giới thiệu user này
+  referredBy          User?                 @relation("UserReferrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals           User[]                @relation("UserReferrals")
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -111,9 +124,12 @@ model User {
   cart                Cart?
   loyaltyTransactions LoyaltyTransaction[]
   notifications       Notification[]
+  referralRecords     ReferralRecord[]      @relation("ReferrerUser")
+  referredRecord      ReferralRecord?       @relation("RefereeUser")
 
   @@index([email])
   @@index([phone])
+  @@index([referralCode])
   @@map("users")
 }
 
@@ -468,6 +484,7 @@ model Order {
   items               OrderItem[]
   statusHistory       OrderStatusHistory[]
   loyaltyTransactions LoyaltyTransaction[]
+  referralRecords     ReferralRecord[]
 
   @@index([userId])
   @@index([orderNumber])
@@ -655,4 +672,30 @@ model Notification {
   @@index([userId, isRead])
   @@index([userId, createdAt])
   @@map("notifications")
+}
+
+// ============================================================
+// REFERRAL & AFFILIATE PROGRAM (Mời Bạn Nhận Quà)
+// ============================================================
+
+model ReferralRecord {
+  id                    String         @id @default(cuid())
+  referrerId            String         // Người giới thiệu (chủ link)
+  refereeId             String         @unique // Người được giới thiệu (bạn bè)
+  orderId               String?        // Đơn hàng đầu tiên đủ điều kiện nhận thưởng
+  status                ReferralStatus @default(PENDING)
+  referrerRewardPoints  Int            @default(500) // Điểm thưởng cho người giới thiệu
+  refereeVoucherCode    String?        // Mã voucher chào mừng tặng bạn mới
+  rewardedAt            DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  // Relations
+  referrer User   @relation("ReferrerUser", fields: [referrerId], references: [id], onDelete: Cascade)
+  referee  User   @relation("RefereeUser", fields: [refereeId], references: [id], onDelete: Cascade)
+  order    Order? @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([referrerId])
+  @@index([status])
+  @@map("referral_records")
 }

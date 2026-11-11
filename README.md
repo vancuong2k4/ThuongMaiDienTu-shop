@@ -781,6 +781,19 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tự động thông báo khi Đổi Voucher thành công (`src/app/api/user/loyalty/redeem/route.ts`): Gửi mã code và hướng dẫn sử dụng voucher về hòm thư thông báo.
   - Tự động thông báo khi Admin điều chỉnh điểm tích lũy (`src/app/api/admin/loyalty/adjust/route.ts`): Báo số điểm biến động (+/-) và lý do kiểm toán minh bạch.
 
+### 👥 Giai đoạn 12: Hệ Thống Giới Thiệu Bạn Bè & Tiếp Thị Liên Kết (Referral & Affiliate Program - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 12.1: Nâng cấp Schema Referral, Zod Validations & Seed Dữ Liệu Mời Bạn Bè** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Khởi tạo enum `ReferralStatus` (`PENDING`, `QUALIFIED`, `REWARDED`, `EXPIRED`) trong `prisma/schema.prisma`.
+  - Mở rộng model `User` với mã giới thiệu độc quyền `referralCode` (@unique), quan hệ tự tham chiếu người mời `referredBy` và danh sách người được mời `referrals`.
+  - Tạo mới model `ReferralRecord` (`id`, `referrerId`, `refereeId`, `orderId`, `status`, `referrerRewardPoints`, `refereeVoucherCode`, `rewardedAt`) liên kết trực tiếp với `User` và `Order`.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện (`src/lib/validations/referral.ts`): Cấu hình thể lệ chương trình (Người giới thiệu nhận +500 điểm ~ 50.000₫, Bạn mới nhận Voucher chào mừng 50.000₫ cho đơn từ 300.000₫), schemas áp dụng mã và từ điển hiển thị trạng thái.
+  - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-referrals.ts`): Sinh mã giới thiệu cho toàn bộ khách hàng hiện có và tạo các liên kết bạn bè với các trạng thái thực tế (`REWARDED`, `QUALIFIED`, `PENDING`).
+- [ ] **Giai đoạn 12.2: Hệ Thống REST APIs Quản Lý Giới Thiệu & Động Cơ Trả Thưởng Tự Động**: Endpoints lấy mã mời cá nhân, thống kê hoa hồng và API kiểm duyệt Admin.
+- [ ] **Giai đoạn 12.3: Giao diện Quản trị Giới Thiệu Admin CMS (`/admin/marketing/gioi-thieu`)**: 4 Thẻ KPI chuyển đổi, bảng theo dõi liên kết bạn bè và báo cáo doanh thu giới thiệu.
+- [ ] **Giai đoạn 12.4: Giao diện Storefront Trung Tâm Mời Bạn Nhận Quà (`/tai-khoan/gioi-thieu`)**: Thẻ chia sẻ mã mời sang trọng, nút sao chép link 1-chạm, mã QR và danh sách bạn bè đã mời.
+- [ ] **Giai đoạn 12.5: Tích Hợp Đăng Ký Tài Khoản Nhận Mã Mời & Tự Động Trả Thưởng Khi Giao Hàng**: Tích hợp mã mời vào luồng đăng ký `/api/auth/register`, tự động phát voucher bạn mới và kích hoạt trả thưởng +500 điểm cho người mời khi đơn hàng đầu tiên giao thành công.
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
