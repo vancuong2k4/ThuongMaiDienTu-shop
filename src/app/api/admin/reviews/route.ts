@@ -1,6 +1,6 @@
 // ============================================================
 // app/api/admin/reviews/route.ts
-// API Danh Sách & Thống Kê Kiểm Duyệt Đánh Giá Admin CMS
+// API Danh Sách & Thống Kê Kiểm Duyệt Đánh Giá Admin CMS (Phase 14)
 // ============================================================
 
 import { NextRequest, NextResponse } from "next/server";
@@ -54,10 +54,12 @@ export async function GET(req: NextRequest) {
       orderBy = { rating: "desc" };
     } else if (sortBy === "rating_asc") {
       orderBy = { rating: "asc" };
+    } else if (sortBy === "helpful_desc") {
+      orderBy = { helpfulCount: "desc" };
     }
 
     // ── Truy vấn dữ liệu & Thống kê song song ───────────────────
-    const [reviews, totalCount, statsData, avgAgg] = await Promise.all([
+    const [reviews, totalCount, statsData, avgAgg, mediaCount] = await Promise.all([
       prisma.review.findMany({
         where,
         skip,
@@ -82,6 +84,7 @@ export async function GET(req: NextRequest) {
               name: true,
               email: true,
               avatar: true,
+              membershipTier: true,
             },
           },
         },
@@ -92,19 +95,32 @@ export async function GET(req: NextRequest) {
         prisma.review.count({ where: { status: ReviewStatus.PENDING } }),
         prisma.review.count({ where: { status: ReviewStatus.APPROVED } }),
         prisma.review.count({ where: { status: ReviewStatus.REJECTED } }),
+        prisma.review.count({ where: { status: ReviewStatus.FEATURED } }),
       ]),
       prisma.review.aggregate({
         _avg: { rating: true },
       }),
+      prisma.review.count({
+        where: { images: { isEmpty: false } },
+      }),
     ]);
 
-    const [totalAll, pendingCount, approvedCount, rejectedCount] = statsData;
+    const [totalAll, pendingCount, approvedCount, rejectedCount, featuredCount] = statsData;
 
     const formattedReviews = reviews.map((r) => ({
       id: r.id,
       rating: r.rating,
+      packagingRating: r.packagingRating,
+      freshnessRating: r.freshnessRating,
+      effectivenessRating: r.effectivenessRating,
       content: r.content,
       images: r.images,
+      isVerifiedBuyer: r.isVerifiedBuyer,
+      airCargoVerified: r.airCargoVerified,
+      helpfulCount: r.helpfulCount,
+      adminReply: r.adminReply,
+      adminReplyAt: r.adminReplyAt ? r.adminReplyAt.toISOString() : null,
+      rewardPoints: r.rewardPoints,
       status: r.status,
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
@@ -119,11 +135,13 @@ export async function GET(req: NextRequest) {
         name: r.user.name,
         email: r.user.email,
         avatar: r.user.avatar,
+        membershipTier: r.user.membershipTier,
       },
     }));
 
     const rawAvg = avgAgg._avg.rating || 5.0;
     const averageRating = Math.round(rawAvg * 10) / 10;
+    const mediaRate = totalAll > 0 ? Math.round((mediaCount / totalAll) * 100) : 0;
 
     return NextResponse.json({
       success: true,
@@ -139,7 +157,9 @@ export async function GET(req: NextRequest) {
         pending: pendingCount,
         approved: approvedCount,
         rejected: rejectedCount,
+        featured: featuredCount,
         averageRating,
+        mediaRate,
       },
     });
   } catch (error) {

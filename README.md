@@ -950,7 +950,18 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng lớp kiểm thực Zod toàn diện (`src/lib/validations/review.ts`): Cấu hình điểm thưởng, schemas tạo đánh giá, duyệt đánh giá Admin, hỏi đáp cộng đồng và bộ lọc phân trang.
   - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-reviews-ugc.ts`): 5 đánh giá unboxing hàng bay air thực tế (Aptamil, Manuka Honey, Vitamin Úc), 1 bình chọn hữu ích, 2 câu hỏi hỏi đáp chuyên gia kèm câu trả lời chính thức từ Dược sĩ THUYNGA.
-- [ ] **Giai đoạn 14.2: Hệ Thống REST APIs Đánh Giá, Bình Chọn Hữu Ích, Trả Thưởng Điểm & Hỏi Đáp Q&A**
+- [x] **Giai đoạn 14.2: Hệ Thống REST APIs Đánh Giá, Bình Chọn Hữu Ích, Trả Thưởng Điểm & Hỏi Đáp Q&A** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng module điều phối nghiệp vụ đánh giá (`src/lib/reviews.ts`):
+    - Xác thực người mua hàng thực tế `checkVerifiedBuyer`: Kiểm tra đơn hàng hoàn tất (`DELIVERED`) có chứa sản phẩm, tự động liên kết `orderId`.
+    - Động cơ trả thưởng điểm THUYNGA Club `awardReviewPoints`: Tự động cộng +50 điểm (đánh giá chữ) hoặc +150 điểm (đính kèm ảnh/video UGC), ghi sổ cái giao dịch `LoyaltyTransaction` (`type: EARN_REVIEW`) và gửi thông báo In-App.
+    - Bình chọn hữu ích `toggleHelpfulVote`: Cơ chế bật/tắt (toggle) chống spam, cập nhật bảng `ReviewHelpfulVote` và số đếm `helpfulCount`.
+    - Tính toán ma trận thống kê đa chiều `calculateProductRatingStats`: Điểm trung bình, phân bổ 1-5 sao kèm %, điểm đóng gói air-cargo, date HSD mới, hiệu quả & bé hợp vị, số lượng ảnh UGC.
+  - `POST /api/reviews`: Khách hàng gửi bài đánh giá kèm kiểm thực Zod, tự động nhận diện verified buyer và trả thưởng điểm.
+  - `POST /api/reviews/[id]/helpful`: Khách hàng bình chọn "Hữu ích" cho bài đánh giá hữu ích của người khác.
+  - `GET /api/reviews/product/[slug]`: Endpoint công khai tải danh sách đánh giá đã duyệt/ghim, hỗ trợ phân trang, lọc theo sao, lọc bài có ảnh UGC, lọc người mua thực tế, sắp xếp đa dạng và kiểm tra trạng thái bình chọn của user hiện tại.
+  - `GET & POST /api/products/[slug]/qa`: Khách hàng tra cứu và đặt câu hỏi chuyên gia sữa & TPCN Úc.
+  - `POST /api/products/[slug]/qa/[questionId]/answer`: Dược sĩ / Cộng đồng phản hồi câu hỏi; tự động gán nhãn `isOfficial: true` cho tài khoản Quản trị viên và bắn thông báo In-App cho người hỏi.
+  - `GET & PATCH & DELETE /api/admin/reviews`: Phân hệ Admin CMS tra cứu danh sách kiểm duyệt, thống kê 5 chỉ số (Tổng bài, Chờ duyệt, Điểm TB, Tỷ lệ ảnh UGC, Ghim), cập nhật trạng thái và gửi phản hồi Dược sĩ chính thức.
 - [ ] **Giai đoạn 14.3: Giao Diện Quản Trị Đánh Giá & UGC Admin CMS (`/admin/marketing/danh-gia`)**
 - [ ] **Giai đoạn 14.4: Nâng Cấp Giao Diện Đánh Giá & Tab Hỏi Đáp Chuyên Gia Trên Trang Chi Tiết Sản Phẩm**
 - [ ] **Giai đoạn 14.5: Giao Diện Storefront Trung Tâm Đánh Giá & Săn Điểm Thưởng Của Tôi (`/tai-khoan/danh-gia`)**

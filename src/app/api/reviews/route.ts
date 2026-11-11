@@ -1,46 +1,92 @@
-import { NextResponse } from "next/server";
+// ============================================================
+// app/api/reviews/route.ts
+// REST API Khách Hàng Gửi Đánh Giá Xác Thực & Nhận Thưởng (Phase 14)
+// ============================================================
+
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ReviewStatus } from "@prisma/client";
 import { auth } from "@/lib/auth";
+import { createReviewSchema } from "@/lib/validations/review";
+import { checkVerifiedBuyer, awardReviewPoints } from "@/lib/reviews";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { productId, rating, content, userName } = body;
-
-    if (!productId || !rating || !content || !userName) {
+    const session = await auth();
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Vui lòng điền đầy đủ thông tin đánh giá" },
+        { error: "Vui lòng đăng nhập để gửi đánh giá và nhận điểm thưởng THUYNGA Club" },
+        { status: 401 }
+      );
+    }
+
+    const userId = session.user.id;
+    const body = await req.json();
+    const result = createReviewSchema.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          error: "Dữ liệu đánh giá không hợp lệ",
+          details: result.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }
 
-    // Kiểm tra xem user đã đăng nhập chưa
-    const session = await auth();
-    let userId = session?.user?.id;
+    const {
+      productId,
+      orderId: clientOrderId,
+      rating,
+      packagingRating,
+      freshnessRating,
+      effectivenessRating,
+      content,
+      images,
+    } = result.data;
 
-    if (!userId) {
-      // Nếu là khách ẩn danh chưa đăng nhập: tìm hoặc tạo tài khoản tạm
-      const tempEmail = `guest.${Date.now()}@thuyngashop.local`;
-      const guestUser = await prisma.user.create({
-        data: {
-          name: userName,
-          email: tempEmail,
-          role: "CUSTOMER",
+    // 1. Kiểm tra xem người dùng đã từng đánh giá sản phẩm này chưa
+    const existingReview = await prisma.review.findUnique({
+      where: {
+        productId_userId: {
+          productId,
+          userId,
         },
-      });
-      userId = guestUser.id;
+      },
+    });
+
+    if (existingReview) {
+      return NextResponse.json(
+        { error: "Bạn đã gửi đánh giá cho sản phẩm này rồi" },
+        { status: 400 }
+      );
     }
 
-    // Tạo review (mặc định APPROVED để hiển thị ngay, hoặc PENDING nếu cần duyệt)
+    // 2. Kiểm tra xác thực người mua hàng (Verified Buyer)
+    const buyerCheck = await checkVerifiedBuyer(userId, productId);
+    const finalOrderId = clientOrderId || buyerCheck.orderId;
+    const isVerifiedBuyer = buyerCheck.isVerifiedBuyer || Boolean(finalOrderId);
+
+    // 3. Khởi tạo đánh giá
+    // Nếu là người mua hàng xác thực (Verified Buyer), tự động duyệt APPROVED để hiển thị ngay
+    const initialStatus = isVerifiedBuyer
+      ? ReviewStatus.APPROVED
+      : ReviewStatus.PENDING;
+
     const review = await prisma.review.create({
       data: {
         productId,
         userId,
-        rating: Math.max(1, Math.min(5, Number(rating))),
+        orderId: finalOrderId,
+        rating,
+        packagingRating: packagingRating || rating,
+        freshnessRating: freshnessRating || rating,
+        effectivenessRating: effectivenessRating || rating,
         content: content.trim(),
-        status: ReviewStatus.APPROVED,
-        images: [],
+        images,
+        isVerifiedBuyer,
+        airCargoVerified: true,
+        status: initialStatus,
       },
       include: {
         user: {
@@ -52,11 +98,23 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, data: review });
+    // 4. Trả thưởng điểm THUYNGA Club (+50đ hoặc +150đ kèm ảnh UGC)
+    const { pointsAwarded } = await awardReviewPoints(
+      userId,
+      review.id,
+      images.length > 0
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: `Cảm ơn bạn đã đánh giá! Bạn được tặng +${pointsAwarded} Điểm THUYNGA Club.`,
+      data: review,
+      pointsAwarded,
+    });
   } catch (error) {
-    console.error("Error creating review:", error);
+    console.error("POST /api/reviews error:", error);
     return NextResponse.json(
-      { error: "Không thể gửi đánh giá, vui lòng thử lại sau" },
+      { error: "Đã xảy ra lỗi khi gửi đánh giá, vui lòng thử lại sau" },
       { status: 500 }
     );
   }
