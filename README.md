@@ -1011,7 +1011,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Trang Server Component [`/tai-khoan/danh-gia`](/tai-khoan/danh-gia): Kiểm soát đăng nhập SSR (Auth Guard), đối soát đơn hàng `DELIVERED` và bài review từ Prisma PostgreSQL.
   - Tích hợp điều hướng Storefront: Bổ sung mục "Đánh giá của tôi" (icon `Star`) vào thanh menu tài khoản (`AccountSidebar.tsx`) và menu người dùng Header (`UserAccountMenu.tsx`).
 
-### ✈️ Giai đoạn 15: Hệ Thống Minh Bạch Lô Hàng Air-Cargo, Vận Đơn AWB & Chứng Thực Hạn Sử Dụng (Australian Airway Bill & Batch Transparency System - ĐANG TRIỂN KHAI)
+### ✈️ Giai đoạn 15: Hệ Thống Minh Bạch Lô Hàng Air-Cargo, Vận Đơn AWB & Chứng Thực Hạn Sử Dụng (Australian Airway Bill & Batch Transparency System - HOÀN THÀNH 100%)
 - [x] **Giai đoạn 15.1: Thiết Kế Schema Lô Hàng Bay Air, Mã Lô, Zod Validations & Seed Dữ Liệu Vận Đơn Thực Tế** *(Đã hoàn thành & Đã kiểm thử)*:
   - Khởi tạo enum `ShipmentStatus` (`DEPARTED`, `IN_TRANSIT`, `CUSTOMS_CLEARED`, `IN_WAREHOUSE`) và `AirlineCarrier` (`VIETNAM_AIRLINES_CARGO`, `QANTAS_FREIGHT`, `EMIRATES_SKYCARGO`, `SINGAPORE_AIRLINES_CARGO`) trong `prisma/schema.prisma`.
   - Thiết lập model `AirCargoShipment` (mã chuyến bay, số vận đơn AWB chính thức, hãng hàng không, sân bay khởi hành/hạ cánh SYD/MEL -> HAN, ngày bay, dải nhiệt độ bảo quản lạnh min/max, bản ghi nhiệt độ theo thời gian `temperatureLog`, ảnh hóa đơn mua hàng Chemist Warehouse Úc, ảnh chứng từ thông quan y tế).
@@ -1082,7 +1082,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Cổng Tra Cứu Hợp Nhất & 4 Trụ Cột Cam Kết Vàng (`TransparencyPortalClient.tsx` & Server Component [`/minh-bach-air-cargo`](/minh-bach-air-cargo)):
     - Quản lý đồng bộ URL searchParams `?code=...`, hỗ trợ SSR pre-fetch kết quả tức thì.
     - Khối cẩm nang 3 bước hướng dẫn tra cứu và banner 4 Cam kết vàng (100% Đi Máy Bay, HSD > 18-24 tháng, Kho Lạnh 18-24°C, Hóa Đơn Thuế GST Đầy Đủ).
-- [ ] **Giai đoạn 15.5: Widget Chứng Thực Bay Air Trên Trang Chi Tiết Sản Phẩm & Điều Hướng Toàn Sàn**
+- [x] **Giai đoạn 15.5: Widget Chứng Thực Bay Air Trên Trang Chi Tiết Sản Phẩm & Điều Hướng Toàn Sàn** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Widget Huy Hiệu Lô Hàng Bay Air Đang Lưu Hành (`ProductAirCargoBadge.tsx`):
+    - Tự động hiển thị huy hiệu nổi bật ngay dưới 4 cam kết vàng của trang chi tiết sản phẩm.
+    - Hiển thị đầy đủ thông số mã chuyến bay (VN782), số vận đơn AWB (738-98421054), mã lô dập nổi đáy lon (`batchCode`), dải nhiệt độ kho mát 18-24°C, nguồn mua Chemist Warehouse Úc.
+    - Đếm ngược số tháng HSD còn lại kèm huy hiệu "Date mới tinh (Còn 23 tháng HSD)".
+    - Nút dẫn động "Soi hóa đơn & AWB" đưa khách hàng trực tiếp sang Cổng tra cứu minh bạch kèm mã lô được điền sẵn tự động.
+    - Chế độ dự phòng thông minh (Fallback) hiển thị cam kết 100% bay air cho các sản phẩm chưa gán mã lô cụ thể.
+  - Tích hợp liên hoàn Server Component & Client State (`ProductDetailClient.tsx`, `ProductInfoSection.tsx`, `/san-pham/[slug]`):
+    - Server Component trang sản phẩm tự động truy vấn SSR `getLatestBatchForProduct(product.id)` song song với các sản phẩm liên quan.
+    - Truyền dữ liệu kiểu định type-safe xuống `ProductDetailClient` và render mượt mà trong `ProductInfoSection`.
+  - Nâng Cấp Hệ Thống Điều Hướng Toàn Sàn:
+    - Top Announcement Bar: Bổ sung liên kết "Minh bạch bay Air" (icon `Plane`) trên đỉnh trang web.
+    - Header Navigation Bar: Bổ sung huy hiệu "Minh bạch bay Air" nổi bật bên cạnh nút "FLASH SALE".
+    - Footer Chân Trang: Bổ sung mục "Minh bạch lô bay Air & Hạn sử dụng (AWB)" trong khối Hỗ Trợ & Chính Sách.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.

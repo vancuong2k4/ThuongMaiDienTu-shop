@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { ProductDetailClient } from "@/components/storefront/product/ProductDetailClient";
 import { ProductCard, ProductCardData } from "@/components/storefront/product/ProductCard";
 import { ChevronRight, Home, ShieldCheck, ArrowRight } from "lucide-react";
+import { getLatestBatchForProduct } from "@/lib/aircargo";
 
 export const revalidate = 60; // Tự động làm mới cache mỗi 60s (ISR)
 
@@ -110,21 +111,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Truy vấn sản phẩm liên quan trong cùng ngành hàng (lấy 4 sản phẩm)
-  const relatedProducts = await prisma.product.findMany({
-    where: {
-      categoryId: product.categoryId,
-      id: { not: product.id },
-      isActive: true,
-    },
-    take: 4,
-    include: {
-      category: { select: { name: true, slug: true } },
-      variants: { where: { isActive: true }, orderBy: { sortOrder: "asc" } },
-      images: { orderBy: { sortOrder: "asc" }, take: 2 },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // Truy vấn sản phẩm liên quan trong cùng ngành hàng và lô hàng bay Air mới nhất song song
+  const [relatedProducts, latestBatch] = await Promise.all([
+    prisma.product.findMany({
+      where: {
+        categoryId: product.categoryId,
+        id: { not: product.id },
+        isActive: true,
+      },
+      take: 4,
+      include: {
+        category: { select: { name: true, slug: true } },
+        variants: { where: { isActive: true }, orderBy: { sortOrder: "asc" } },
+        images: { orderBy: { sortOrder: "asc" }, take: 2 },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    getLatestBatchForProduct(product.id),
+  ]);
 
   // Serialize Prisma Decimal objects sang số thuần để truyền an toàn xuống Client Component
   const serializedProduct = {
@@ -281,7 +285,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
         </nav>
 
         {/* ── Client Product Detail Interactive Component ────────── */}
-        <ProductDetailClient product={serializedProduct} />
+        <ProductDetailClient
+          product={serializedProduct}
+          latestBatch={latestBatch}
+        />
 
         {/* ── Related Products (Sản phẩm cùng ngành hàng) ─────────── */}
         {serializedRelated.length > 0 && (

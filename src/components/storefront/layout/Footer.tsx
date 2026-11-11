@@ -280,6 +280,15 @@ export function Footer({ categories = [] }: FooterProps) {
               </li>
               <li>
                 <Link
+                  href="/minh-bach-air-cargo"
+                  className="hover:text-white font-semibold transition-colors flex items-center gap-1.5 py-0.5 text-sky-400"
+                >
+                  <ChevronRight className="w-3 h-3 text-sky-400 shrink-0" />
+                  <span>Minh bạch lô bay Air & Hạn sử dụng (AWB)</span>
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/tin-tuc"
                   className="hover:text-white transition-colors flex items-center gap-1.5 py-0.5"
                 >

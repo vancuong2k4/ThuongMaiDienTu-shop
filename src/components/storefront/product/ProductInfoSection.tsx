@@ -30,6 +30,10 @@ import {
   type SubscriptionFrequencyType,
 } from "@/components/storefront/product/SubscriptionOptionSelector";
 import { SUBSCRIPTION_CONFIG } from "@/lib/validations/subscription";
+import {
+  ProductAirCargoBadge,
+  type LatestBatchData,
+} from "@/components/storefront/product/ProductAirCargoBadge";
 
 export interface VariantData {
   id: string;
@@ -65,6 +69,7 @@ interface ProductInfoSectionProps {
   selectedVariant: VariantData;
   onSelectVariant: (variant: VariantData) => void;
   reviewAverage?: number;
+  latestBatch?: LatestBatchData | null;
 }
 
 export function ProductInfoSection({
@@ -72,6 +77,7 @@ export function ProductInfoSection({
   selectedVariant,
   onSelectVariant,
   reviewAverage = 5.0,
+  latestBatch,
 }: ProductInfoSectionProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
@@ -326,6 +332,9 @@ export function ProductInfoSection({
           </div>
         </div>
       </div>
+
+      {/* ── 3.5. Minh Bạch Vận Chuyển Air-Cargo & Hạn Sử Dụng (Phase 15) ── */}
+      <ProductAirCargoBadge latestBatch={latestBatch} />
 
       {/* ── 4. Smart Variant Selector (Bộ chọn biến thể thông minh) ─── */}
       <div className="space-y-3 pt-2">

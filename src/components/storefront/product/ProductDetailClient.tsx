@@ -8,6 +8,7 @@ import { ProductReviewsSection, ReviewItemData } from "./ProductReviewsSection";
 import { ProductQnABox } from "./ProductQnABox";
 import { StickyMobileCartBar } from "./StickyMobileCartBar";
 import { calcDiscount } from "@/lib/utils";
+import type { LatestBatchData } from "./ProductAirCargoBadge";
 
 interface ProductDetailClientProps {
   product: {
@@ -31,9 +32,10 @@ interface ProductDetailClientProps {
       reviews: number;
     };
   };
+  latestBatch?: LatestBatchData | null;
 }
 
-export function ProductDetailClient({ product }: ProductDetailClientProps) {
+export function ProductDetailClient({ product, latestBatch }: ProductDetailClientProps) {
   // Tìm biến thể mặc định hoặc biến thể đầu tiên
   const initialVariant =
     product.variants.find((v) => v.isDefault) || product.variants[0];
@@ -90,6 +92,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
             selectedVariant={selectedVariant}
             onSelectVariant={handleSelectVariant}
             reviewAverage={reviewAverage}
+            latestBatch={latestBatch}
           />
         </div>
       </div>

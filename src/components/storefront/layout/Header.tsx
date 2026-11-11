@@ -81,6 +81,14 @@ export function Header({ categories }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-5">
+            <Link
+              href="/minh-bach-air-cargo"
+              className="flex items-center gap-1 text-sky-200 hover:text-white transition-colors"
+            >
+              <Plane className="w-3.5 h-3.5 text-sky-300" />
+              <span>Minh bạch bay Air</span>
+            </Link>
+            <span className="text-white/20">|</span>
             <a
               href="https://facebook.com/thuyngashop.com.vn"
               target="_blank"
@@ -283,6 +291,15 @@ export function Header({ categories }: HeaderProps) {
 
             {/* 3. Utility Promotion Badges (Căn sát góc phải bằng ml-auto, cân xứng với Giỏ hàng) */}
             <div className="flex items-center gap-2 ml-auto shrink-0">
+              {/* Minh bạch bay Air */}
+              <Link
+                href="/minh-bach-air-cargo"
+                className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200/80 font-bold text-xs rounded-full transition-all whitespace-nowrap"
+              >
+                <Plane className="w-3.5 h-3.5 text-sky-600" />
+                <span>Minh bạch bay Air</span>
+              </Link>
+
               {/* Flash Sale link */}
               <Link
                 href="/flash-sale"
