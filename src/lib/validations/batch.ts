@@ -87,6 +87,8 @@ export const createShipmentSchema = z.object({
 });
 
 export type CreateShipmentInput = z.infer<typeof createShipmentSchema>;
+export const updateShipmentSchema = createShipmentSchema.partial();
+export type UpdateShipmentInput = z.infer<typeof updateShipmentSchema>;
 
 export const createBatchSchema = z.object({
   batchCode: z
@@ -106,6 +108,8 @@ export const createBatchSchema = z.object({
 });
 
 export type CreateBatchInput = z.infer<typeof createBatchSchema>;
+export const updateBatchSchema = createBatchSchema.partial();
+export type UpdateBatchInput = z.infer<typeof updateBatchSchema>;
 
 export const verifyBatchQuerySchema = z.object({
   batchCode: z.string().min(2, "Mã lô tra cứu tối thiểu 2 ký tự"),

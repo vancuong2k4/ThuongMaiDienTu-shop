@@ -1021,7 +1021,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng lớp kiểm thực Zod toàn diện (`src/lib/validations/batch.ts`): Cấu hình 4 hãng hàng không, 4 trạng thái vận chuyển khoang mát và schemas tạo lô hàng, tạo mã lô, tra cứu minh bạch.
   - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-aircargo-batches.ts`): Nạp 2 lô hàng bay air tiêu biểu (Chuyến bay VN782 của Vietnam Airlines Cargo từ Sydney, Chuyến bay QF43 của Qantas Freight từ Melbourne), 3 mã lô chính thức cho Aptamil, Mật ong Manuka, Swisse và 2 nhật ký tra cứu mẫu.
-- [ ] **Giai đoạn 15.2: Hệ Thống REST APIs Tra Cứu Vận Đơn AWB, Quản Lý Lô Hàng & Kiểm Chứng HSD**
+- [x] **Giai đoạn 15.2: Hệ Thống REST APIs Tra Cứu Vận Đơn AWB, Quản Lý Lô Hàng & Kiểm Chứng HSD** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện nghiệp vụ tra cứu & quản lý kho lạnh (`src/lib/aircargo.ts`):
+    - `verifyBatchByCode`: Tra cứu mã lô hàng, đối soát mã vạch Úc, tự động tính toán số tháng HSD còn lại (`monthsRemaining`), gán huy hiệu độ tươi mới (Date mới tinh / Date rất xa), liên kết toàn bộ lộ trình chuyến bay, dải nhiệt độ khoang mát và ghi nhận nhật ký tra cứu IP/User-Agent.
+    - `getLatestBatchForProduct`: Lấy thông tin lô hàng bay air đang lưu hành mới nhất của một sản phẩm (mã AWB, chuyến bay, hãng vận chuyển, ngày hạ cánh, nhiệt độ bảo quản) phục vụ gắn badge uy tín.
+    - `calculateAirCargoKPIs`: Tính toán 5 chỉ số vận hành kho lạnh hàng không thời gian thực (Tổng số chuyến bay, Tổng số lô hàng, Lô hàng đang lưu hành, Chuyến bay đang bay/vận chuyển, Tổng lượt khách tra cứu minh bạch).
+  - API Storefront tra cứu công khai:
+    - `GET /api/aircargo/verify/[batchCode]`: API tra cứu mã lô hàng thời gian thực, xác thực đầy đủ hóa đơn mua hàng Chemist Warehouse Úc và hải quan Nội Bài.
+    - `GET /api/aircargo/latest/[productId]`: API lấy dữ liệu chứng nhận bay air mới nhất để render widget trên trang chi tiết sản phẩm.
+  - Bộ REST APIs Quản trị Admin CMS bảo mật (`ADMIN` role check):
+    - `GET & POST /api/admin/aircargo/shipments`: Lấy danh sách chuyến bay phân trang, lọc theo hãng hàng không, trạng thái vận chuyển, tìm kiếm theo số AWB/mã chuyến; tạo chuyến bay mới với Zod validation và tự động sinh mã chuyến.
+    - `GET, PATCH & DELETE /api/admin/aircargo/shipments/[id]`: Xem chi tiết chuyến bay kèm danh sách lô hàng liên kết; cập nhật trạng thái thông quan/nhiệt độ; chặn xóa an toàn nếu chuyến bay đang chứa các lô hàng liên kết.
+    - `GET & POST /api/admin/aircargo/batches`: Quản lý danh sách lô hàng sản phẩm phân trang, lọc theo chuyến bay/sản phẩm; tạo lô hàng mới kiểm tra chống trùng mã lô (`batchCode`).
+    - `GET, PATCH & DELETE /api/admin/aircargo/batches/[id]`: Xem chi tiết lịch sử tra cứu của lô; cập nhật ngày HSD/tồn kho/trạng thái lưu hành; xóa lô hàng an toàn.
+- [ ] **Giai đoạn 15.3: Giao Diện Quản Trị Lô Hàng Bay Air & Mã Lô Admin CMS (`/admin/kho-hang/lo-hang-air`)**
 - [ ] **Giai đoạn 15.3: Giao Diện Quản Trị Lô Hàng Bay Air & Mã Lô Admin CMS (`/admin/kho-hang/lo-hang-air`)**
 - [ ] **Giai đoạn 15.4: Giao Diện Storefront Tra Cứu Minh Bạch Nguồn Gốc & Hạn Sử Dụng Air-Cargo (`/minh-bach-air-cargo`)**
 - [ ] **Giai đoạn 15.5: Widget Chứng Thực Bay Air Trên Trang Chi Tiết Sản Phẩm & Điều Hướng Toàn Sàn**
