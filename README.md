@@ -859,7 +859,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Cộng ngay +500 Điểm THUYNGA Club cho người giới thiệu, ghi nhật ký sổ cái `LoyaltyTransaction` (`type: "EARN_REFERRAL"`).
     - Bắn thông báo đẩy In-App ăn mừng gửi đến chuông thông báo của người giới thiệu!
 
-### 🔄 Giai đoạn 13: Phân Hệ Đơn Hàng Đăng Ký Định Kỳ Tiết Kiệm (Subscribe & Save / Auto-Ship - ĐANG TRIỂN KHAI)
+### ✅ Giai đoạn 13: Phân Hệ Đơn Hàng Đăng Ký Định Kỳ Tiết Kiệm (Subscribe & Save / Auto-Ship - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 13.1: Nâng cấp Schema Subscription, Zod Validations & Seed Dữ Liệu Gói Định Kỳ** *(Đã hoàn thành & Đã kiểm thử)*:
   - Khởi tạo enum `SubscriptionFrequency` (`EVERY_2_WEEKS`, `EVERY_1_MONTH`, `EVERY_2_MONTHS`, `EVERY_3_MONTHS`) và `SubscriptionStatus` (`ACTIVE`, `PAUSED`, `CANCELLED`, `EXPIRED`) trong `prisma/schema.prisma`.
   - Thiết lập model `Subscription` (`id`, `subscriptionNumber`, `userId`, `frequency`, `status`, `discountPercent: 10`, `startDate`, `nextDeliveryDate`, `lastDeliveryDate`, `totalCyclesDelivered`, `recipientName`, `recipientPhone`, `shippingAddress`, `paymentMethod`, `note`, `pausedAt`, `cancelledAt`, `cancellationReason`).
@@ -919,8 +919,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Tạo bản ghi `Subscription` và `SubscriptionItem` trong cùng 1 transaction atomic.
     - Liên kết `subscriptionId` với `Order` đầu tiên.
     - Tự động bắn thông báo In-App chúc mừng khách hàng đã đăng ký gói định kỳ thành công.
-- [ ] **Giai đoạn 13.5: Giao diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)**: Danh sách gói đăng ký, thẻ trực quan, lịch giao hàng và các nút thao tác 1-chạm (Đổi chu kỳ, Tạm dừng, Giao ngay, Hủy).
-- [ ] **Giai đoạn 13.5: Giao diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)**: Danh sách gói đăng ký, thẻ trực quan, lịch giao hàng và các nút thao tác 1-chạm (Đổi chu kỳ, Tạm dừng, Giao ngay, Hủy).
+- [x] **Giai đoạn 13.5: Giao Diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Banner đặc quyền thượng lưu (`SubscriptionHeroBanner.tsx`): Tông màu rượu vang `#800028` kết hợp xanh ngọc lục bảo, làm nổi bật 3 cam kết: Giảm 10% trọn đời mọi chu kỳ, Freeship 100% toàn quốc và Linh hoạt 1-chạm.
+  - 3 Thẻ thống kê trực quan (`SubscriptionStatsCards.tsx`): Số gói đang kích hoạt, Lịch giao hàng gần nhất (kèm đếm ngược số ngày còn lại), Tổng số tiền đã tiết kiệm từ chiết khấu và freeship.
+  - Thẻ thông tin gói chi tiết (`SubscriptionCard.tsx`):
+    - Mã gói `#SUB-2026-XXXX`, huy hiệu trạng thái (Đang hoạt động / Tạm dừng / Đã hủy), chu kỳ giao hàng (2 tuần, 1 tháng, 2 tháng, 3 tháng).
+    - Cảnh báo lịch giao tiếp theo nổi bật kèm đếm ngược ngày.
+    - Danh sách sản phẩm trong gói: Ảnh thumbnail, tên sản phẩm, phân loại, số lượng, đơn giá sau giảm 10%.
+    - Thông tin người nhận, địa chỉ giao hàng và phương thức thanh toán.
+    - Bảng tổng kết tài chính: Tạm tính, Tiết kiệm 10%, Phí ship 0₫ (Freeship), Tổng thanh toán mỗi kỳ.
+    - Accordion lịch sử các đơn hàng đã được tạo tự động từ gói kèm liên kết đến chi tiết đơn hàng.
+    - Thanh tác vụ 1-chạm: Tạm dừng gói, Kích hoạt lại, Bỏ qua lần giao này, Giao ngay hôm nay (lập tức đóng gói đi air), Đổi chu kỳ nhận hàng (kèm Modal chọn tần suất trực quan), và Hủy gói.
+  - Client Container điều phối (`SubscriptionHubClient.tsx`): Tabs phân loại (Tất cả, Đang hoạt động, Tạm dừng, Đã hủy), thông báo toast realtime khi thực hiện thao tác, trạng thái rỗng thân thiện kích thích mua sắm, Accordion FAQ giải đáp thắc mắc khách hàng.
+  - Trang Server Component [`/tai-khoan/dinh-ky`](/tai-khoan/dinh-ky): Kiểm soát xác thực SSR, prefetch dữ liệu gói định kỳ và lịch sử đơn hàng từ Prisma.
+  - Tích hợp điều hướng Storefront: Bổ sung mục "Gói giao định kỳ" (icon `Repeat`) vào cả `AccountSidebar.tsx` và `UserAccountMenu.tsx`.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.

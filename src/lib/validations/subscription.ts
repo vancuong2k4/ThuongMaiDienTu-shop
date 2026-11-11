@@ -59,6 +59,8 @@ export const SUBSCRIPTION_CONFIG = {
   },
 } as const;
 
+export const SUBSCRIPTION_FREQUENCY_CONFIG = SUBSCRIPTION_CONFIG.FREQUENCIES;
+
 export const subscriptionItemSchema = z.object({
   variantId: z.string().optional().nullable(),
   productName: z.string().min(1, "Tên sản phẩm không được trống"),
