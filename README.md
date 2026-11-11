@@ -781,7 +781,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tự động thông báo khi Đổi Voucher thành công (`src/app/api/user/loyalty/redeem/route.ts`): Gửi mã code và hướng dẫn sử dụng voucher về hòm thư thông báo.
   - Tự động thông báo khi Admin điều chỉnh điểm tích lũy (`src/app/api/admin/loyalty/adjust/route.ts`): Báo số điểm biến động (+/-) và lý do kiểm toán minh bạch.
 
-### 👥 Giai đoạn 12: Hệ Thống Giới Thiệu Bạn Bè & Tiếp Thị Liên Kết (Referral & Affiliate Program - ĐANG TRIỂN KHAI)
+### 👥 Giai đoạn 12: Hệ Thống Giới Thiệu Bạn Bè & Tiếp Thị Liên Kết (Referral & Affiliate Program - HOÀN THÀNH 100%)
 - [x] **Giai đoạn 12.1: Nâng cấp Schema Referral, Zod Validations & Seed Dữ Liệu Mời Bạn Bè** *(Đã hoàn thành & Đã kiểm thử)*:
   - Khởi tạo enum `ReferralStatus` (`PENDING`, `QUALIFIED`, `REWARDED`, `EXPIRED`) trong `prisma/schema.prisma`.
   - Mở rộng model `User` với mã giới thiệu độc quyền `referralCode` (@unique), quan hệ tự tham chiếu người mời `referredBy` và danh sách người được mời `referrals`.
@@ -842,7 +842,22 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Trạng thái rỗng thân thiện (Empty State) kèm nút gọi hành động "Mời bạn bè ngay".
   - Bộ câu hỏi thường gặp FAQ Accordion (`ReferralFAQ.tsx`): Giải đáp 5 thắc mắc phổ biến về thể lệ, thời điểm trả thưởng và tính chất không giới hạn số lượt mời.
   - Trang Server Component [`/tai-khoan/gioi-thieu`](/tai-khoan/gioi-thieu): Kiểm soát phiên đăng nhập (Auth Guard), tự động sinh mã mời nếu người dùng chưa có (`ensureUserReferralCode`), pre-fetch SSR dữ liệu bạn bè siêu tốc và kết nối đồng bộ Client Component.
-- [ ] **Giai đoạn 12.5: Tích Hợp Đăng Ký Tài Khoản Nhận Mã Mời & Tự Động Trả Thưởng Khi Giao Hàng**: Tích hợp mã mời vào luồng đăng ký `/api/auth/register`, tự động phát voucher bạn mới và kích hoạt trả thưởng +500 điểm cho người mời khi đơn hàng đầu tiên giao thành công.
+- [x] **Giai đoạn 12.5: Tích Hợp Đăng Ký Tài Khoản Nhận Mã Mời & Tự Động Trả Thưởng Khi Giao Hàng** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Nâng cấp luồng đăng ký tài khoản (`src/app/api/auth/register/route.ts` & `src/lib/validations/auth.ts`):
+    - Nhận diện `referralCode` từ request body; kiểm tra tồn tại và tính hợp lệ của người giới thiệu.
+    - Tự động sinh `referralCode` độc quyền cho tài khoản mới ngay khi tạo.
+    - Tự động gán `referredById`, tạo bản ghi `ReferralRecord` (trạng thái `PENDING`), tự sinh Voucher chào mừng 50.000₫ `BANMOI-XXXX` và bắn 2 thông báo In-App thông báo người mời & bạn mới.
+  - Giao diện đăng ký thân thiện (`src/components/storefront/auth/RegisterForm.tsx`):
+    - Tự động nhận diện query param `?ref=...` từ URL và điền sẵn mã giới thiệu.
+    - Hiển thị banner chào đón nổi bật: "🎁 Bạn đang được giới thiệu bởi mã REF-... Đăng ký ngay để nhận Voucher 50.000₫!".
+    - Bổ sung ô nhập mã giới thiệu trực quan (tùy chọn) với icon `Gift`.
+  - Tự động liên kết đơn hàng đầu tiên (`src/app/api/orders/route.ts`):
+    - Khi bạn mới thực hiện đặt đơn hàng đầu tiên, hệ thống tự động tìm kiếm `ReferralRecord` (PENDING), liên kết `orderId: newOrder.id` và chuyển sang trạng thái `QUALIFIED` (đã kích hoạt phát sinh đơn hàng).
+  - Tự động kích hoạt trả thưởng khi giao hàng thành công (`src/app/api/admin/orders/[id]/status/route.ts`):
+    - Khi đơn hàng chuyển sang `DELIVERED`, hệ thống tự động kích hoạt `processReferralRewardOnDelivered(order.id)`.
+    - Chuyển trạng thái liên kết sang `REWARDED`, cập nhật thời điểm nhận thưởng `rewardedAt`.
+    - Cộng ngay +500 Điểm THUYNGA Club cho người giới thiệu, ghi nhật ký sổ cái `LoyaltyTransaction` (`type: "EARN_REFERRAL"`).
+    - Bắn thông báo đẩy In-App ăn mừng gửi đến chuông thông báo của người giới thiệu!
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.

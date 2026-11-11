@@ -34,6 +34,11 @@ export const registerSchema = z
         "Mật khẩu phải có chữ hoa, chữ thường và số"
       ),
     confirmPassword: z.string(),
+    referralCode: z
+      .string()
+      .max(20)
+      .optional()
+      .or(z.literal("")),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Mật khẩu xác nhận không khớp",

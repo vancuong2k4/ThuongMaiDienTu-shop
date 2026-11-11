@@ -434,6 +434,25 @@ export async function POST(req: NextRequest) {
           });
         }
 
+        // 7. Tự động liên kết đơn hàng đầu tiên với bản ghi giới thiệu bạn bè (Stage 12.5)
+        const pendingReferral = await tx.referralRecord.findUnique({
+          where: { refereeId: currentUserId },
+        });
+
+        if (
+          pendingReferral &&
+          pendingReferral.status === "PENDING" &&
+          !pendingReferral.orderId
+        ) {
+          await tx.referralRecord.update({
+            where: { id: pendingReferral.id },
+            data: {
+              orderId: newOrder.id,
+              status: "QUALIFIED",
+            },
+          });
+        }
+
         return newOrder;
       },
       {

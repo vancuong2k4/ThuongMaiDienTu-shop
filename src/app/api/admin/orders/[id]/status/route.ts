@@ -10,6 +10,7 @@ import { updateOrderStatusSchema } from "@/lib/validations/order";
 import { MEMBERSHIP_TIER_CONFIG } from "@/lib/validations/loyalty";
 import type { MembershipTier } from "@prisma/client";
 import { createInAppNotification } from "@/lib/notifications";
+import { processReferralRewardOnDelivered } from "@/lib/referral";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -283,6 +284,9 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
           type: "ORDER_STATUS",
           link: `/tai-khoan/don-hang/${order.orderNumber}`,
         });
+
+        // Tự động kích hoạt trả thưởng +500 điểm cho người giới thiệu nếu là đơn đầu (Stage 12.5)
+        await processReferralRewardOnDelivered(order.id);
       } else if (newStatus === "CANCELLED") {
         await createInAppNotification({
           userId: order.userId,

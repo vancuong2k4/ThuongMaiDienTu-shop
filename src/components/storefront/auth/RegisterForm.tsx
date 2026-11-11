@@ -21,18 +21,21 @@ import {
   ArrowRight,
   UserPlus,
   CheckCircle2,
+  Gift,
 } from "lucide-react";
 
 export const RegisterForm: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const refParam = searchParams.get("ref") || "";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [referralCode, setReferralCode] = useState(refParam);
   const [showPassword, setShowPassword] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +76,7 @@ export const RegisterForm: React.FC = () => {
           phone: phone.trim() || undefined,
           password,
           confirmPassword,
+          referralCode: referralCode.trim() || undefined,
         }),
       });
 
@@ -127,6 +131,19 @@ export const RegisterForm: React.FC = () => {
           <div className="mb-5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2.5">
             <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
             <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {refParam && (
+          <div className="mb-4 p-3.5 rounded-2xl bg-gradient-to-r from-amber-50 to-rose-50 border border-amber-200 text-xs text-amber-950 flex items-start gap-2.5">
+            <Gift className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold">Ưu đãi bạn mới:</span> Bạn đang được giới thiệu bởi mã{" "}
+              <span className="font-mono font-bold text-[#800028] bg-white px-1.5 py-0.5 rounded border border-amber-300">
+                {refParam}
+              </span>
+              . Đăng ký ngay để nhận Voucher 50.000₫!
+            </div>
           </div>
         )}
 
@@ -238,6 +255,28 @@ export const RegisterForm: React.FC = () => {
                 disabled={isLoading}
                 required
                 className="w-full h-11 pl-10 pr-3.5 text-sm bg-neutral-50/60 border border-neutral-300 rounded-xl focus:bg-white focus:outline-none focus:border-[#800028] focus:ring-1 focus:ring-[#800028] transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Mã giới thiệu (Tùy chọn) */}
+          <div>
+            <label className="block text-xs font-semibold text-neutral-700 mb-1 flex items-center justify-between">
+              <span>Mã giới thiệu (Không bắt buộc)</span>
+              <span className="text-[11px] text-amber-600 font-bold">Nhận Voucher 50.000₫</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+                <Gift className="w-4 h-4 text-amber-600" />
+              </div>
+              <input
+                type="text"
+                placeholder="Ví dụ: REF-THUYNGA-XXXX"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                disabled={isLoading}
+                maxLength={20}
+                className="w-full h-11 pl-10 pr-3.5 text-sm font-mono font-bold uppercase bg-neutral-50/60 border border-neutral-300 rounded-xl focus:bg-white focus:outline-none focus:border-[#800028] focus:ring-1 focus:ring-[#800028] transition-colors"
               />
             </div>
           </div>
