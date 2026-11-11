@@ -3,6 +3,8 @@
 // Định nghĩa kiểu dữ liệu cho giao diện Quản Lý Tích Điểm Admin CMS
 // ============================================================
 
+import type { LoyaltyType } from "@prisma/client";
+
 export interface LoyaltyUserSummary {
   id: string;
   name: string;
@@ -16,12 +18,7 @@ export interface LoyaltyUserSummary {
 export interface LoyaltyTransactionItem {
   id: string;
   points: number;
-  type:
-    | "EARN_ORDER"
-    | "REDEEM_ORDER"
-    | "REDEEM_VOUCHER"
-    | "ADMIN_ADJUST"
-    | "SIGNUP_BONUS";
+  type: LoyaltyType;
   description: string;
   balanceAfter: number;
   createdAt: string;

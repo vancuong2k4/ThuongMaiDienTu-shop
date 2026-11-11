@@ -3,6 +3,8 @@
 // Kiểu dữ liệu Storefront Khách Hàng Thân Thiết THUYNGA Club
 // ============================================================
 
+import type { LoyaltyType } from "@prisma/client";
+
 export interface TierConfig {
   name: string;
   code: string;
@@ -35,12 +37,7 @@ export interface RewardOption {
 export interface LoyaltyTransactionEntry {
   id: string;
   points: number;
-  type:
-    | "EARN_ORDER"
-    | "REDEEM_ORDER"
-    | "REDEEM_VOUCHER"
-    | "ADMIN_ADJUST"
-    | "SIGNUP_BONUS";
+  type: LoyaltyType;
   description: string;
   balanceAfter: number;
   createdAt: string;

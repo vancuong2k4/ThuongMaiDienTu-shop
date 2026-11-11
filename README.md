@@ -934,6 +934,27 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Trang Server Component [`/tai-khoan/dinh-ky`](/tai-khoan/dinh-ky): Kiểm soát xác thực SSR, prefetch dữ liệu gói định kỳ và lịch sử đơn hàng từ Prisma.
   - Tích hợp điều hướng Storefront: Bổ sung mục "Gói giao định kỳ" (icon `Repeat`) vào cả `AccountSidebar.tsx` và `UserAccountMenu.tsx`.
 
+### 🌟 Giai đoạn 14: Hệ Thống Đánh Giá & Trưng Bày UGC Người Dùng Thực Tế Xác Thực Đường Bay Air-Cargo (Verified Air-Cargo Customer Reviews, UGC Showcase & Community Q&A - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 14.1: Nâng Cấp Schema Đánh Giá Đa Chiều, Q&A Chuyên Gia, Zod Validations & Seed Dữ Liệu UGC Thực Tế** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Mở rộng enum `ReviewStatus` bổ sung trạng thái `FEATURED` (Ghim bài đánh giá & ảnh UGC nổi bật lên đầu trang sản phẩm/trang chủ).
+  - Bổ sung giá trị `EARN_REVIEW` trong enum `LoyaltyType` để liên kết sổ cái tích điểm thưởng THUYNGA Club khi khách hàng gửi review (+50 đến +150 điểm).
+  - Nâng cấp toàn diện model `Review` trong `prisma/schema.prisma`:
+    - Đánh giá đa chiều 4 tiêu chí: Sao tổng thể `rating` (1-5), Đóng gói & Giữ nhiệt Air-cargo `packagingRating` (1-5), Date HSD mới chuẩn Úc `freshnessRating` (1-5), Hiệu quả & Bé hợp vị `effectivenessRating` (1-5).
+    - Huy hiệu uy tín: `isVerifiedBuyer` (Đã mua hàng từ đơn thực tế), `airCargoVerified` (Xác thực hàng bay Air-cargo chính ngạch kèm bill Chemist Warehouse).
+    - Tương tác cộng đồng: Đếm số lượt cảm ơn hữu ích `helpfulCount`, liên kết 1-N với model `ReviewHelpfulVote`.
+    - Phản hồi từ Dược sĩ / CSKH THUYNGA Shop: `adminReply` và `adminReplyAt`.
+    - Thưởng điểm THUYNGA Club: `rewardPoints` ghi nhận điểm thưởng đã chi trả (+50đ bài chữ, +150đ bài kèm ảnh/video UGC).
+    - Liên kết trực tiếp với đơn hàng `orderId` trong `Order`.
+  - Khởi tạo model `ReviewHelpfulVote` chống spam bình chọn "Hữu ích".
+  - Khởi tạo model `ProductQuestion` và `ProductAnswer` hỗ trợ phân hệ Hỏi Đáp Chuyên Gia Sữa & TPCN Úc trực tiếp trên trang chi tiết sản phẩm.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng lớp kiểm thực Zod toàn diện (`src/lib/validations/review.ts`): Cấu hình điểm thưởng, schemas tạo đánh giá, duyệt đánh giá Admin, hỏi đáp cộng đồng và bộ lọc phân trang.
+  - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-reviews-ugc.ts`): 5 đánh giá unboxing hàng bay air thực tế (Aptamil, Manuka Honey, Vitamin Úc), 1 bình chọn hữu ích, 2 câu hỏi hỏi đáp chuyên gia kèm câu trả lời chính thức từ Dược sĩ THUYNGA.
+- [ ] **Giai đoạn 14.2: Hệ Thống REST APIs Đánh Giá, Bình Chọn Hữu Ích, Trả Thưởng Điểm & Hỏi Đáp Q&A**
+- [ ] **Giai đoạn 14.3: Giao Diện Quản Trị Đánh Giá & UGC Admin CMS (`/admin/marketing/danh-gia`)**
+- [ ] **Giai đoạn 14.4: Nâng Cấp Giao Diện Đánh Giá & Tab Hỏi Đáp Chuyên Gia Trên Trang Chi Tiết Sản Phẩm**
+- [ ] **Giai đoạn 14.5: Giao Diện Storefront Trung Tâm Đánh Giá & Săn Điểm Thưởng Của Tôi (`/tai-khoan/danh-gia`)**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
