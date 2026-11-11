@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { User, LogIn, UserPlus, Package, Heart, Shield, LogOut, ChevronDown, Award, Bell } from "lucide-react";
+import { User, LogIn, UserPlus, Package, Heart, Shield, LogOut, ChevronDown, Award, Bell, Share2 } from "lucide-react";
 
 export function UserAccountMenu() {
   const { data: session, status } = useSession();
@@ -127,6 +127,15 @@ export function UserAccountMenu() {
             >
               <Award className="w-4 h-4 text-amber-600" />
               <span>THUYNGA Club (Tích điểm)</span>
+            </Link>
+
+            <Link
+              href="/tai-khoan/gioi-thieu"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2 text-sm text-[#800028] font-semibold hover:bg-rose-50/60 transition-colors"
+            >
+              <Share2 className="w-4 h-4 text-[#800028]" />
+              <span>Mời bạn nhận quà</span>
             </Link>
 
             <Link

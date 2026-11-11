@@ -818,7 +818,30 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Điểm thưởng: Thưởng `+500 pts` và nhãn xác nhận đã cộng điểm vào ví hội viên.
     - Phân trang dữ liệu thông minh hỗ trợ chuyển trang mượt mà.
   - Trang Server Component [`/admin/marketing/gioi-thieu`](/admin/marketing/gioi-thieu): Kiểm soát phiên Admin RBAC an toàn, pre-fetch SSR dữ liệu ban đầu siêu tốc và kết nối đồng bộ với trình điều phối `ReferralManager.tsx`.
-- [ ] **Giai đoạn 12.4: Giao diện Storefront Trung Tâm Mời Bạn Nhận Quà (`/tai-khoan/gioi-thieu`)**: Thẻ chia sẻ mã mời sang trọng, nút sao chép link 1-chạm, mã QR và danh sách bạn bè đã mời.
+- [x] **Giai đoạn 12.4: Giao diện Storefront Trung Tâm Mời Bạn Nhận Quà (`/tai-khoan/gioi-thieu`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp lối tắt truy cập nhanh "Mời bạn nhận quà" kèm biểu tượng `Share2` tại:
+    - Thanh điều hướng tài khoản khách hàng (`AccountSidebar.tsx`).
+    - Menu thả xuống Header người dùng (`UserAccountMenu.tsx`).
+  - Khối Hero Banner nhận diện thương hiệu sang trọng (`ReferralHeroBanner.tsx`):
+    - Đồ họa nền Gradient đỏ rượu `#800028` chuẩn nhận diện thương hiệu, viền bo tròn 3xl và ánh sáng mờ huyền ảo.
+    - 2 Thẻ quyền lợi song hành: Quà tặng Bạn Mới (Voucher 50.000₫ cho đơn từ 300k) và Thưởng Người Mời (+500 Điểm THUYNGA Club ≈ 50.000₫ khi bạn mới hoàn tất đơn đầu).
+  - Thẻ chia sẻ mã mời đa kênh thông minh (`ReferralShareCard.tsx`):
+    - Hộp hiển thị mã mời độc quyền cá nhân chữ lớn, nút sao chép 1-chạm kèm phản hồi tương tác tích cực.
+    - Ô liên kết giới thiệu đầy đủ (`/dang-ky?ref=CODE`) tự động điền sẵn mã khi bạn bè bấm vào.
+    - Trình tạo mã QR Code thời gian thực tích hợp thư viện `qrcode`: Hiển thị mã QR thương hiệu đỏ rượu, hỗ trợ nút "Tải ảnh QR về máy" để in ấn hoặc đăng story.
+    - Phím tắt chia sẻ 1-chạm mạng xã hội: Facebook, Zalo Chat và Telegram.
+  - Ô kích hoạt mã mời từ bạn bè (`ReferralHubClient.tsx`):
+    - Dành cho khách hàng chưa có người giới thiệu: Nhập mã mời để nhận ngay Voucher chào mừng 50.000₫ tức thì.
+  - 3 Thẻ đo lường hiệu quả mời bạn (`ReferralStatsCards.tsx`):
+    - Bạn bè đã kết nối (số lượng đã đăng ký).
+    - Đơn đầu thành công (số lượng bạn đã nhận hàng thành công).
+    - Điểm thưởng đã nhận (+XX điểm ≈ XX.XXX ₫ tích lũy).
+  - Sổ theo dõi bạn bè đã mời (`ReferralFriendsList.tsx`):
+    - Danh sách bạn bè kèm email đã che dấu bảo mật (`c***@gmail.com`).
+    - Huy hiệu tiến trình: Chờ đơn đầu, Đang giao hàng, Đã nhận +500 pts.
+    - Trạng thái rỗng thân thiện (Empty State) kèm nút gọi hành động "Mời bạn bè ngay".
+  - Bộ câu hỏi thường gặp FAQ Accordion (`ReferralFAQ.tsx`): Giải đáp 5 thắc mắc phổ biến về thể lệ, thời điểm trả thưởng và tính chất không giới hạn số lượt mời.
+  - Trang Server Component [`/tai-khoan/gioi-thieu`](/tai-khoan/gioi-thieu): Kiểm soát phiên đăng nhập (Auth Guard), tự động sinh mã mời nếu người dùng chưa có (`ensureUserReferralCode`), pre-fetch SSR dữ liệu bạn bè siêu tốc và kết nối đồng bộ Client Component.
 - [ ] **Giai đoạn 12.5: Tích Hợp Đăng Ký Tài Khoản Nhận Mã Mời & Tự Động Trả Thưởng Khi Giao Hàng**: Tích hợp mã mời vào luồng đăng ký `/api/auth/register`, tự động phát voucher bạn mới và kích hoạt trả thưởng +500 điểm cho người mời khi đơn hàng đầu tiên giao thành công.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
