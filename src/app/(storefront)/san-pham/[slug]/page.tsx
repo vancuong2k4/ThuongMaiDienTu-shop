@@ -88,16 +88,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
         orderBy: { sortOrder: "asc" },
       },
       reviews: {
-        where: { status: "APPROVED" },
+        where: { status: { in: ["APPROVED", "FEATURED"] } },
         include: {
           user: {
             select: {
               name: true,
               avatar: true,
+              membershipTier: true,
             },
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ status: "asc" }, { createdAt: "desc" }],
       },
       _count: {
         select: { reviews: true },
@@ -157,8 +158,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
     reviews: product.reviews.map((r) => ({
       id: r.id,
       rating: r.rating,
+      packagingRating: r.packagingRating,
+      freshnessRating: r.freshnessRating,
+      effectivenessRating: r.effectivenessRating,
       content: r.content,
       images: r.images,
+      isVerifiedBuyer: r.isVerifiedBuyer,
+      airCargoVerified: r.airCargoVerified,
+      helpfulCount: r.helpfulCount,
+      adminReply: r.adminReply,
+      adminReplyAt: r.adminReplyAt ? r.adminReplyAt.toISOString() : null,
+      rewardPoints: r.rewardPoints,
+      isFeatured: r.status === "FEATURED",
       createdAt: r.createdAt.toISOString(),
       user: r.user,
     })),

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { ProductImageGallery } from "./ProductImageGallery";
 import { ProductInfoSection, VariantData } from "./ProductInfoSection";
 import { ProductTabs } from "./ProductTabs";
-import { ProductReviewsSection, ReviewData } from "./ProductReviewsSection";
+import { ProductReviewsSection, ReviewItemData } from "./ProductReviewsSection";
+import { ProductQnABox } from "./ProductQnABox";
 import { StickyMobileCartBar } from "./StickyMobileCartBar";
 import { calcDiscount } from "@/lib/utils";
 
@@ -25,7 +26,7 @@ interface ProductDetailClientProps {
     };
     variants: VariantData[];
     images: Array<{ url: string; alt: string | null }>;
-    reviews: ReviewData[];
+    reviews: ReviewItemData[];
     _count: {
       reviews: number;
     };
@@ -96,14 +97,22 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
       {/* ── 2. Middle Section: Product Tabs (Mô tả, Thông số, Vận chuyển) ── */}
       <ProductTabs product={product} />
 
-      {/* ── 3. Bottom Section: Customer Reviews ─────────────────────────── */}
+      {/* ── 3. Bottom Section: Customer Reviews & UGC ─────────────────── */}
       <ProductReviewsSection
         productId={product.id}
+        productSlug={product.slug}
         productName={product.name}
         reviews={product.reviews}
       />
 
-      {/* ── 4. Mobile Sticky Buy Bar khi cuộn trang ─────────────────────── */}
+      {/* ── 4. Community Q&A Box (Hỏi Đáp Chuyên Gia Sữa & TPCN Úc) ─────── */}
+      <ProductQnABox
+        productId={product.id}
+        productSlug={product.slug}
+        productName={product.name}
+      />
+
+      {/* ── 5. Mobile Sticky Buy Bar khi cuộn trang ─────────────────────── */}
       <StickyMobileCartBar
         productId={product.id}
         productName={product.name}

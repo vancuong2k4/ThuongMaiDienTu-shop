@@ -987,7 +987,18 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Cung cấp sẵn các mẫu câu tư vấn chuẩn y khoa & chăm sóc mẹ bé.
     - Tự động lưu phản hồi công khai và bắn thông báo In-App cho người đánh giá.
   - Trang Server Component [`/admin/danh-gia`](/admin/danh-gia): Pre-fetch SSR 7 chỉ số thống kê, kết nối đồng bộ `ReviewManager.tsx`.
-- [ ] **Giai đoạn 14.4: Nâng Cấp Giao Diện Đánh Giá & Tab Hỏi Đáp Chuyên Gia Trên Trang Chi Tiết Sản Phẩm**
+- [x] **Giai đoạn 14.4: Nâng Cấp Giao Diện Đánh Giá & Phân Hệ Hỏi Đáp Chuyên Gia Trên Trang Chi Tiết Sản Phẩm** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Nâng cấp toàn diện phân hệ đánh giá (`ProductReviewsSection.tsx`):
+    - Hộp tổng quan đánh giá: Điểm trung bình to bản (★/5.0), số lượng đánh giá, thanh phân bổ 5 sao kèm tỷ lệ % và cam kết 100% chuẩn Air-Cargo Úc.
+    - 3 Điểm thành phần chuyên sâu: Đóng gói Air-cargo (5.0★), Date HSD mới tinh (5.0★), Bé hợp vị & Hiệu quả (4.9★).
+    - Góc ảnh mở hộp thực tế (Top UGC Gallery): Băng chuyền hình ảnh thực tế bóc hộp air-cargo của khách, hỗ trợ nhấp xem phóng to Lightbox sắc nét.
+    - Thanh công cụ lọc: Lọc nhanh theo số sao (1-5★), lọc bài có ảnh UGC, lọc người mua thực tế (Verified Buyer), sắp xếp (Mới nhất, Hữu ích nhất, Sao cao nhất).
+    - Thẻ đánh giá người mua chi tiết: Avatar, huy hiệu "Đã mua hàng" (`CheckCircle2`), "Chuẩn Air Úc" (`ShieldCheck`), "Top Đánh Giá" (`Award`), nội dung nhận xét, thư viện ảnh UGC, khối phản hồi từ Dược sĩ THUYNGA Shop và nút bình chọn "Hữu ích" thời gian thực.
+    - Modal viết đánh giá nhận thưởng đa tiêu chí: Banner thưởng +50đ hoặc +150đ THUYNGA Club, bộ chọn 4 tiêu chí sao, đính kèm tối đa 5 ảnh UGC và thông báo chúc mừng nhận điểm ngay lập tức.
+  - Phân hệ Hỏi Đáp Chuyên Gia Sữa & TPCN Úc (`ProductQnABox.tsx`):
+    - Khối hỏi đáp cộng đồng tương tác cao: Danh sách câu hỏi của phụ huynh kèm câu trả lời chính thức từ Dược sĩ THUYNGA Shop (`ShieldCheck`) hoặc thành viên khác.
+    - Modal đặt câu hỏi chuyên môn nhanh chóng và form gửi câu trả lời cộng đồng.
+  - Tích hợp đồng bộ vào trang chi tiết sản phẩm (`ProductDetailClient.tsx` & `/san-pham/[slug]`): Truy vấn SSR các đánh giá đã duyệt hoặc ghim top, truyền `productSlug` và hiển thị cả 2 khối Đánh giá và Hỏi đáp chuyên gia.
 - [ ] **Giai đoạn 14.5: Giao Diện Storefront Trung Tâm Đánh Giá & Săn Điểm Thưởng Của Tôi (`/tai-khoan/danh-gia`)**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
