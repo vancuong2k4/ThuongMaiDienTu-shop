@@ -798,8 +798,26 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - `GET /api/user/referral`: Lấy mã mời cá nhân, liên kết chia sẻ đầy đủ, tổng hợp thống kê chuyển đổi (Tổng bạn đã mời, Bạn đã hoàn thành đơn đầu, Tổng điểm thưởng đã nhận) và danh sách bạn bè đã mời kèm email đã được che dấu bảo mật (`m***@gmail.com`).
   - `POST /api/user/referral/apply`: Khách hàng kích hoạt mã mời bạn bè; kiểm tra chặt chẽ chống tự mời bản thân (Self-referral check), chống áp dụng lại khi đã có người mời, ngăn chặn nếu khách đã từng phát sinh đơn hàng, tự động phát sinh voucher chào mừng và gửi thông báo In-App thông báo người mời kết nối thành công.
   - `GET /api/admin/referrals`: Phân hệ Admin CMS truy vấn phân trang danh sách kết nối giới thiệu, tìm kiếm theo tên/email người mời và người được mời hoặc mã voucher, lọc theo trạng thái (`PENDING`, `QUALIFIED`, `REWARDED`, `EXPIRED`) và tính toán 5 chỉ số KPIs chuyển đổi then chốt.
-- [ ] **Giai đoạn 12.3: Giao diện Quản trị Giới Thiệu Admin CMS (`/admin/marketing/gioi-thieu`)**: 4 Thẻ KPI chuyển đổi, bảng theo dõi liên kết bạn bè và báo cáo doanh thu giới thiệu.
-- [ ] **Giai đoạn 12.3: Giao diện Quản trị Giới Thiệu Admin CMS (`/admin/marketing/gioi-thieu`)**: 4 Thẻ KPI chuyển đổi, bảng theo dõi liên kết bạn bè và báo cáo doanh thu giới thiệu.
+- [x] **Giai đoạn 12.3: Giao diện Quản trị Giới Thiệu Admin CMS (`/admin/marketing/gioi-thieu`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp mục "Mời bạn nhận quà" kèm biểu tượng `Share2` trên thanh điều hướng bên trái Admin CMS (`AdminSidebar.tsx`).
+  - 4 Thẻ KPI chuyển đổi thời gian thực (`ReferralStats.tsx`):
+    - Tổng lượt giới thiệu: Số lượng bạn bè được mời vào sàn.
+    - Tỷ lệ chuyển đổi (%): Tỷ lệ bạn mới hoàn thành đơn hàng đầu tiên thành công.
+    - Doanh số bạn mới: Tổng doanh thu thuần tạo ra từ các đơn hàng liên kết (VNĐ).
+    - Điểm thưởng đã chi trả: Tổng số điểm THUYNGA Club đã phân phối cho người giới thiệu (+500 pts/đơn) kèm giá trị tiền mặt quy đổi tương đương.
+  - Bộ lọc thông minh & tìm kiếm tức thì (`ReferralFilters.tsx`):
+    - 5 Tabs phân loại trạng thái: Tất cả, 🎉 Đã trả thưởng (+500 pts), 🚚 Đang giao đơn đầu, ⏳ Chờ đơn đầu, ⌛ Hết hạn.
+    - Tìm kiếm debounce theo tên người mời, bạn mới, email hoặc mã voucher chào mừng.
+    - Phím tắt chuyển nhanh xem trang Storefront Mời Bạn (`/tai-khoan/gioi-thieu`) và nút Xóa bộ lọc 1-chạm.
+  - Bảng theo dõi dữ liệu chi tiết (`ReferralTable.tsx`):
+    - Người giới thiệu: Avatar, tên, email, huy hiệu hạng hội viên (Đồng/Bạc/Vàng/Kim Cương) và mã mời độc quyền.
+    - Bạn mới được mời: Tên, email và ngày tham gia hệ thống.
+    - Trạng thái liên kết: Huy hiệu màu sắc trực quan kèm icon nhận diện (`Clock`, `Truck`, `CheckCircle2`, `AlertCircle`).
+    - Voucher bạn mới: Mã code `BANMOI-XXXX` kèm nút sao chép 1-chạm.
+    - Đơn hàng kích hoạt: Mã đơn hàng kèm liên kết mở chi tiết đơn trong CMS, số tiền đơn hàng và trạng thái đơn.
+    - Điểm thưởng: Thưởng `+500 pts` và nhãn xác nhận đã cộng điểm vào ví hội viên.
+    - Phân trang dữ liệu thông minh hỗ trợ chuyển trang mượt mà.
+  - Trang Server Component [`/admin/marketing/gioi-thieu`](/admin/marketing/gioi-thieu): Kiểm soát phiên Admin RBAC an toàn, pre-fetch SSR dữ liệu ban đầu siêu tốc và kết nối đồng bộ với trình điều phối `ReferralManager.tsx`.
 - [ ] **Giai đoạn 12.4: Giao diện Storefront Trung Tâm Mời Bạn Nhận Quà (`/tai-khoan/gioi-thieu`)**: Thẻ chia sẻ mã mời sang trọng, nút sao chép link 1-chạm, mã QR và danh sách bạn bè đã mời.
 - [ ] **Giai đoạn 12.5: Tích Hợp Đăng Ký Tài Khoản Nhận Mã Mời & Tự Động Trả Thưởng Khi Giao Hàng**: Tích hợp mã mời vào luồng đăng ký `/api/auth/register`, tự động phát voucher bạn mới và kích hoạt trả thưởng +500 điểm cho người mời khi đơn hàng đầu tiên giao thành công.
 

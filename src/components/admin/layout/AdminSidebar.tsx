@@ -22,6 +22,7 @@ import {
   BookOpen,
   Zap,
   Award,
+  Share2,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -107,6 +108,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Tích điểm & VIP",
       href: "/admin/khach-hang/tich-diem",
       icon: Award,
+    },
+    {
+      label: "Mời bạn nhận quà",
+      href: "/admin/marketing/gioi-thieu",
+      icon: Share2,
     },
     {
       label: "Đánh giá",
