@@ -1034,8 +1034,33 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `GET, PATCH & DELETE /api/admin/aircargo/shipments/[id]`: Xem chi tiết chuyến bay kèm danh sách lô hàng liên kết; cập nhật trạng thái thông quan/nhiệt độ; chặn xóa an toàn nếu chuyến bay đang chứa các lô hàng liên kết.
     - `GET & POST /api/admin/aircargo/batches`: Quản lý danh sách lô hàng sản phẩm phân trang, lọc theo chuyến bay/sản phẩm; tạo lô hàng mới kiểm tra chống trùng mã lô (`batchCode`).
     - `GET, PATCH & DELETE /api/admin/aircargo/batches/[id]`: Xem chi tiết lịch sử tra cứu của lô; cập nhật ngày HSD/tồn kho/trạng thái lưu hành; xóa lô hàng an toàn.
-- [ ] **Giai đoạn 15.3: Giao Diện Quản Trị Lô Hàng Bay Air & Mã Lô Admin CMS (`/admin/kho-hang/lo-hang-air`)**
-- [ ] **Giai đoạn 15.3: Giao Diện Quản Trị Lô Hàng Bay Air & Mã Lô Admin CMS (`/admin/kho-hang/lo-hang-air`)**
+- [x] **Giai đoạn 15.3: Giao Diện Quản Trị Lô Hàng Bay Air & Mã Lô Admin CMS (`/admin/kho-hang/lo-hang-air`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 5 Thẻ Thống Kê KPI Vận Hành Kho Lạnh Air (`AirCargoStats.tsx`):
+    - Tổng chuyến bay Air: Đếm tổng các chuyến bay từ Sydney/Melbourne về Nội Bài.
+    - Lô hàng đang lưu hành: Đếm số lượng mã lô date mới (> 18-24 tháng).
+    - Chuyến bay đang vận chuyển: Đếm số chuyến bay trên khoang hàng không kiểm soát nhiệt độ.
+    - Lượt khách tra cứu AWB: Thống kê số lượt khách hàng quét mã QR / tra cứu minh bạch.
+    - Chuẩn nhiệt độ kho lạnh: Đồng hồ đo nhiệt độ bảo quản 18°C - 24°C chuẩn y tế.
+  - Bộ Lọc Đa Năng & Chuyển Đổi Tab Thông Minh (`AirCargoFilters.tsx`):
+    - Tab Switcher: "Vận Đơn & Chuyến Bay Air" và "Mã Lô & Hạn Sử Dụng".
+    - Tìm kiếm nhanh theo số AWB, số hiệu chuyến bay, mã lô, barcode Úc 93x.
+    - Lọc theo hãng hàng không (Vietnam Airlines Cargo, Qantas Freight, Emirates, Singapore Airlines).
+    - Lọc theo trạng thái vận chuyển và tình trạng lưu hành (Active / Inactive).
+  - Bảng Quản Lý Chuyến Bay & Vận Đơn AWB (`ShipmentTable.tsx`):
+    - Hiển thị số hiệu chuyến bay kèm badge hãng hàng không, số vận đơn AWB, hành trình bay (SYD/MEL ✈️ HAN), dải nhiệt độ kho lạnh, trạng thái thông quan, số lượng lô hàng liên kết.
+    - Thư viện ảnh hóa đơn mua hàng Chemist Warehouse Úc & chứng từ hải quan với Modal Lightbox phóng to sắc nét.
+    - Chuyển đổi trạng thái 1-chạm (Cất cánh / Đang bay / Thông quan / Nhập kho) và xóa an toàn.
+  - Bảng Quản Lý Mã Lô Sản Phẩm & Khóa HSD (`BatchTable.tsx`):
+    - Hiển thị mã lô đáy hộp, barcode Úc 93x, thumbnail sản phẩm liên kết, chuyến bay/AWB, NSX - HSD kèm đếm ngược số tháng còn lại và huy hiệu độ tươi mới (Date mới tinh / Date rất xa).
+    - Quản lý tồn kho/nhập, nguồn nhà thuốc Úc Chemist Warehouse, đếm lượt khách tra cứu thực tế.
+    - Nút gạt bật/tắt trạng thái lưu hành công khai và xóa mã lô.
+  - Modal Thêm Mới Chuyến Bay & AWB (`CreateShipmentModal.tsx`):
+    - Form nhập đầy đủ số AWB, chuyến bay, sân bay đi/đến, thời điểm cất/hạ cánh, dải nhiệt độ, danh sách URL ảnh hóa đơn Chemist Warehouse và ghi chú vận hành.
+  - Modal Thêm Mới Mã Lô & Khóa HSD (`CreateBatchModal.tsx`):
+    - Chọn chuyến bay liên kết, tự động tải danh sách sản phẩm từ hệ thống, nhập mã lô, barcode 93x, NSX/HSD, số lượng nhập/tồn và nguồn gốc nhà thuốc Úc.
+  - Trung Tâm Quản Trị Hợp Nhất (`AirCargoManager.tsx` & Server Component [`/admin/kho-hang/lo-hang-air`](/admin/kho-hang/lo-hang-air)):
+    - Quản lý đồng bộ trạng thái, gọi API bất đồng bộ và pre-fetch SSR dữ liệu ban đầu.
+  - Điều Hướng Admin: Bổ sung mục "Lô hàng bay Air" (icon `Plane`) vào thanh điều hướng bên trái `AdminSidebar.tsx`.
 - [ ] **Giai đoạn 15.4: Giao Diện Storefront Tra Cứu Minh Bạch Nguồn Gốc & Hạn Sử Dụng Air-Cargo (`/minh-bach-air-cargo`)**
 - [ ] **Giai đoạn 15.5: Widget Chứng Thực Bay Air Trên Trang Chi Tiết Sản Phẩm & Điều Hướng Toàn Sàn**
 
