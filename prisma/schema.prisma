@@ -102,6 +102,20 @@ enum SubscriptionStatus {
   EXPIRED         // Hết hiệu lực
 }
 
+enum ShipmentStatus {
+  DEPARTED            // Đã cất cánh từ Úc (Sydney/Melbourne)
+  IN_TRANSIT          // Đang trên khoang hàng không
+  CUSTOMS_CLEARED     // Đã hạ cánh & hoàn tất thông quan hải quan Nội Bài
+  IN_WAREHOUSE        // Đã nhập kho mát tiêu chuẩn tại THUYNGA Shop
+}
+
+enum AirlineCarrier {
+  VIETNAM_AIRLINES_CARGO   // Vietnam Airlines Cargo (VN)
+  QANTAS_FREIGHT           // Qantas Freight (QF)
+  EMIRATES_SKYCARGO        // Emirates SkyCargo (EK)
+  SINGAPORE_AIRLINES_CARGO // Singapore Airlines Cargo (SQ)
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -279,6 +293,7 @@ model Product {
   wishlist       Wishlist[]
   flashSaleItems FlashSaleItem[]
   tags           ProductTag[]
+  batches        ProductBatch[]
 
   @@index([slug])
   @@index([categoryId])
@@ -313,6 +328,7 @@ model ProductVariant {
   orderItems     OrderItem[]
   cartItems      CartItem[]
   flashSaleItems FlashSaleItem[]
+  batches        ProductBatch[]
 
   @@index([productId])
   @@index([sku])
@@ -848,4 +864,81 @@ model SubscriptionItem {
 
   @@index([subscriptionId])
   @@map("subscription_items")
+}
+
+// ============================================================
+// AIR-CARGO SHIPMENTS & BATCH TRANSPARENCY (PHASE 15)
+// ============================================================
+
+model AirCargoShipment {
+  id                  String          @id @default(cuid())
+  shipmentNumber      String          @unique // Ví dụ: AWB-VN782-202611
+  airWaybillNumber    String          // Số vận đơn AWB chính thức: 738-12345678
+  carrier             AirlineCarrier  @default(VIETNAM_AIRLINES_CARGO)
+  flightNumber        String          // Số hiệu chuyến bay (VN782, QF43...)
+  originAirport       String          // SYD (Sydney Kingsford Smith) hoặc MEL (Melbourne)
+  destinationAirport   String          // HAN (Sân bay quốc tế Nội Bài)
+  departureDate       DateTime        // Ngày cất cánh từ Úc
+  arrivalDate         DateTime        // Ngày hạ cánh tại Việt Nam
+  status              ShipmentStatus  @default(IN_WAREHOUSE)
+  storageTempMin      Float           @default(18.0) // Nhiệt độ bảo quản tối thiểu (°C)
+  storageTempMax      Float           @default(24.0) // Nhiệt độ bảo quản tối đa (°C)
+  temperatureLog      Json?           // Bản ghi đo nhiệt độ theo thời gian [{ time: "...", temp: 20.5 }]
+  receiptImages       String[]        // Ảnh hóa đơn mua hàng gốc từ Chemist Warehouse / Coles / Woolworths Úc
+  customsDocImages    String[]        // Ảnh tờ khai hải quan & chứng thư kiểm dịch bay air
+  notes               String?         @db.Text
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  batches             ProductBatch[]
+
+  @@index([airWaybillNumber])
+  @@index([status])
+  @@index([arrivalDate])
+  @@map("air_cargo_shipments")
+}
+
+model ProductBatch {
+  id                String            @id @default(cuid())
+  batchCode         String            @unique // Ví dụ: BATCH-APT-2026-SYD hoặc in dưới đáy lon
+  productId         String
+  variantId         String?
+  shipmentId        String
+  manufactureDate   DateTime          // Ngày sản xuất (NSX)
+  expiryDate        DateTime          // Hạn sử dụng (HSD)
+  importedQuantity  Int               // Số lượng nhập kho đợt này
+  remainingStock    Int               // Số lượng còn lại thực tế
+  australianBarcode String?           // Mã vạch chuẩn Úc (93x...)
+  chemistSource     String?           // Chemist Warehouse Victoria / George St Sydney...
+  certificateUrl    String?           // Chứng thư chất lượng đi kèm
+  isActive          Boolean           @default(true) // Đang là lô hàng lưu hành hiện tại
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  product           Product           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant           ProductVariant?   @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  shipment          AirCargoShipment  @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  verificationLogs  BatchVerificationLog[]
+
+  @@index([productId])
+  @@index([variantId])
+  @@index([shipmentId])
+  @@index([batchCode])
+  @@index([expiryDate])
+  @@map("product_batches")
+}
+
+model BatchVerificationLog {
+  id          String        @id @default(cuid())
+  batchId     String
+  batchCode   String
+  ipAddress   String?
+  userAgent   String?
+  verifiedAt  DateTime      @default(now())
+
+  batch       ProductBatch  @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([verifiedAt])
+  @@map("batch_verification_logs")
 }

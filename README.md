@@ -1011,6 +1011,21 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Trang Server Component [`/tai-khoan/danh-gia`](/tai-khoan/danh-gia): Kiểm soát đăng nhập SSR (Auth Guard), đối soát đơn hàng `DELIVERED` và bài review từ Prisma PostgreSQL.
   - Tích hợp điều hướng Storefront: Bổ sung mục "Đánh giá của tôi" (icon `Star`) vào thanh menu tài khoản (`AccountSidebar.tsx`) và menu người dùng Header (`UserAccountMenu.tsx`).
 
+### ✈️ Giai đoạn 15: Hệ Thống Minh Bạch Lô Hàng Air-Cargo, Vận Đơn AWB & Chứng Thực Hạn Sử Dụng (Australian Airway Bill & Batch Transparency System - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 15.1: Thiết Kế Schema Lô Hàng Bay Air, Mã Lô, Zod Validations & Seed Dữ Liệu Vận Đơn Thực Tế** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Khởi tạo enum `ShipmentStatus` (`DEPARTED`, `IN_TRANSIT`, `CUSTOMS_CLEARED`, `IN_WAREHOUSE`) và `AirlineCarrier` (`VIETNAM_AIRLINES_CARGO`, `QANTAS_FREIGHT`, `EMIRATES_SKYCARGO`, `SINGAPORE_AIRLINES_CARGO`) trong `prisma/schema.prisma`.
+  - Thiết lập model `AirCargoShipment` (mã chuyến bay, số vận đơn AWB chính thức, hãng hàng không, sân bay khởi hành/hạ cánh SYD/MEL -> HAN, ngày bay, dải nhiệt độ bảo quản lạnh min/max, bản ghi nhiệt độ theo thời gian `temperatureLog`, ảnh hóa đơn mua hàng Chemist Warehouse Úc, ảnh chứng từ thông quan y tế).
+  - Thiết lập model `ProductBatch` (mã lô in dưới đáy lon/thân chai `batchCode`, ngày sản xuất NSX, hạn sử dụng HSD, số lượng nhập/tồn, mã vạch chuẩn Úc 93x, địa chỉ nhà thuốc Chemist Warehouse Úc, link chứng thư kiểm định chất lượng, trạng thái lưu hành `isActive`).
+  - Thiết lập model `BatchVerificationLog` lưu nhật ký tra cứu minh bạch từ khách hàng (IP, User-Agent, thời điểm).
+  - Mở rộng model `Product` và `ProductVariant` liên kết 1-N với `ProductBatch`.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng lớp kiểm thực Zod toàn diện (`src/lib/validations/batch.ts`): Cấu hình 4 hãng hàng không, 4 trạng thái vận chuyển khoang mát và schemas tạo lô hàng, tạo mã lô, tra cứu minh bạch.
+  - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-aircargo-batches.ts`): Nạp 2 lô hàng bay air tiêu biểu (Chuyến bay VN782 của Vietnam Airlines Cargo từ Sydney, Chuyến bay QF43 của Qantas Freight từ Melbourne), 3 mã lô chính thức cho Aptamil, Mật ong Manuka, Swisse và 2 nhật ký tra cứu mẫu.
+- [ ] **Giai đoạn 15.2: Hệ Thống REST APIs Tra Cứu Vận Đơn AWB, Quản Lý Lô Hàng & Kiểm Chứng HSD**
+- [ ] **Giai đoạn 15.3: Giao Diện Quản Trị Lô Hàng Bay Air & Mã Lô Admin CMS (`/admin/kho-hang/lo-hang-air`)**
+- [ ] **Giai đoạn 15.4: Giao Diện Storefront Tra Cứu Minh Bạch Nguồn Gốc & Hạn Sử Dụng Air-Cargo (`/minh-bach-air-cargo`)**
+- [ ] **Giai đoạn 15.5: Widget Chứng Thực Bay Air Trên Trang Chi Tiết Sản Phẩm & Điều Hướng Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
