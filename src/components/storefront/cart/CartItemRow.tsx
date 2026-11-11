@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2, AlertCircle, Flame } from "lucide-react";
+import { Minus, Plus, Trash2, AlertCircle, Flame, Repeat } from "lucide-react";
 import { formatVND } from "@/lib/utils";
 import type { CartItem } from "@/types";
 
@@ -56,6 +56,12 @@ export function CartItemRow({
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-red-600 to-[#800028] text-white text-[10px] font-black uppercase tracking-wider shadow-xs">
                 <Flame className="w-3 h-3 fill-amber-300 text-amber-300" />
                 <span>Giá Flash Sale</span>
+              </span>
+            )}
+            {item.isSubscription && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+                <Repeat className="w-3 h-3" />
+                <span>Giao định kỳ (-10%)</span>
               </span>
             )}
           </div>

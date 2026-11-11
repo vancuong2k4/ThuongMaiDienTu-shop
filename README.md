@@ -902,7 +902,24 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Nút thao tác Admin "Tạo đơn ngay" 1-chạm: Kích hoạt tạo đơn hàng định kỳ tức thì qua API `/api/admin/subscriptions/[id]/trigger`.
     - Phân trang dữ liệu thông minh.
   - Trang Server Component [`/admin/don-hang/dinh-ky`](/admin/don-hang/dinh-ky): Kiểm soát quyền Admin RBAC nghiêm ngặt, pre-fetch SSR dữ liệu siêu tốc và kết nối đồng bộ `SubscriptionManager.tsx`.
-- [ ] **Giai đoạn 13.4: Tích Hợp Bộ Chọn Subscribe & Save Trên Trang Chi Tiết Sản Phẩm & Giỏ Hàng**: Chuyển đổi "Mua một lần" vs "Giao định kỳ - Tiết kiệm 10%", chọn chu kỳ giao và hỗ trợ checkout gói định kỳ.
+- [x] **Giai đoạn 13.4: Tích Hợp Bộ Chọn Subscribe & Save Trên Trang Chi Tiết Sản Phẩm & Giỏ Hàng** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Component bộ chọn tùy chọn mua hàng (`SubscriptionOptionSelector.tsx`):
+    - Tùy chọn 1: "Mua một lần" - Mức giá niêm yết hoặc giá khuyến mãi thường.
+    - Tùy chọn 2: "Giao Định Kỳ (Subscribe & Save)" - Nổi bật huy hiệu "TIẾT KIỆM 10%", tính toán số tiền tiết kiệm trên từng sản phẩm, miễn phí ship trọn đời.
+    - Bộ chọn tần suất giao hàng 4 cấp độ: Mỗi 2 tuần, Mỗi 1 tháng (Khuyên dùng), Mỗi 2 tháng, Mỗi 3 tháng.
+    - 3 Cam kết vàng: Freeship toàn quốc, Tạm dừng/hủy 1-chạm, Chuẩn date Air-Cargo mới nhất.
+  - Tích hợp sâu vào trang chi tiết sản phẩm (`ProductInfoSection.tsx`):
+    - Đồng bộ giá sau chiết khấu 10% khi chuyển chế độ Subscribe & Save.
+    - Thêm vào giỏ hàng hoặc bấm "Mua ngay" tự động nhận diện gói định kỳ.
+  - Nâng cấp Giỏ hàng Zustand (`src/store/cart.ts` & `src/types/index.ts`):
+    - Mở rộng kiểu dữ liệu `CartItem` hỗ trợ `isSubscription` và `subscriptionFrequency`.
+    - Dòng giỏ hàng (`CartItemRow.tsx`) hiển thị huy hiệu nhận diện "Giao định kỳ (-10%)" kèm icon `Repeat`.
+  - Tự động kích hoạt gói định kỳ khi đặt hàng Checkout (`src/app/api/orders/route.ts`):
+    - Nhận diện các mặt hàng đăng ký định kỳ, áp dụng chính sách Freeship 0₫ tự động.
+    - Tạo bản ghi `Subscription` và `SubscriptionItem` trong cùng 1 transaction atomic.
+    - Liên kết `subscriptionId` với `Order` đầu tiên.
+    - Tự động bắn thông báo In-App chúc mừng khách hàng đã đăng ký gói định kỳ thành công.
+- [ ] **Giai đoạn 13.5: Giao diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)**: Danh sách gói đăng ký, thẻ trực quan, lịch giao hàng và các nút thao tác 1-chạm (Đổi chu kỳ, Tạm dừng, Giao ngay, Hủy).
 - [ ] **Giai đoạn 13.5: Giao diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)**: Danh sách gói đăng ký, thẻ trực quan, lịch giao hàng và các nút thao tác 1-chạm (Đổi chu kỳ, Tạm dừng, Giao ngay, Hủy).
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production

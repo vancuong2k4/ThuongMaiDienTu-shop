@@ -25,6 +25,11 @@ import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
 import { CountryFlag } from "@/components/ui/CountryFlag";
 import { WishlistButton } from "@/components/storefront/product/WishlistButton";
+import {
+  SubscriptionOptionSelector,
+  type SubscriptionFrequencyType,
+} from "@/components/storefront/product/SubscriptionOptionSelector";
+import { SUBSCRIPTION_CONFIG } from "@/lib/validations/subscription";
 
 export interface VariantData {
   id: string;
@@ -71,6 +76,9 @@ export function ProductInfoSection({
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isSubscription, setIsSubscription] = useState(false);
+  const [subscriptionFrequency, setSubscriptionFrequency] =
+    useState<SubscriptionFrequencyType>("EVERY_1_MONTH");
   const router = useRouter();
 
   const addItem = useCartStore((state) => state.addItem);
@@ -93,16 +101,28 @@ export function ProductInfoSection({
   const handleAddToCart = () => {
     if (isOutOfStock) return;
 
+    const effectivePrice = isSubscription
+      ? Math.round(price * 0.9)
+      : price;
+    const effectiveVariantId = isSubscription
+      ? `${selectedVariant.id}_sub_${subscriptionFrequency}`
+      : selectedVariant.id;
+
     addItem({
-      variantId: selectedVariant.id,
+      variantId: effectiveVariantId,
       productId: product.id,
       productName: product.name,
-      variantName: selectedVariant.name,
+      variantName: isSubscription
+        ? `${selectedVariant.name} [Định kỳ: ${SUBSCRIPTION_CONFIG.FREQUENCIES[subscriptionFrequency].label}]`
+        : selectedVariant.name,
       sku: selectedVariant.sku,
-      price: price,
+      price: effectivePrice,
+      originalPrice: isSubscription ? price : (originalPrice || null),
       image: selectedVariant.image || product.images[0]?.url || null,
       quantity: quantity,
       stock: selectedVariant.stock,
+      isSubscription: isSubscription,
+      subscriptionFrequency: isSubscription ? subscriptionFrequency : undefined,
     });
 
     setIsAdded(true);
@@ -113,16 +133,28 @@ export function ProductInfoSection({
   const handleBuyNow = () => {
     if (isOutOfStock) return;
 
+    const effectivePrice = isSubscription
+      ? Math.round(price * 0.9)
+      : price;
+    const effectiveVariantId = isSubscription
+      ? `${selectedVariant.id}_sub_${subscriptionFrequency}`
+      : selectedVariant.id;
+
     addItem({
-      variantId: selectedVariant.id,
+      variantId: effectiveVariantId,
       productId: product.id,
       productName: product.name,
-      variantName: selectedVariant.name,
+      variantName: isSubscription
+        ? `${selectedVariant.name} [Định kỳ: ${SUBSCRIPTION_CONFIG.FREQUENCIES[subscriptionFrequency].label}]`
+        : selectedVariant.name,
       sku: selectedVariant.sku,
-      price: price,
+      price: effectivePrice,
+      originalPrice: isSubscription ? price : (originalPrice || null),
       image: selectedVariant.image || product.images[0]?.url || null,
       quantity: quantity,
       stock: selectedVariant.stock,
+      isSubscription: isSubscription,
+      subscriptionFrequency: isSubscription ? subscriptionFrequency : undefined,
     });
 
     router.push("/thanh-toan");
@@ -373,6 +405,15 @@ export function ProductInfoSection({
           })}
         </div>
       </div>
+
+      {/* ── 4.5. Tùy chọn Mua Một Lần vs Giao Định Kỳ Subscribe & Save ── */}
+      <SubscriptionOptionSelector
+        isSubscription={isSubscription}
+        onToggleSubscription={setIsSubscription}
+        frequency={subscriptionFrequency}
+        onFrequencyChange={setSubscriptionFrequency}
+        basePrice={price}
+      />
 
       {/* ── 5. Quantity & Actions Buttons ───────────────────────────── */}
       <div className="space-y-4 pt-2">

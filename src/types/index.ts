@@ -88,6 +88,8 @@ export interface CartItem {
   stock: number; // Để kiểm tra giới hạn tồn kho
   isFlashSale?: boolean;
   originalPrice?: number | null;
+  isSubscription?: boolean;
+  subscriptionFrequency?: "EVERY_2_WEEKS" | "EVERY_1_MONTH" | "EVERY_2_MONTHS" | "EVERY_3_MONTHS";
 }
 
 // ============================================================

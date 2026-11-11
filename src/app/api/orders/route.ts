@@ -6,8 +6,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { PaymentMethod } from "@prisma/client";
+import { PaymentMethod, SubscriptionFrequency, SubscriptionStatus } from "@prisma/client";
 import { createInAppNotification } from "@/lib/notifications";
+import {
+  generateSubscriptionNumber,
+  calculateNextDeliveryDate,
+} from "@/lib/subscription";
 
 interface OrderItemRequest {
   variantId: string;
@@ -119,9 +123,24 @@ export async function POST(req: NextRequest) {
     const formattedShippingAddress = `${addressDetail.trim()}, ${ward.trim()}, ${district.trim()}, ${province.trim()}`;
 
     // 2. Chạy Prisma Transaction với Pessimistic Locking chống Overselling
+    let createdSubscriptionNumber: string | null = null;
+
     const resultOrder = await prisma.$transaction(
       async (tx) => {
         let calculatedSubtotal = 0;
+        let hasSubscriptionItem = false;
+        let detectedFrequency: SubscriptionFrequency = "EVERY_1_MONTH";
+        const subscriptionItemsToSave: {
+          variantId: string;
+          productName: string;
+          variantName: string;
+          sku: string;
+          originalPrice: number;
+          price: number;
+          quantity: number;
+          image: string | null;
+        }[] = [];
+
         const verifiedItems: {
           variantId: string;
           productName: string;
@@ -136,24 +155,34 @@ export async function POST(req: NextRequest) {
         const sortedItems = [...items].sort((a, b) => a.variantId.localeCompare(b.variantId));
 
         for (const it of sortedItems) {
+          const rawId = it.variantId;
+          const isSubItem = rawId.includes("_sub_");
+          const targetVariantId = isSubItem ? rawId.split("_sub_")[0] : rawId;
+          const itemFreq = isSubItem ? (rawId.split("_sub_")[1] as SubscriptionFrequency) : null;
+
+          if (isSubItem && itemFreq) {
+            hasSubscriptionItem = true;
+            detectedFrequency = itemFreq;
+          }
+
           // Pessimistic Lock: SELECT FOR UPDATE
           const lockedRows: { id: string }[] = await tx.$queryRaw`
             SELECT id FROM product_variants
-            WHERE id = ${it.variantId}
+            WHERE id = ${targetVariantId}
             FOR UPDATE
           `;
 
           if (lockedRows.length === 0) {
-            throw new Error(`Sản phẩm (mã: ${it.variantId}) không tồn tại trong hệ thống.`);
+            throw new Error(`Sản phẩm (mã: ${targetVariantId}) không tồn tại trong hệ thống.`);
           }
 
           const variant = await tx.productVariant.findUnique({
-            where: { id: it.variantId },
+            where: { id: targetVariantId },
             include: { product: true },
           });
 
           if (!variant || !variant.isActive || !variant.product.isActive) {
-            throw new Error(`Sản phẩm "${variant?.name || it.variantId}" hiện không còn kinh doanh.`);
+            throw new Error(`Sản phẩm "${variant?.name || targetVariantId}" hiện không còn kinh doanh.`);
           }
 
           if (variant.stock < it.quantity) {
@@ -177,7 +206,20 @@ export async function POST(req: NextRequest) {
 
           let itemPrice = Number(variant.price);
 
-          if (
+          if (isSubItem) {
+            // Giá ưu đãi Subscribe & Save: Giảm 10% trọn đời
+            itemPrice = Math.round(Number(variant.price) * 0.9);
+            subscriptionItemsToSave.push({
+              variantId: variant.id,
+              productName: variant.product.name,
+              variantName: variant.name,
+              sku: variant.sku,
+              originalPrice: Number(variant.price),
+              price: itemPrice,
+              quantity: it.quantity,
+              image: variant.image || null,
+            });
+          } else if (
             activeFlashDeal &&
             activeFlashDeal.soldCount < activeFlashDeal.quantity
           ) {
@@ -206,7 +248,9 @@ export async function POST(req: NextRequest) {
           verifiedItems.push({
             variantId: variant.id,
             productName: variant.product.name,
-            variantName: variant.name,
+            variantName: isSubItem
+              ? `${variant.name} [Định kỳ]`
+              : variant.name,
             sku: variant.sku,
             price: itemPrice,
             quantity: it.quantity,
@@ -224,7 +268,7 @@ export async function POST(req: NextRequest) {
 
         // 3. Tính toán Phí Ship & Voucher
         const standardShippingFee = calculatedSubtotal >= 500000 ? 0 : 30000;
-        let finalShippingFee = standardShippingFee;
+        let finalShippingFee = hasSubscriptionItem ? 0 : standardShippingFee;
         let calculatedDiscount = 0;
         let validatedVoucherId: string | null = null;
 
@@ -365,11 +409,53 @@ export async function POST(req: NextRequest) {
             ? `TN${orderNumber.replace(/[^A-Za-z0-9]/g, "")}`
             : null;
 
+        // 4.5. Khởi tạo Gói Giao Định Kỳ nếu giỏ hàng có sản phẩm Subscribe & Save (Stage 13.4)
+        let createdSubscriptionId: string | null = null;
+        if (hasSubscriptionItem && subscriptionItemsToSave.length > 0) {
+          const subNum = generateSubscriptionNumber();
+          createdSubscriptionNumber = subNum;
+          const nowTime = new Date();
+          const nextDelivery = calculateNextDeliveryDate(nowTime, detectedFrequency);
+
+          const newSub = await tx.subscription.create({
+            data: {
+              subscriptionNumber: subNum,
+              userId: currentUserId,
+              frequency: detectedFrequency,
+              status: SubscriptionStatus.ACTIVE,
+              discountPercent: 10,
+              startDate: nowTime,
+              nextDeliveryDate: nextDelivery,
+              lastDeliveryDate: nowTime,
+              totalCyclesDelivered: 1,
+              recipientName: recipientName.trim(),
+              recipientPhone: cleanPhone,
+              shippingAddress: formattedShippingAddress,
+              paymentMethod,
+              note: note?.trim() || null,
+              items: {
+                create: subscriptionItemsToSave.map((item) => ({
+                  variantId: item.variantId,
+                  productName: item.productName,
+                  variantName: item.variantName,
+                  sku: item.sku,
+                  originalPrice: item.originalPrice,
+                  price: item.price,
+                  quantity: item.quantity,
+                  image: item.image,
+                })),
+              },
+            },
+          });
+          createdSubscriptionId = newSub.id;
+        }
+
         // 5. Lưu Order và OrderItems snapshot
         const newOrder = await tx.order.create({
           data: {
             orderNumber,
             userId: currentUserId,
+            subscriptionId: createdSubscriptionId,
             recipientName: recipientName.trim(),
             recipientPhone: cleanPhone,
             shippingAddress: formattedShippingAddress,
@@ -470,6 +556,17 @@ export async function POST(req: NextRequest) {
       type: "ORDER_STATUS",
       link: `/tai-khoan/don-hang/${resultOrder.orderNumber}`,
     });
+
+    // Thông báo khởi tạo gói định kỳ thành công (nếu có)
+    if (createdSubscriptionNumber) {
+      await createInAppNotification({
+        userId: currentUserId,
+        type: "PROMOTION",
+        title: `🔄 Đăng ký gói định kỳ #${createdSubscriptionNumber} thành công!`,
+        message: `Bạn đã đăng ký nhận hàng định kỳ thành công với đặc quyền giảm 10% trọn đời & Miễn phí vận chuyển. Đơn hàng đầu tiên #${resultOrder.orderNumber} đã được khởi tạo.`,
+        link: "/tai-khoan/dinh-ky",
+      });
+    }
 
     return NextResponse.json(
       {
