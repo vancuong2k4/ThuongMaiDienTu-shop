@@ -789,7 +789,16 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng lớp kiểm thực dữ liệu Zod toàn diện (`src/lib/validations/referral.ts`): Cấu hình thể lệ chương trình (Người giới thiệu nhận +500 điểm ~ 50.000₫, Bạn mới nhận Voucher chào mừng 50.000₫ cho đơn từ 300.000₫), schemas áp dụng mã và từ điển hiển thị trạng thái.
   - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-referrals.ts`): Sinh mã giới thiệu cho toàn bộ khách hàng hiện có và tạo các liên kết bạn bè với các trạng thái thực tế (`REWARDED`, `QUALIFIED`, `PENDING`).
-- [ ] **Giai đoạn 12.2: Hệ Thống REST APIs Quản Lý Giới Thiệu & Động Cơ Trả Thưởng Tự Động**: Endpoints lấy mã mời cá nhân, thống kê hoa hồng và API kiểm duyệt Admin.
+- [x] **Giai đoạn 12.2: Hệ Thống REST APIs Quản Lý Giới Thiệu & Động Cơ Trả Thưởng Tự Động** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng module nghiệp vụ Referral độc lập (`src/lib/referral.ts`):
+    - Thuật toán sinh mã giới thiệu độc quyền ngẫu nhiên (`generateRandomReferralCode`).
+    - Hàm đảm bảo người dùng luôn có mã mời duy nhất (`ensureUserReferralCode`).
+    - Động cơ tự động sinh Voucher chào mừng 50.000₫ cho bạn mới (`createRefereeWelcomeVoucher`: mã `BANMOI-XXXX`, đơn tối thiểu 300.000₫, hạn dùng 30 ngày).
+    - Động cơ xử lý trả thưởng nguyên tử khi đơn hàng đầu tiên giao thành công (`processReferralRewardOnDelivered`): Chuyển trạng thái `REWARDED`, cộng +500 điểm tích lũy THUYNGA Club cho người mời, ghi sổ cái `LoyaltyTransaction` (`EARN_REFERRAL`) và tự động bắn thông báo đẩy In-App ăn mừng kèm thông tin người bạn được mời.
+  - `GET /api/user/referral`: Lấy mã mời cá nhân, liên kết chia sẻ đầy đủ, tổng hợp thống kê chuyển đổi (Tổng bạn đã mời, Bạn đã hoàn thành đơn đầu, Tổng điểm thưởng đã nhận) và danh sách bạn bè đã mời kèm email đã được che dấu bảo mật (`m***@gmail.com`).
+  - `POST /api/user/referral/apply`: Khách hàng kích hoạt mã mời bạn bè; kiểm tra chặt chẽ chống tự mời bản thân (Self-referral check), chống áp dụng lại khi đã có người mời, ngăn chặn nếu khách đã từng phát sinh đơn hàng, tự động phát sinh voucher chào mừng và gửi thông báo In-App thông báo người mời kết nối thành công.
+  - `GET /api/admin/referrals`: Phân hệ Admin CMS truy vấn phân trang danh sách kết nối giới thiệu, tìm kiếm theo tên/email người mời và người được mời hoặc mã voucher, lọc theo trạng thái (`PENDING`, `QUALIFIED`, `REWARDED`, `EXPIRED`) và tính toán 5 chỉ số KPIs chuyển đổi then chốt.
+- [ ] **Giai đoạn 12.3: Giao diện Quản trị Giới Thiệu Admin CMS (`/admin/marketing/gioi-thieu`)**: 4 Thẻ KPI chuyển đổi, bảng theo dõi liên kết bạn bè và báo cáo doanh thu giới thiệu.
 - [ ] **Giai đoạn 12.3: Giao diện Quản trị Giới Thiệu Admin CMS (`/admin/marketing/gioi-thieu`)**: 4 Thẻ KPI chuyển đổi, bảng theo dõi liên kết bạn bè và báo cáo doanh thu giới thiệu.
 - [ ] **Giai đoạn 12.4: Giao diện Storefront Trung Tâm Mời Bạn Nhận Quà (`/tai-khoan/gioi-thieu`)**: Thẻ chia sẻ mã mời sang trọng, nút sao chép link 1-chạm, mã QR và danh sách bạn bè đã mời.
 - [ ] **Giai đoạn 12.5: Tích Hợp Đăng Ký Tài Khoản Nhận Mã Mời & Tự Động Trả Thưởng Khi Giao Hàng**: Tích hợp mã mời vào luồng đăng ký `/api/auth/register`, tự động phát voucher bạn mới và kích hoạt trả thưởng +500 điểm cho người mời khi đơn hàng đầu tiên giao thành công.
