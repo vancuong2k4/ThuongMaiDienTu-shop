@@ -962,7 +962,31 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - `GET & POST /api/products/[slug]/qa`: Khách hàng tra cứu và đặt câu hỏi chuyên gia sữa & TPCN Úc.
   - `POST /api/products/[slug]/qa/[questionId]/answer`: Dược sĩ / Cộng đồng phản hồi câu hỏi; tự động gán nhãn `isOfficial: true` cho tài khoản Quản trị viên và bắn thông báo In-App cho người hỏi.
   - `GET & PATCH & DELETE /api/admin/reviews`: Phân hệ Admin CMS tra cứu danh sách kiểm duyệt, thống kê 5 chỉ số (Tổng bài, Chờ duyệt, Điểm TB, Tỷ lệ ảnh UGC, Ghim), cập nhật trạng thái và gửi phản hồi Dược sĩ chính thức.
-- [ ] **Giai đoạn 14.3: Giao Diện Quản Trị Đánh Giá & UGC Admin CMS (`/admin/marketing/danh-gia`)**
+- [x] **Giai đoạn 14.3: Giao Diện Quản Trị Đánh Giá & UGC Admin CMS (`/admin/danh-gia`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 4 Thẻ KPI kiểm duyệt đa chiều thời gian thực (`ReviewStats.tsx`):
+    - Tổng Đánh Giá & Điểm TB: Tổng phản hồi toàn sàn kèm huy hiệu điểm trung bình sao vàng (★/5.0).
+    - Chờ Kiểm Duyệt: Số lượng bài chờ xử lý kèm chỉ báo pulse cảnh báo khi tồn đọng.
+    - Ghim Nổi Bật (Top UGC): Số lượng bài viết xuất sắc được gắn huy hiệu tím `Award` đưa lên đầu trang.
+    - Tỷ Lệ Ảnh UGC Thực Tế: Phần trăm đánh giá kèm ảnh bóc hộp air-cargo chính hãng.
+  - Bộ lọc đa năng & tìm kiếm thông minh (`ReviewFilters.tsx`):
+    - 5 Tabs phân loại: Tất Cả, ⏳ Chờ Duyệt, 🟢 Đã Duyệt, ⭐ Ghim Nổi Bật, ❌ Từ Chối.
+    - Dropdown lọc theo số sao (1-5 sao).
+    - Phím bật/tắt (Toggle) "Có ảnh UGC" và "Đã mua hàng (Verified Buyer)".
+    - Ô tìm kiếm tức thì theo nội dung, tên khách hàng, email hoặc tên sản phẩm.
+    - Nút xóa bộ lọc 1-chạm khi có tiêu chí đang kích hoạt.
+  - Bảng dữ liệu chi tiết chuyên sâu (`ReviewTable.tsx`):
+    - Khách hàng: Avatar, tên, email, huy hiệu hạng hội viên THUYNGA Club (Đồng/Bạc/Vàng/Kim Cương).
+    - Sản phẩm: Thumbnail ảnh, tên sản phẩm, liên kết mở xem trang chi tiết.
+    - Tiêu chí chi tiết: Sao tổng thể kèm 3 điểm thành phần (Đóng gói Air-cargo, Date HSD mới, Hiệu quả & Bé hợp vị).
+    - Huy hiệu tin cậy: "Đã mua hàng" (`CheckCircle2`), "Bay Air" (`ShieldCheck`), "+Xđ" điểm thưởng THUYNGA Club.
+    - Thư viện ảnh UGC: Xem ảnh thu nhỏ, hỗ trợ mở Modal Lightbox xem ảnh lớn độ nét cao.
+    - Lượt hữu ích: Thống kê số lượng người dùng khác bình chọn (👍 X).
+    - Khối phản hồi Dược sĩ: Hiển thị phản hồi chính thức hoặc nút mở modal trả lời.
+    - Thanh tác vụ kiểm duyệt 1-chạm: Phê duyệt (`APPROVED`), Ghim Top (`FEATURED`), Từ chối (`REJECTED`), Xóa vĩnh viễn (`DELETE`).
+  - Modal Dược sĩ THUYNGA Shop phản hồi chuyên môn (`ReviewPharmacistReplyModal.tsx`):
+    - Cung cấp sẵn các mẫu câu tư vấn chuẩn y khoa & chăm sóc mẹ bé.
+    - Tự động lưu phản hồi công khai và bắn thông báo In-App cho người đánh giá.
+  - Trang Server Component [`/admin/danh-gia`](/admin/danh-gia): Pre-fetch SSR 7 chỉ số thống kê, kết nối đồng bộ `ReviewManager.tsx`.
 - [ ] **Giai đoạn 14.4: Nâng Cấp Giao Diện Đánh Giá & Tab Hỏi Đáp Chuyên Gia Trên Trang Chi Tiết Sản Phẩm**
 - [ ] **Giai đoạn 14.5: Giao Diện Storefront Trung Tâm Đánh Giá & Săn Điểm Thưởng Của Tôi (`/tai-khoan/danh-gia`)**
 

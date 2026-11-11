@@ -1,15 +1,16 @@
-"use client";
-
 // ============================================================
 // components/admin/reviews/ReviewManager.tsx
-// Trình Quản Lý & Kiểm Duyệt Đánh Giá (Client Component điều phối)
+// Trình Quản Lý & Kiểm Duyệt Đánh Giá UGC Air-Cargo (Phase 14)
 // ============================================================
+
+"use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import { ReviewStats } from "./ReviewStats";
 import { ReviewFilters } from "./ReviewFilters";
 import { ReviewTable } from "./ReviewTable";
-import { AlertTriangle, Trash2, Loader2 } from "lucide-react";
+import { ReviewPharmacistReplyModal } from "./ReviewPharmacistReplyModal";
+import { AlertTriangle, Trash2, Loader2, CheckCircle2 } from "lucide-react";
 import type { ReviewListItem, ReviewStatsData, ReviewStatus } from "./types";
 
 interface ReviewManagerProps {
@@ -25,7 +26,9 @@ export const ReviewManager: React.FC<ReviewManagerProps> = ({ initialStats }) =>
       pending: 0,
       approved: 0,
       rejected: 0,
+      featured: 0,
       averageRating: 5.0,
+      mediaRate: 0,
     }
   );
 
@@ -39,11 +42,24 @@ export const ReviewManager: React.FC<ReviewManagerProps> = ({ initialStats }) =>
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [selectedRating, setSelectedRating] = useState("ALL");
-  const [sortBy, setSortBy] = useState("createdAt_desc");
+  const [hasImages, setHasImages] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
 
-  // Delete dialog states
+  // Modals & Dialogs
+  const [replyReview, setReplyReview] = useState<ReviewListItem | null>(null);
   const [reviewToDelete, setReviewToDelete] = useState<ReviewListItem | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  const showToast = (type: "success" | "error", text: string) => {
+    setToastMessage({ type, text });
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+  };
 
   // Fetch reviews from API
   const fetchReviews = useCallback(async () => {
@@ -55,68 +71,91 @@ export const ReviewManager: React.FC<ReviewManagerProps> = ({ initialStats }) =>
       if (search) params.set("search", search);
       if (selectedStatus !== "ALL") params.set("status", selectedStatus);
       if (selectedRating !== "ALL") params.set("rating", selectedRating);
-      if (sortBy) params.set("sortBy", sortBy);
+      if (hasImages) params.set("hasImages", "true");
+      if (verifiedOnly) params.set("verifiedOnly", "true");
 
       const res = await fetch(`/api/admin/reviews?${params.toString()}`);
-      const data = await res.json();
+      if (!res.ok) {
+        throw new Error("Không thể tải danh sách đánh giá");
+      }
 
+      const data = await res.json();
       if (data.success) {
-        setReviews(data.reviews);
-        setTotalPages(data.pagination.totalPages);
-        setTotalItems(data.pagination.total);
+        setReviews(data.reviews || []);
+        setTotalPages(data.pagination?.totalPages || 1);
+        setTotalItems(data.pagination?.total || 0);
         if (data.stats) {
           setStats(data.stats);
         }
       }
-    } catch (err) {
-      console.error("Fetch reviews failed:", err);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Đã có lỗi xảy ra";
+      showToast("error", msg);
     } finally {
       setLoading(false);
     }
-  }, [page, search, selectedStatus, selectedRating, sortBy]);
+  }, [page, search, selectedStatus, selectedRating, hasImages, verifiedOnly]);
 
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
 
-  // Handle Update Status with Optimistic UI
+  // Cập nhật trạng thái duyệt (PENDING, APPROVED, REJECTED, FEATURED)
   const handleUpdateStatus = async (id: string, nextStatus: ReviewStatus) => {
-    const prevReviews = [...reviews];
-
-    // Optimistic update
-    setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: nextStatus } : r))
-    );
-
     try {
-      const res = await fetch(`/api/admin/reviews/${id}/status`, {
+      const res = await fetch(`/api/admin/reviews/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: nextStatus }),
       });
 
+      const data = await res.json();
       if (!res.ok) {
-        throw new Error("Không thể cập nhật trạng thái");
+        throw new Error(data.error || "Không thể cập nhật trạng thái");
       }
 
-      // Re-fetch to sync counts
-      fetchReviews();
-    } catch (err) {
-      // Revert if failed
-      setReviews(prevReviews);
-      alert("Đã xảy ra lỗi khi cập nhật trạng thái đánh giá");
+      showToast("success", "Cập nhật trạng thái đánh giá thành công!");
+      await fetchReviews();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Đã có lỗi xảy ra";
+      showToast("error", msg);
     }
   };
 
-  // Trigger Delete Review
-  const handleDeletePrompt = (review: ReviewListItem) => {
-    setReviewToDelete(review);
+  // Dược sĩ gửi phản hồi
+  const handlePharmacistReplySubmit = async (
+    reviewId: string,
+    replyText: string
+  ) => {
+    try {
+      const targetReview = reviews.find((r) => r.id === reviewId);
+      const currentStatus = targetReview?.status || "APPROVED";
+
+      const res = await fetch(`/api/admin/reviews/${reviewId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          status: currentStatus,
+          adminReply: replyText,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Không thể lưu phản hồi");
+      }
+
+      showToast("success", "Gửi phản hồi từ Dược sĩ thành công!");
+      await fetchReviews();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Đã có lỗi xảy ra";
+      showToast("error", msg);
+    }
   };
 
-  // Confirm Delete
-  const handleConfirmDelete = async () => {
+  // Xóa đánh giá
+  const confirmDelete = async () => {
     if (!reviewToDelete) return;
-
     try {
       setDeleting(true);
       const res = await fetch(`/api/admin/reviews/${reviewToDelete.id}`, {
@@ -128,64 +167,100 @@ export const ReviewManager: React.FC<ReviewManagerProps> = ({ initialStats }) =>
         throw new Error(data.error || "Không thể xóa đánh giá");
       }
 
+      showToast("success", "Đã xóa đánh giá vi phạm thành công!");
       setReviewToDelete(null);
-      fetchReviews();
-    } catch (err: any) {
-      alert(err.message || "Đã xảy ra lỗi khi xóa");
+      await fetchReviews();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Đã có lỗi xảy ra";
+      showToast("error", msg);
     } finally {
       setDeleting(false);
     }
   };
 
-  // Reset Filters
+  const hasActiveFilters =
+    selectedStatus !== "ALL" ||
+    selectedRating !== "ALL" ||
+    Boolean(search) ||
+    hasImages ||
+    verifiedOnly;
+
   const handleResetFilters = () => {
-    setSearch("");
     setSelectedStatus("ALL");
     setSelectedRating("ALL");
-    setSortBy("createdAt_desc");
+    setSearch("");
+    setHasImages(false);
+    setVerifiedOnly(false);
     setPage(1);
   };
 
-  const hasActiveFilters = Boolean(
-    search ||
-      selectedStatus !== "ALL" ||
-      selectedRating !== "ALL" ||
-      sortBy !== "createdAt_desc"
-  );
-
   return (
     <div className="space-y-6">
-      {/* 1. KPI Stats Cards */}
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div
+          className={`p-3.5 rounded-2xl flex items-center justify-between text-xs sm:text-sm font-bold shadow-lg animate-in slide-in-from-top duration-200 ${
+            toastMessage.type === "success"
+              ? "bg-emerald-600 text-white"
+              : "bg-red-600 text-white"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span>{toastMessage.type === "success" ? "✓" : "⚠"}</span>
+            <span>{toastMessage.text}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setToastMessage(null)}
+            className="text-white/80 hover:text-white ml-3 font-bold"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* KPI Stats */}
       <ReviewStats stats={stats} />
 
-      {/* 2. Filters & Actions */}
+      {/* Filters & Search */}
       <ReviewFilters
+        currentStatus={selectedStatus}
+        onStatusChange={(status) => {
+          setSelectedStatus(status);
+          setPage(1);
+        }}
+        currentRating={selectedRating}
+        onRatingChange={(rating) => {
+          setSelectedRating(rating);
+          setPage(1);
+        }}
         search={search}
         onSearchChange={(val) => {
           setSearch(val);
           setPage(1);
         }}
-        selectedStatus={selectedStatus}
-        onStatusChange={(s) => {
-          setSelectedStatus(s);
+        hasImages={hasImages}
+        onHasImagesChange={(val) => {
+          setHasImages(val);
           setPage(1);
         }}
-        selectedRating={selectedRating}
-        onRatingChange={(r) => {
-          setSelectedRating(r);
+        verifiedOnly={verifiedOnly}
+        onVerifiedOnlyChange={(val) => {
+          setVerifiedOnly(val);
           setPage(1);
         }}
-        sortBy={sortBy}
-        onSortByChange={(sb) => {
-          setSortBy(sb);
-          setPage(1);
-        }}
-        pendingCount={stats.pending}
         onResetFilters={handleResetFilters}
         hasActiveFilters={hasActiveFilters}
+        counts={{
+          all: stats.total,
+          pending: stats.pending,
+          approved: stats.approved,
+          featured: stats.featured,
+          rejected: stats.rejected,
+        }}
       />
 
-      {/* 3. Table of Reviews */}
+      {/* Reviews Table */}
       <ReviewTable
         reviews={reviews}
         loading={loading}
@@ -194,59 +269,58 @@ export const ReviewManager: React.FC<ReviewManagerProps> = ({ initialStats }) =>
         totalItems={totalItems}
         onPageChange={setPage}
         onUpdateStatus={handleUpdateStatus}
-        onDeleteReview={handleDeletePrompt}
+        onDeleteReview={setReviewToDelete}
+        onOpenPharmacistReply={setReplyReview}
       />
 
-      {/* Dialog: Confirm Delete Review */}
+      {/* Modal Phản hồi Dược sĩ */}
+      <ReviewPharmacistReplyModal
+        review={replyReview}
+        isOpen={replyReview !== null}
+        onClose={() => setReplyReview(null)}
+        onSubmit={handlePharmacistReplySubmit}
+      />
+
+      {/* Delete Confirmation Dialog */}
       {reviewToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="p-6 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="w-6 h-6" />
-              </div>
-              <h3 className="text-base font-bold text-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div className="text-center space-y-1">
+              <h3 className="font-extrabold text-base text-slate-900">
                 Xác Nhận Xóa Đánh Giá?
               </h3>
-              <p className="text-xs text-slate-500 mt-2">
-                Bạn có chắc chắn muốn xóa đánh giá của{" "}
-                <span className="font-bold text-slate-700">
-                  {reviewToDelete.user.name || reviewToDelete.user.email}
-                </span>{" "}
-                cho sản phẩm{" "}
-                <span className="font-bold text-[#800028]">
-                  {reviewToDelete.product.name}
-                </span>
-                ? Thao tác này không thể hoàn tác.
+              <p className="text-xs text-slate-500">
+                Hành động này sẽ xóa vĩnh viễn bài nhận xét và toàn bộ ảnh UGC kèm theo.
+                Dữ liệu không thể khôi phục lại sau khi xóa.
               </p>
             </div>
-
-            <div className="flex items-center justify-end gap-2.5 px-6 py-4 bg-slate-50 border-t border-slate-100">
+            <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 italic text-center line-clamp-2">
+              &ldquo;{reviewToDelete.content || "Ảnh đánh giá không có văn bản"}&rdquo;
+            </div>
+            <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 type="button"
                 disabled={deleting}
                 onClick={() => setReviewToDelete(null)}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-bold transition-all"
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors"
               >
                 Hủy bỏ
               </button>
               <button
                 type="button"
                 disabled={deleting}
-                onClick={handleConfirmDelete}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all disabled:opacity-50"
+                onClick={confirmDelete}
+                className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 transition-colors disabled:opacity-50 shadow-md shadow-rose-600/20"
               >
                 {deleting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Đang xóa...</span>
-                  </>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 ) : (
-                  <>
-                    <Trash2 className="w-4 h-4" />
-                    <span>Xóa Vĩnh Viễn</span>
-                  </>
+                  <Trash2 className="w-3.5 h-3.5" />
                 )}
+                <span>{deleting ? "Đang xóa..." : "Xác nhận xóa"}</span>
               </button>
             </div>
           </div>
