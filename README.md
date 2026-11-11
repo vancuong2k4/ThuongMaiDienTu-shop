@@ -868,7 +868,17 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng lớp kiểm thực Zod toàn diện (`src/lib/validations/subscription.ts`): Cấu hình ưu đãi giảm 10% trọn đời, schemas tạo mới gói, đổi chu kỳ, tạm dừng, bỏ qua kỳ và bộ lọc truy vấn.
   - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-subscriptions.ts`): Nạp 3 gói định kỳ tiêu biểu (Sữa bột Úc cho bé 1 tháng/lần, Mật ong & TPCN 2 tuần/lần, Vitamin bổ khớp 2 tháng/lần - PAUSED).
-- [ ] **Giai đoạn 13.2: Hệ Thống REST APIs Quản Lý Gói Định Kỳ & Động Cơ Sinh Đơn Hàng Tự Động**: Endpoints tra cứu, tạo mới, tạm dừng, tiếp tục, bỏ qua kỳ tới, giao ngay và API kiểm soát Admin CMS.
+- [x] **Giai đoạn 13.2: Hệ Thống REST APIs Quản Lý Gói Định Kỳ & Động Cơ Sinh Đơn Hàng Tự Động** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng module điều phối Subscription độc lập (`src/lib/subscription.ts`):
+    - Thuật toán sinh mã gói định kỳ duy nhất `SUB-YYYY-XXXX` (`generateSubscriptionNumber`).
+    - Hàm tính toán ngày giao hàng kế tiếp dựa trên chu kỳ (`calculateNextDeliveryDate`: 2 tuần, 1 tháng, 2 tháng, 3 tháng).
+    - Động cơ tạo đơn hàng tự động nguyên tử (`createOrderFromSubscription`): Tự động tạo `Order` kèm `OrderItem`s với giá giảm 10% trọn đời, miễn phí vận chuyển 0₫, cập nhật `lastDeliveryDate`, `nextDeliveryDate` và tăng `totalCyclesDelivered`, đồng thời bắn thông báo In-App cho khách.
+    - Động cơ quét và kích hoạt các gói định kỳ đến hạn (`processDueSubscriptions`).
+  - `GET /api/user/subscriptions`: Khách hàng tra cứu danh sách gói định kỳ, danh sách sản phẩm, các đơn hàng gần đây phát sinh từ gói và 4 chỉ số thống kê cá nhân (Tổng số gói, Gói đang kích hoạt, Ngày giao sớm nhất, Tổng tiền tiết kiệm lũy kế).
+  - `POST /api/user/subscriptions`: Khách hàng đăng ký gói giao định kỳ mới kèm kiểm thực Zod nghiêm ngặt.
+  - `PATCH /api/user/subscriptions/[id]/action`: Khách hàng thao tác linh hoạt trên gói: Tạm dừng (`PAUSE`), Kích hoạt lại (`RESUME`), Bỏ qua kỳ tới (`SKIP_NEXT`), Đặt giao ngay hôm nay (`DELIVER_NOW`), Hủy gói (`CANCEL`), hoặc Thay đổi chu kỳ (`UPDATE_FREQUENCY`).
+  - `GET /api/admin/subscriptions`: Phân hệ Admin CMS tra cứu phân trang, tìm kiếm đa tiêu chí, lọc theo trạng thái & chu kỳ, và tính toán 5 chỉ số KPIs then chốt (Tổng số gói, Gói hoạt động, Gói tạm dừng, Doanh thu định kỳ ước tính MRR, Tổng số đơn hàng định kỳ đã tạo).
+  - `POST /api/admin/subscriptions/[id]/trigger`: Endpoint Admin CMS cho phép kích hoạt tạo đơn hàng định kỳ ngay lập tức theo yêu cầu hỗ trợ khách hàng.
 - [ ] **Giai đoạn 13.3: Giao diện Quản Trị Đơn Hàng Định Kỳ Admin CMS (`/admin/don-hang/dinh-ky`)**: 4 Thẻ KPI MRR & Churn, bảng theo dõi gói định kỳ, lọc trạng thái và nút kích hoạt chu kỳ thủ công.
 - [ ] **Giai đoạn 13.4: Tích Hợp Bộ Chọn Subscribe & Save Trên Trang Chi Tiết Sản Phẩm & Giỏ Hàng**: Chuyển đổi "Mua một lần" vs "Giao định kỳ - Tiết kiệm 10%", chọn chu kỳ giao và hỗ trợ checkout gói định kỳ.
 - [ ] **Giai đoạn 13.5: Giao diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)**: Danh sách gói đăng ký, thẻ trực quan, lịch giao hàng và các nút thao tác 1-chạm (Đổi chu kỳ, Tạm dừng, Giao ngay, Hủy).
