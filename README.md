@@ -1061,7 +1061,27 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Trung Tâm Quản Trị Hợp Nhất (`AirCargoManager.tsx` & Server Component [`/admin/kho-hang/lo-hang-air`](/admin/kho-hang/lo-hang-air)):
     - Quản lý đồng bộ trạng thái, gọi API bất đồng bộ và pre-fetch SSR dữ liệu ban đầu.
   - Điều Hướng Admin: Bổ sung mục "Lô hàng bay Air" (icon `Plane`) vào thanh điều hướng bên trái `AdminSidebar.tsx`.
-- [ ] **Giai đoạn 15.4: Giao Diện Storefront Tra Cứu Minh Bạch Nguồn Gốc & Hạn Sử Dụng Air-Cargo (`/minh-bach-air-cargo`)**
+- [x] **Giai đoạn 15.4: Giao Diện Storefront Tra Cứu Minh Bạch Nguồn Gốc & Hạn Sử Dụng Air-Cargo (`/minh-bach-air-cargo`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thanh Tra Cứu Thông Minh & Gợi Ý 1-Chạm (`TransparencySearchBar.tsx`):
+    - Input tra cứu mã lô in nổi dưới đáy lon/thân chai (`APT-2026-SYD01`, `MNK-2026-MEL02`, `SWI-2026-SYD03`).
+    - Nút bấm mã lô mẫu 1-chạm giúp khách hàng trải nghiệm ngay không cần gõ phím.
+  - Thẻ Hành Trình Chuyến Bay & Vận Đơn Hàng Không AWB (`FlightTimelineCard.tsx`):
+    - Trực quan hóa chặng bay từ sân bay quốc tế Sydney Kingsford Smith (SYD) hoặc Melbourne Tullamarine (MEL) về thẳng sân bay quốc tế Nội Bài (HAN).
+    - Hiển thị logo/badge hãng hàng không (Vietnam Airlines Cargo / Qantas Freight), số hiệu chuyến bay, thời gian bay non-stop (~9h45m), số vận đơn AWB có nút sao chép 1-chạm và trạng thái thông quan hải quan.
+  - Thẻ Kiểm Soát Kho Lạnh Hàng Không & Nhật Ký Cảm Biến (`ColdChainGaugeCard.tsx`):
+    - Thước đo nhiệt độ khoang mát dải chuẩn 18°C - 24°C, bảo toàn 100% men vi sinh Probiotics và vi chất dinh dưỡng.
+    - Bảng nhật ký nhiệt độ 4 chặng: Đóng pallet tại Úc, trên khoang bay hàng không độ cao 11,000m, kiểm dịch y tế Nội Bài, và nhập kho điều hòa 24/7 của THUYNGA Shop.
+  - Thư Viện Hóa Đơn Mua Hàng Chemist Warehouse Úc (`ChemistReceiptGallery.tsx`):
+    - Bộ sưu tập hóa đơn mua hàng thực tế từ hệ thống Chemist Warehouse Sydney (Pitt St, NSW) và Melbourne.
+    - Huy hiệu "Có thuế GST Úc" chứng minh nguồn gốc chính hãng chuẩn mực.
+    - Tích hợp Modal Lightbox phóng to độ nét cao soi rõ từng mã vạch và số tiền thanh toán AUD.
+  - Thẻ Chứng Thực Hạn Sử Dụng & Cam Kết Độ Tươi Mới (`BatchFreshnessPledge.tsx`):
+    - Hiển thị ảnh sản phẩm, NSX và HSD dập nổi thực tế kèm đếm ngược số tháng còn lại (Date mới tinh > 20 tháng).
+    - Mã vạch GS1 Úc đầu số 93x chuẩn Australia.
+    - Nút hành động trực tiếp "Đặt Mua Lô Hàng Này" dẫn thẳng tới trang sản phẩm.
+  - Cổng Tra Cứu Hợp Nhất & 4 Trụ Cột Cam Kết Vàng (`TransparencyPortalClient.tsx` & Server Component [`/minh-bach-air-cargo`](/minh-bach-air-cargo)):
+    - Quản lý đồng bộ URL searchParams `?code=...`, hỗ trợ SSR pre-fetch kết quả tức thì.
+    - Khối cẩm nang 3 bước hướng dẫn tra cứu và banner 4 Cam kết vàng (100% Đi Máy Bay, HSD > 18-24 tháng, Kho Lạnh 18-24°C, Hóa Đơn Thuế GST Đầy Đủ).
 - [ ] **Giai đoạn 15.5: Widget Chứng Thực Bay Air Trên Trang Chi Tiết Sản Phẩm & Điều Hướng Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
