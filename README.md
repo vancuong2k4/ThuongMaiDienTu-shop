@@ -859,6 +859,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Cộng ngay +500 Điểm THUYNGA Club cho người giới thiệu, ghi nhật ký sổ cái `LoyaltyTransaction` (`type: "EARN_REFERRAL"`).
     - Bắn thông báo đẩy In-App ăn mừng gửi đến chuông thông báo của người giới thiệu!
 
+### 🔄 Giai đoạn 13: Phân Hệ Đơn Hàng Đăng Ký Định Kỳ Tiết Kiệm (Subscribe & Save / Auto-Ship - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 13.1: Nâng cấp Schema Subscription, Zod Validations & Seed Dữ Liệu Gói Định Kỳ** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Khởi tạo enum `SubscriptionFrequency` (`EVERY_2_WEEKS`, `EVERY_1_MONTH`, `EVERY_2_MONTHS`, `EVERY_3_MONTHS`) và `SubscriptionStatus` (`ACTIVE`, `PAUSED`, `CANCELLED`, `EXPIRED`) trong `prisma/schema.prisma`.
+  - Thiết lập model `Subscription` (`id`, `subscriptionNumber`, `userId`, `frequency`, `status`, `discountPercent: 10`, `startDate`, `nextDeliveryDate`, `lastDeliveryDate`, `totalCyclesDelivered`, `recipientName`, `recipientPhone`, `shippingAddress`, `paymentMethod`, `note`, `pausedAt`, `cancelledAt`, `cancellationReason`).
+  - Thiết lập model `SubscriptionItem` (`id`, `subscriptionId`, `variantId`, `productName`, `variantName`, `sku`, `originalPrice`, `price`, `quantity`, `image`).
+  - Mở rộng model `User` liên kết 1-N với `Subscription`, mở rộng model `Order` liên kết 1-N với `Subscription` (theo dõi đơn hàng phát sinh từ gói định kỳ).
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng lớp kiểm thực Zod toàn diện (`src/lib/validations/subscription.ts`): Cấu hình ưu đãi giảm 10% trọn đời, schemas tạo mới gói, đổi chu kỳ, tạm dừng, bỏ qua kỳ và bộ lọc truy vấn.
+  - Kịch bản nạp dữ liệu mẫu sinh động (`prisma/seed-subscriptions.ts`): Nạp 3 gói định kỳ tiêu biểu (Sữa bột Úc cho bé 1 tháng/lần, Mật ong & TPCN 2 tuần/lần, Vitamin bổ khớp 2 tháng/lần - PAUSED).
+- [ ] **Giai đoạn 13.2: Hệ Thống REST APIs Quản Lý Gói Định Kỳ & Động Cơ Sinh Đơn Hàng Tự Động**: Endpoints tra cứu, tạo mới, tạm dừng, tiếp tục, bỏ qua kỳ tới, giao ngay và API kiểm soát Admin CMS.
+- [ ] **Giai đoạn 13.3: Giao diện Quản Trị Đơn Hàng Định Kỳ Admin CMS (`/admin/don-hang/dinh-ky`)**: 4 Thẻ KPI MRR & Churn, bảng theo dõi gói định kỳ, lọc trạng thái và nút kích hoạt chu kỳ thủ công.
+- [ ] **Giai đoạn 13.4: Tích Hợp Bộ Chọn Subscribe & Save Trên Trang Chi Tiết Sản Phẩm & Giỏ Hàng**: Chuyển đổi "Mua một lần" vs "Giao định kỳ - Tiết kiệm 10%", chọn chu kỳ giao và hỗ trợ checkout gói định kỳ.
+- [ ] **Giai đoạn 13.5: Giao diện Storefront Trung Tâm Quản Lý Gói Định Kỳ (`/tai-khoan/dinh-ky`)**: Danh sách gói đăng ký, thẻ trực quan, lịch giao hàng và các nút thao tác 1-chạm (Đổi chu kỳ, Tạm dừng, Giao ngay, Hủy).
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.

@@ -85,6 +85,20 @@ enum ReferralStatus {
   EXPIRED       // Hết hạn hoặc đơn hàng bị hủy
 }
 
+enum SubscriptionFrequency {
+  EVERY_2_WEEKS   // Mỗi 2 tuần
+  EVERY_1_MONTH   // Mỗi 1 tháng (Mặc định phổ biến)
+  EVERY_2_MONTHS  // Mỗi 2 tháng
+  EVERY_3_MONTHS  // Mỗi 3 tháng
+}
+
+enum SubscriptionStatus {
+  ACTIVE          // Đang hoạt động, chờ đến kỳ giao tiếp theo
+  PAUSED          // Tạm dừng theo yêu cầu của khách hàng
+  CANCELLED       // Đã hủy gói định kỳ
+  EXPIRED         // Hết hiệu lực
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -126,6 +140,7 @@ model User {
   notifications       Notification[]
   referralRecords     ReferralRecord[]      @relation("ReferrerUser")
   referredRecord      ReferralRecord?       @relation("RefereeUser")
+  subscriptions       Subscription[]
 
   @@index([email])
   @@index([phone])
@@ -446,6 +461,7 @@ model Order {
   userId          String?
   addressId       String?
   voucherId       String?
+  subscriptionId  String?
   
   // Snapshot địa chỉ lúc đặt (tránh thay đổi sau)
   recipientName   String
@@ -481,6 +497,7 @@ model Order {
   user                User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
   address             Address?              @relation(fields: [addressId], references: [id], onDelete: SetNull)
   voucher             Voucher?              @relation(fields: [voucherId], references: [id], onDelete: SetNull)
+  subscription        Subscription?         @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
   items               OrderItem[]
   statusHistory       OrderStatusHistory[]
   loyaltyTransactions LoyaltyTransaction[]
@@ -489,6 +506,7 @@ model Order {
   @@index([userId])
   @@index([orderNumber])
   @@index([orderStatus])
+  @@index([subscriptionId])
   @@index([createdAt])
   @@map("orders")
 }
@@ -698,4 +716,65 @@ model ReferralRecord {
   @@index([referrerId])
   @@index([status])
   @@map("referral_records")
+}
+
+// ============================================================
+// SUBSCRIBE & SAVE / AUTO-SHIP (Giao Hàng Định Kỳ Tiết Kiệm)
+// ============================================================
+
+model Subscription {
+  id                    String                @id @default(cuid())
+  subscriptionNumber    String                @unique // SUB-2026-XXXX
+  userId                String
+  frequency             SubscriptionFrequency @default(EVERY_1_MONTH)
+  status                SubscriptionStatus    @default(ACTIVE)
+  discountPercent       Int                   @default(10) // Mặc định giảm 10% trọn đời
+  
+  startDate             DateTime              @default(now())
+  nextDeliveryDate      DateTime              // Ngày dự kiến giao kỳ tiếp theo
+  lastDeliveryDate      DateTime?             // Ngày giao kỳ gần nhất
+  totalCyclesDelivered  Int                   @default(0)  // Số kỳ đã giao thành công
+
+  // Thông tin nhận hàng mặc định cho gói định kỳ
+  recipientName         String
+  recipientPhone        String
+  shippingAddress       String
+  paymentMethod         PaymentMethod         @default(COD)
+  note                  String?               @db.Text
+
+  pausedAt              DateTime?
+  cancelledAt           DateTime?
+  cancellationReason    String?
+
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+
+  // Relations
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items                 SubscriptionItem[]
+  orders                Order[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([nextDeliveryDate])
+  @@map("subscriptions")
+}
+
+model SubscriptionItem {
+  id              String        @id @default(cuid())
+  subscriptionId  String
+  variantId       String?       // null nếu biến thể bị gỡ
+  productName     String
+  variantName     String
+  sku             String
+  originalPrice   Decimal       @db.Decimal(12, 0) // Giá gốc niêm yết
+  price           Decimal       @db.Decimal(12, 0) // Giá sau giảm 10% định kỳ
+  quantity        Int           @default(1)
+  image           String?
+
+  // Relations
+  subscription    Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@map("subscription_items")
 }
