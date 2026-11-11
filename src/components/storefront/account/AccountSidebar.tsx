@@ -17,6 +17,7 @@ import {
   Bell,
   Share2,
   Repeat,
+  Star,
   LogOut,
   ShieldCheck,
   ChevronRight,
@@ -50,6 +51,12 @@ export const AccountSidebar: React.FC<AccountSidebarProps> = ({ user }) => {
       label: "Gói giao định kỳ",
       href: "/tai-khoan/dinh-ky",
       icon: Repeat,
+      exact: false,
+    },
+    {
+      label: "Đánh giá của tôi",
+      href: "/tai-khoan/danh-gia",
+      icon: Star,
       exact: false,
     },
     {

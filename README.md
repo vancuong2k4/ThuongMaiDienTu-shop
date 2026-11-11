@@ -934,7 +934,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Trang Server Component [`/tai-khoan/dinh-ky`](/tai-khoan/dinh-ky): Kiểm soát xác thực SSR, prefetch dữ liệu gói định kỳ và lịch sử đơn hàng từ Prisma.
   - Tích hợp điều hướng Storefront: Bổ sung mục "Gói giao định kỳ" (icon `Repeat`) vào cả `AccountSidebar.tsx` và `UserAccountMenu.tsx`.
 
-### 🌟 Giai đoạn 14: Hệ Thống Đánh Giá & Trưng Bày UGC Người Dùng Thực Tế Xác Thực Đường Bay Air-Cargo (Verified Air-Cargo Customer Reviews, UGC Showcase & Community Q&A - ĐANG TRIỂN KHAI)
+### ✅ Giai đoạn 14: Hệ Thống Đánh Giá & Trưng Bày UGC Người Dùng Thực Tế Xác Thực Đường Bay Air-Cargo (Verified Air-Cargo Customer Reviews, UGC Showcase & Community Q&A - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 14.1: Nâng Cấp Schema Đánh Giá Đa Chiều, Q&A Chuyên Gia, Zod Validations & Seed Dữ Liệu UGC Thực Tế** *(Đã hoàn thành & Đã kiểm thử)*:
   - Mở rộng enum `ReviewStatus` bổ sung trạng thái `FEATURED` (Ghim bài đánh giá & ảnh UGC nổi bật lên đầu trang sản phẩm/trang chủ).
   - Bổ sung giá trị `EARN_REVIEW` trong enum `LoyaltyType` để liên kết sổ cái tích điểm thưởng THUYNGA Club khi khách hàng gửi review (+50 đến +150 điểm).
@@ -999,7 +999,17 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Khối hỏi đáp cộng đồng tương tác cao: Danh sách câu hỏi của phụ huynh kèm câu trả lời chính thức từ Dược sĩ THUYNGA Shop (`ShieldCheck`) hoặc thành viên khác.
     - Modal đặt câu hỏi chuyên môn nhanh chóng và form gửi câu trả lời cộng đồng.
   - Tích hợp đồng bộ vào trang chi tiết sản phẩm (`ProductDetailClient.tsx` & `/san-pham/[slug]`): Truy vấn SSR các đánh giá đã duyệt hoặc ghim top, truyền `productSlug` và hiển thị cả 2 khối Đánh giá và Hỏi đáp chuyên gia.
-- [ ] **Giai đoạn 14.5: Giao Diện Storefront Trung Tâm Đánh Giá & Săn Điểm Thưởng Của Tôi (`/tai-khoan/danh-gia`)**
+- [x] **Giai đoạn 14.5: Giao Diện Storefront Trung Tâm Đánh Giá & Săn Điểm Thưởng Của Tôi (`/tai-khoan/danh-gia`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 3 Thẻ thống kê cá nhân thời gian thực (`AccountReviewsStats.tsx`):
+    - Sản phẩm đã đánh giá: Đếm tổng số mặt hàng người dùng đã hoàn thành chia sẻ cảm nhận.
+    - Điểm thưởng đã tích lũy: Tổng điểm THUYNGA Club đã tích lũy từ các bài review (+50đ bài chữ, +150đ bài kèm ảnh).
+    - Lượt cảm ơn hữu ích: Tổng số lượt các mẹ bỉm sữa khác đã bình chọn "Hữu ích" cho đánh giá của bạn.
+  - Phân hệ 2 Tabs thông minh (`AccountReviewsHubClient.tsx`):
+    - Tab 1: "Chờ Đánh Giá" (`PendingReviewsList.tsx`): Tự động phát hiện các mặt hàng trong các đơn hàng đã giao thành công (`DELIVERED`) mà khách hàng chưa review, hiển thị thumbnail, tên sản phẩm, mã đơn hàng, ngày nhận và nút hành động nổi bật "Đánh giá (+150đ)" kèm icon `Camera`.
+    - Tab 2: "Đã Đánh Giá" (`MyReviewsList.tsx`): Danh sách các đánh giá cá nhân đã đăng, hiển thị huy hiệu trạng thái (Đã hiển thị / Top Đánh Giá / Đang duyệt), điểm số 4 tiêu chí sao, ảnh bóc hộp UGC thực tế, điểm thưởng nhận được và phản hồi chính thức từ Dược sĩ THUYNGA Shop.
+  - Modal đánh giá trực tiếp từ đơn hàng: Chọn điểm 4 tiêu chí sao, nhập cảm nhận thực tế, dán ảnh bóc hộp air-cargo, tự động cập nhật danh sách và trả thưởng điểm THUYNGA Club ngay lập tức.
+  - Trang Server Component [`/tai-khoan/danh-gia`](/tai-khoan/danh-gia): Kiểm soát đăng nhập SSR (Auth Guard), đối soát đơn hàng `DELIVERED` và bài review từ Prisma PostgreSQL.
+  - Tích hợp điều hướng Storefront: Bổ sung mục "Đánh giá của tôi" (icon `Star`) vào thanh menu tài khoản (`AccountSidebar.tsx`) và menu người dùng Header (`UserAccountMenu.tsx`).
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
