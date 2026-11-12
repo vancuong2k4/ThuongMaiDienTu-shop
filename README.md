@@ -1123,7 +1123,30 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `GET, PATCH & DELETE /api/admin/protocols/[id]`: Xem chi tiết phác đồ, cập nhật thông tin và xóa an toàn.
     - `GET /api/admin/consultations`: Quản lý danh sách lịch hẹn tư vấn dược sĩ, lọc theo trạng thái (`PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED`).
     - `PATCH & DELETE /api/admin/consultations/[id]`: Cập nhật trạng thái cuộc gọi và lưu ghi chú chuyên môn của Dược sĩ.
-- [ ] **Giai đoạn 16.3: Giao Diện Quản Trị Phác Đồ & Lịch Hẹn Tư Vấn Admin CMS (`/admin/phac-do-dinh-duong`)**
+- [x] **Giai đoạn 16.3: Giao Diện Quản Trị Phác Đồ & Lịch Hẹn Tư Vấn Admin CMS (`/admin/phac-do-dinh-duong`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 5 Thẻ Thống Kê KPI Phác Đồ & Lịch Hẹn Tư Vấn (`ProtocolStats.tsx`):
+    - Lượt trắc nghiệm sức khỏe: Thống kê số lượt khách hàng hoàn thành bài test.
+    - Lịch hẹn chờ Dược sĩ gọi: Cảnh báo số lượng cuộc hẹn mới cần phân công Dược sĩ.
+    - Đã tư vấn hoàn tất: Tổng số cuộc gọi hướng dẫn chuyên môn thành công.
+    - Phác đồ đang lưu hành: Đếm số lượng phác đồ chuẩn y khoa Úc đang kích hoạt.
+    - Tỷ lệ chốt combo phác đồ: Thống kê hiệu quả chuyển đổi combo ưu đãi 10%.
+  - Bộ Lọc Đa Năng & Chuyển Đổi Tab Thông Minh (`ProtocolFilters.tsx`):
+    - Tab Switcher: "Phác Đồ Dinh Dưỡng" và "Lịch Hẹn Tư Vấn Dược Sĩ".
+    - Tìm kiếm theo tên phác đồ, slug, khách hàng, số điện thoại, vấn đề sức khỏe.
+    - Lọc theo nhóm đối tượng mục tiêu (Bé sơ sinh, Mẹ bầu, Sau sinh, Người lớn, Người cao tuổi) và trạng thái cuộc gọi.
+  - Bảng Quản Lý Phác Đồ Lâm Sàng (`ProtocolTable.tsx`):
+    - Hiển thị tiêu đề, slug, nhóm đối tượng, danh sách vi chất cốt lõi, số sản phẩm thành phần, % giảm giá combo và lượt khách áp dụng thực tế.
+    - Nút gạt bật/tắt trạng thái lưu hành công khai và xóa an toàn.
+  - Bảng Quản Lý Lịch Hẹn Tư Vấn 1-1 (`ConsultationTable.tsx`):
+    - Hiển thị tên khách hàng, số điện thoại gọi trực tiếp (`tel:`), ngày và khung giờ hẹn gọi, phác đồ đã gợi ý.
+    - Cập nhật trạng thái cuộc gọi 1-chạm (`PENDING` -> `CONFIRMED` -> `COMPLETED` -> `CANCELLED`).
+    - Nút mở Modal xem toàn bộ câu trả lời bài test và lưu nhật ký ghi chú của Dược sĩ.
+  - Modal Tạo Phác Đồ Mới (`CreateProtocolModal.tsx`):
+    - Form nhập slug, tiêu đề, nhóm đối tượng, mô tả chuyên môn, lời khuyên Dược sĩ, biểu đồ liều dùng sáng/trưa/tối và thêm các sản phẩm thành phần từ hệ thống.
+  - Modal Ghi Chú Chuyên Môn Của Dược Sĩ (`ConsultationNoteModal.tsx`):
+    - Xem lại toàn bộ câu trả lời bài test của khách, cập nhật trạng thái cuộc gọi và lưu chỉ dẫn chuyên môn.
+  - Trang Server Component [`/admin/phac-do-dinh-duong`](/admin/phac-do-dinh-duong) & Điều Hướng:
+    - Pre-fetch SSR dữ liệu ban đầu và bổ sung mục "Phác đồ Dược sĩ" (icon `Stethoscope`) trên thanh menu điều hướng Admin.
 - [ ] **Giai đoạn 16.4: Giao Diện Storefront Trắc Nghiệm Sức Khỏe Tương Tác & Trình Trưng Bày Phác Đồ (`/tu-van-dinh-duong`)**
 - [ ] **Giai đoạn 16.5: Hub Quản Lý Phác Đồ Cá Nhân (`/tai-khoan/phac-do`), Lịch Nhắc Liều Dùng Hàng Ngày & Tích Hợp Toàn Sàn**
 
