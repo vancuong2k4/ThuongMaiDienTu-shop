@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, Trash2, AlertCircle, Flame, Repeat } from "lucide-react";
+import { Minus, Plus, Trash2, AlertCircle, Flame, Repeat, Gift } from "lucide-react";
 import { formatVND } from "@/lib/utils";
 import type { CartItem } from "@/types";
 
@@ -64,7 +64,41 @@ export function CartItemRow({
                 <span>Giao định kỳ (-10%)</span>
               </span>
             )}
+            {item.isCustomHamper && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 text-purple-800 text-[10px] font-bold border border-purple-200">
+                <Gift className="w-3 h-3 text-purple-600" />
+                <span>Giỏ quà tùy biến</span>
+              </span>
+            )}
           </div>
+
+          {/* Chi tiết giỏ quà tùy biến (nếu có) */}
+          {item.isCustomHamper && item.hamperDetails && (
+            <div className="mt-1 text-[11px] text-slate-600 bg-slate-50 p-2 rounded-xl border border-slate-100 space-y-0.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <span>Vỏ hộp: <strong>{item.hamperDetails.templateName}</strong></span>
+                <span>•</span>
+                <span>Nơ: <strong>{item.hamperDetails.ribbonColor}</strong></span>
+                {item.hamperDetails.hasWaxSeal && (
+                  <>
+                    <span>•</span>
+                    <span className="text-amber-800 font-medium">Dấu sáp hoàng gia</span>
+                  </>
+                )}
+                {item.hamperDetails.hasLedLights && (
+                  <>
+                    <span>•</span>
+                    <span className="text-amber-600 font-medium">Đèn LED ấm áp</span>
+                  </>
+                )}
+              </div>
+              {item.hamperDetails.greetingCardMessage && (
+                <p className="italic text-slate-500 line-clamp-1">
+                  &ldquo;{item.hamperDetails.greetingCardMessage}&rdquo;
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Đơn giá */}
           <div className="text-xs font-semibold text-gray-700 sm:hidden pt-0.5 flex items-center gap-2">

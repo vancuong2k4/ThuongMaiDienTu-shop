@@ -1179,7 +1179,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bổ sung phím tắt phác đồ trên menu tài khoản `UserAccountMenu.tsx`.
     - Bổ sung nút "Tư vấn Dinh dưỡng" trên thanh thông báo đầu trang (Top Announcement Bar), huy hiệu nổi bật trên thanh điều hướng chính `Header.tsx` và menu di động `MobileNav.tsx`.
 
-### 🎁 Giai đoạn 17: Hệ Thống Giỏ Quà Biếu Tùy Biến Cao Cấp, Hộp Quà Cherry Bay Air & Thiệp Chúc Mừng Cá Nhân Hóa (Luxury Custom Gift Box, Cherry Hamper Builder & Corporate B2B Gifts - ĐANG TRIỂN KHAI)
+### 🎁 Giai đoạn 17: Hệ Thống Giỏ Quà Biếu Tùy Biến Cao Cấp, Hộp Quà Cherry Bay Air & Thiệp Chúc Mừng Cá Nhân Hóa (Luxury Custom Gift Box, Cherry Hamper Builder & Corporate B2B Gifts - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 17.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu 5 Mẫu Hộp Quà Biếu & Yêu Cầu Doanh Nghiệp** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung 4 enums cốt lõi trong `prisma/schema.prisma`:
     - `GiftBoxType`: `WOODEN_BOX` (Hộp gỗ thông sơn mài), `LEATHER_CASE` (Hộp da lót nhung đỏ), `BAMBOO_HAMPER` (Giỏ mây tre đan thủ công), `CHERRY_CARGO_BOX` (Hộp chuyên dụng Air-Cargo Cherry ép kim vàng 24K), `LUXURY_MAGNETIC_BOX` (Hộp nam châm nắp gập Châu Âu).
@@ -1264,7 +1264,13 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Nút 1-chạm "Thêm Giỏ Quà Này Vào Giỏ Hàng" gọi API lưu cấu hình và đồng bộ tức thì vào giỏ hàng Zustand `useCartStore`.
   - Trang Server Component [`/gio-qua-bieu`](/gio-qua-bieu):
     - Pre-fetch SSR toàn bộ mẫu vỏ hộp quà tặng đang kích hoạt và danh sách sản phẩm Úc đạt chuẩn phối set quà biếu.
-- [ ] **Giai đoạn 17.5: Tích Hợp Giỏ Hàng, Trang Chi Tiết Đơn Hàng & Điều Hướng Toàn Sàn**
+- [x] **Giai đoạn 17.5: Tích Hợp Giỏ Hàng, Trang Chi Tiết Đơn Hàng & Điều Hướng Toàn Sàn** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích Hợp Hiển Thị Giỏ Quà Tùy Biến Trong Giỏ Hàng (`CartItemRow.tsx`):
+    - Nhận diện `item.isCustomHamper` với huy hiệu tím sang trọng "Giỏ quà tùy biến" (icon `Gift`).
+    - Hiển thị danh mục chi tiết: Tên vỏ hộp, màu nơ satin, dấu sáp hoàng gia THUYNGA, đèn LED ấm áp và trích dẫn lời chúc thiệp dập nổi.
+  - Tích Hợp Điều Hướng Toàn Diện Trên Toàn Hệ Thống:
+    - Bổ sung liên kết nổi bật "Giỏ quà biếu" (`Gift`) trên thanh điều hướng chính `Header.tsx`.
+    - Bổ sung mục "Giỏ Quà Biếu Hoàng Gia" (huy hiệu `VIP`) trên ngăn kéo menu di động `MobileNav.tsx`.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.

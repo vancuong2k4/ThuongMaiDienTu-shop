@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   ChevronRight,
   Stethoscope,
+  Gift,
 } from "lucide-react";
 
 interface SubCategory {
@@ -148,6 +149,20 @@ export function MobileNav({ categories }: MobileNavProps) {
               </div>
               <span className="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
                 Mới
+              </span>
+            </Link>
+
+            <Link
+              href="/gio-qua-bieu"
+              onClick={closeMenu}
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-rose-50 text-[#800028] font-bold hover:bg-rose-100 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Gift className="w-4 h-4 text-[#800028]" />
+                <span>Giỏ Quà Biếu Hoàng Gia</span>
+              </div>
+              <span className="text-[10px] bg-[#800028] text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
+                VIP
               </span>
             </Link>
 
