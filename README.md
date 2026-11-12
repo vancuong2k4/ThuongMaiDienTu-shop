@@ -1362,7 +1362,18 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
   - Xây dựng Zod validation schemas (`src/lib/validations/comparison.ts`) với cấu hình danh mục và màu sắc tương tác.
   - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-comparison.ts`): Nạp 11 chỉ tiêu vi chất, 5 quy tắc hiệp đồng/cảnh báo, và thiết lập đầy đủ thông số cho 6 sản phẩm chủ lực (Aptamil Profutura, A2 Platinum, Mật ong Manuka Comvita, Dầu cá Blackmores, Elevit bà bầu, Vitamin D3 K2 Sunday Natural).
-- [ ] **Giai đoạn 19.2: Xây Dựng Comparison Engine, Dịch Vụ Phân Tích Tương Tác Vi Chất & Hệ Thống REST APIs**
+- [x] **Giai đoạn 19.2: Xây Dựng Comparison Engine, Dịch Vụ Phân Tích Tương Tác Vi Chất & Hệ Thống REST APIs** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện logic so sánh ma trận & thuật toán phân tích tương tác (`src/lib/comparison.ts`):
+    - `getComparisonDataset`: Chuẩn hóa dữ liệu tối đa 4 sản phẩm theo 4 phân nhóm (Chung, Tiêu chuẩn chứng nhận, Thành phần vi chất đối chiếu đồng trục, và Cảm quan trải nghiệm).
+    - `analyzeNutrientSynergies`: Thuật toán đối chiếu thành phần vi chất tự động phát hiện nguy cơ thừa liều (`CAUTION_OVERDOSE`) khi tổng lượng vi chất trong các sản phẩm uống cùng ngày vượt ngưỡng an toàn tối đa (Upper Limit - UL), đồng thời truy quét quy tắc hiệp đồng tương hỗ (`SYNERGY_BENEFICIAL`) và cảnh báo uống cách thời điểm (`INTERACTION_SEPARATE`).
+  - Hệ thống Public Storefront REST APIs:
+    - `GET /api/comparison/products?ids=...`: Lấy toàn bộ ma trận dữ liệu phân tích đối chiếu theo danh sách IDs.
+    - `POST /api/comparison/analyze`: API phân tích tương tác vi chất chuẩn Dược sĩ có Zod validation (`analyzeSynergySchema`).
+    - `GET /api/comparison/search`: API tìm kiếm nhanh sản phẩm bổ sung vào bảng so sánh với hỗ trợ lọc danh mục và loại trừ sản phẩm đã chọn.
+  - Hệ thống Admin CMS REST APIs bảo mật (`ADMIN` role guard):
+    - `GET & POST /api/admin/nutrients`: Xem danh mục và khởi tạo chỉ tiêu vi chất chuẩn hóa.
+    - `PUT /api/admin/products/[id]/nutrients`: Cập nhật thông số so sánh mở rộng và cấu trúc thành phần vi chất cho từng sản phẩm trong database transaction.
+- [ ] **Giai đoạn 19.3: Quản Lý State Zustand & Thanh So Sánh Nổi Storefront (Floating Comparison Dock)**
 - [ ] **Giai đoạn 19.3: Quản Lý State Zustand & Thanh So Sánh Nổi Storefront (Floating Comparison Dock)**
 - [ ] **Giai đoạn 19.4: Giao Diện Bảng Ma Trận So Sánh & Thẻ Phân Tích Hiệp Đồng Dược Sĩ (`/so-sanh`)**
 - [ ] **Giai đoạn 19.5: Giao Diện Quản Trị Admin CMS Chỉ Tiêu Vi Chất (`/admin/vi-chat`) & Tích Hợp Toàn Sàn**
