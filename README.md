@@ -1097,6 +1097,22 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Header Navigation Bar: Bổ sung huy hiệu "Minh bạch bay Air" nổi bật bên cạnh nút "FLASH SALE".
     - Footer Chân Trang: Bổ sung mục "Minh bạch lô bay Air & Hạn sử dụng (AWB)" trong khối Hỗ Trợ & Chính Sách.
 
+### 🩺 Giai đoạn 16: Hệ Thống Tư Vấn Dinh Dưỡng & Phác Đồ Bổ Sung Cá Nhân Hóa Chuẩn Y Khoa (AI/Pharmacist Health Assessment & Personalized Supplement Protocol Builder - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 16.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu Ngân Hàng Câu Hỏi & Phác Đồ Mẫu** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`: `HealthTargetGroup` (`BABY_KIDS`, `PREGNANT_MOM`, `POSTPARTUM_MOM`, `ADULT_HEALTH`, `ELDERLY`), `QuizQuestionType` (`SINGLE_CHOICE`, `MULTIPLE_CHOICE`), `ConsultationStatus` (`PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED`).
+  - Thiết kế 6 models cơ sở dữ liệu quan hệ hoàn chỉnh:
+    - `HealthQuizQuestion` & `QuizOption`: Ngân hàng câu hỏi trắc nghiệm đa tầng kèm gợi ý vi chất và liên kết phác đồ lâm sàng.
+    - `HealthProtocol` & `ProtocolProductItem`: Phác đồ dinh dưỡng chuẩn y khoa Úc, chỉ định dưỡng chất cốt lõi, lời khuyên Dược sĩ, biểu đồ liều dùng sáng/trưa/tối và ưu đãi combo trọn bộ -10%.
+    - `UserHealthAssessment`: Hồ sơ đánh giá sức khỏe cá nhân hóa của khách hàng, lưu trữ lịch sử trả lời và phác đồ đã gán.
+    - `PharmacistConsultationBooking`: Hệ thống đặt lịch tư vấn 1-1 chuyên sâu cùng Dược sĩ THUYNGA Shop.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng Zod validation schemas (`src/lib/validations/protocol.ts`): Cấu hình 5 nhóm đối tượng, 4 trạng thái tư vấn và schemas đánh giá bài test, đặt lịch hẹn và tạo phác đồ.
+  - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-protocols.ts`): Nạp 4 phác đồ lâm sàng chuẩn Dược sĩ Úc (Bé tiêu hóa kém biếng ăn, Bé tăng chiều cao đề kháng, Mẹ bầu toàn diện giảm nghén, Người cao tuổi sụn khớp bổ não), 9 câu hỏi trắc nghiệm chuyên sâu và 1 lịch hẹn tư vấn mẫu.
+- [ ] **Giai đoạn 16.2: Xây Dựng Hệ Thống REST APIs Đánh Giá Sức Khỏe & Đề Xuất Phác Đồ**
+- [ ] **Giai đoạn 16.3: Giao Diện Quản Trị Phác Đồ & Lịch Hẹn Tư Vấn Admin CMS (`/admin/phac-do-dinh-duong`)**
+- [ ] **Giai đoạn 16.4: Giao Diện Storefront Trắc Nghiệm Sức Khỏe Tương Tác & Trình Trưng Bày Phác Đồ (`/tu-van-dinh-duong`)**
+- [ ] **Giai đoạn 16.5: Hub Quản Lý Phác Đồ Cá Nhân (`/tai-khoan/phac-do`), Lịch Nhắc Liều Dùng Hàng Ngày & Tích Hợp Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.

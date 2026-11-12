@@ -116,6 +116,26 @@ enum AirlineCarrier {
   SINGAPORE_AIRLINES_CARGO // Singapore Airlines Cargo (SQ)
 }
 
+enum HealthTargetGroup {
+  BABY_KIDS        // Bé sơ sinh & Trẻ nhỏ (0-12 tuổi)
+  PREGNANT_MOM     // Mẹ chuẩn bị mang thai & Đang mang thai
+  POSTPARTUM_MOM   // Mẹ sau sinh & Đang cho con bú
+  ADULT_HEALTH     // Người trưởng thành, Dân văn phòng & Phục hồi
+  ELDERLY          // Người cao tuổi & Hỗ trợ xương khớp, tim mạch
+}
+
+enum QuizQuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+}
+
+enum ConsultationStatus {
+  PENDING          // Chờ Dược sĩ liên hệ
+  CONFIRMED        // Đã xếp lịch gọi
+  COMPLETED        // Đã hoàn tất tư vấn chuyên môn
+  CANCELLED        // Khách hàng hoặc Dược sĩ hủy lịch
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -161,6 +181,8 @@ model User {
   helpfulVotes        ReviewHelpfulVote[]
   productQuestions    ProductQuestion[]
   productAnswers      ProductAnswer[]
+  healthAssessments     UserHealthAssessment[]
+  consultationBookings  PharmacistConsultationBooking[]
 
   @@index([email])
   @@index([phone])
@@ -294,6 +316,7 @@ model Product {
   flashSaleItems FlashSaleItem[]
   tags           ProductTag[]
   batches        ProductBatch[]
+  protocolItems  ProtocolProductItem[]
 
   @@index([slug])
   @@index([categoryId])
@@ -329,6 +352,7 @@ model ProductVariant {
   cartItems      CartItem[]
   flashSaleItems FlashSaleItem[]
   batches        ProductBatch[]
+  protocolItems  ProtocolProductItem[]
 
   @@index([productId])
   @@index([sku])
@@ -941,4 +965,135 @@ model BatchVerificationLog {
   @@index([batchId])
   @@index([verifiedAt])
   @@map("batch_verification_logs")
+}
+
+// ============================================================
+// HEALTH QUIZ & PERSONALIZED SUPPLEMENT PROTOCOLS (PHASE 16)
+// ============================================================
+
+model HealthQuizQuestion {
+  id              String            @id @default(cuid())
+  targetGroup     HealthTargetGroup
+  questionText    String            // Nội dung câu hỏi chuyên môn
+  subtitle        String?           // Hướng dẫn giải thích thêm
+  stepNumber      Int               // Thứ tự bước trong quiz (1, 2, 3...)
+  questionType    QuizQuestionType  @default(SINGLE_CHOICE)
+  sortOrder       Int               @default(0)
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  options         QuizOption[]
+
+  @@index([targetGroup, stepNumber])
+  @@index([isActive])
+  @@map("health_quiz_questions")
+}
+
+model QuizOption {
+  id              String              @id @default(cuid())
+  questionId      String
+  label           String              // Tiêu đề lựa chọn
+  subtitle        String?             // Mô tả chi tiết
+  icon            String?             // Tên Lucide icon (e.g. Baby, Heart, Shield)
+  recommendedTags String[]            // Tags vi chất dinh dưỡng khuyến nghị: ["probiotic", "zinc", "dha"]
+  protocolSlug    String?             // Slug phác đồ liên kết trực tiếp nếu chọn đáp án này
+  sortOrder       Int                 @default(0)
+
+  question        HealthQuizQuestion  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("quiz_options")
+}
+
+model HealthProtocol {
+  id                    String                @id @default(cuid())
+  slug                  String                @unique // Ví dụ: phac-do-be-tieu-hoa-kem-bieng-an
+  title                 String                // Tiêu đề phác đồ
+  targetGroup           HealthTargetGroup
+  subtitle              String?
+  description           String                @db.Text
+  keyNutrients          String[]              // Các dưỡng chất cốt lõi: ["Men vi sinh 15 chủng", "Kẽm sinh học Zinc", "Lactoferrin"]
+  pharmacistAdvice      String                @db.Text // Lời khuyên & chỉ định từ Dược sĩ THUYNGA Shop
+  dosageSchedule        Json                  // Biểu đồ liều dùng sáng / trưa / tối
+  comboDiscountPercent  Int                   @default(10) // % giảm giá khi mua trọn bộ combo phác đồ
+  isActive              Boolean               @default(true)
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+
+  items                 ProtocolProductItem[]
+  assessments           UserHealthAssessment[]
+
+  @@index([targetGroup])
+  @@index([isActive])
+  @@map("health_protocols")
+}
+
+model ProtocolProductItem {
+  id                String          @id @default(cuid())
+  protocolId        String
+  productId         String
+  variantId         String?
+  usageInstructions String          // Cách dùng chi tiết: "1 gói sau ăn sáng 30 phút cùng 50ml nước ấm"
+  timing            String          // "Sáng", "Trưa", "Tối", "Trước khi ngủ"
+  quantity          Int             @default(1)
+  isEssential       Boolean         @default(true) // Sản phẩm cốt lõi bắt buộc hay tùy chọn bổ trợ
+  sortOrder         Int             @default(0)
+
+  protocol          HealthProtocol  @relation(fields: [protocolId], references: [id], onDelete: Cascade)
+  product           Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant           ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([protocolId])
+  @@index([productId])
+  @@index([variantId])
+  @@map("protocol_product_items")
+}
+
+model UserHealthAssessment {
+  id                    String                          @id @default(cuid())
+  userId                String?
+  targetGroup           HealthTargetGroup
+  quizAnswers           Json                            // Bản ghi các câu trả lời trắc nghiệm
+  protocolId            String?
+  customerName          String
+  customerPhone         String
+  customerEmail         String?
+  notes                 String?                         @db.Text
+  isSavedToProfile      Boolean                         @default(false)
+  createdAt             DateTime                        @default(now())
+
+  user                  User?                           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  protocol              HealthProtocol?                 @relation(fields: [protocolId], references: [id], onDelete: SetNull)
+  consultationBookings  PharmacistConsultationBooking[]
+
+  @@index([userId])
+  @@index([protocolId])
+  @@index([customerPhone])
+  @@index([createdAt])
+  @@map("user_health_assessments")
+}
+
+model PharmacistConsultationBooking {
+  id                String                @id @default(cuid())
+  assessmentId      String?
+  userId            String?
+  customerName      String
+  phone             String
+  preferredDate     DateTime
+  preferredTimeSlot String                // Ví dụ: "09:00 - 11:30" hoặc "14:00 - 16:30"
+  healthConcerns    String                @db.Text // Tình trạng sức khỏe cần Dược sĩ tư vấn chuyên sâu
+  status            ConsultationStatus    @default(PENDING)
+  pharmacistNotes   String?               @db.Text // Ghi chú của Dược sĩ sau khi gọi điện tư vấn
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  assessment        UserHealthAssessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
+  user              User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([assessmentId])
+  @@index([status])
+  @@index([preferredDate])
+  @@map("pharmacist_consultation_bookings")
 }
