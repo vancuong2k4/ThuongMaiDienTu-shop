@@ -1272,6 +1272,24 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bổ sung liên kết nổi bật "Giỏ quà biếu" (`Gift`) trên thanh điều hướng chính `Header.tsx`.
     - Bổ sung mục "Giỏ Quà Biếu Hoàng Gia" (huy hiệu `VIP`) trên ngăn kéo menu di động `MobileNav.tsx`.
 
+### 💬 Giai đoạn 18: Hệ Thống Live Chat & Hỗ Trợ Đa Kênh Tích Hợp Dược Sĩ / CSKH (Multi-channel Live Chat, Pharmacist Consultation Widget & Webhook Zalo/Facebook - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 18.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu Hội Thoại Chat Mẫu** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`:
+    - `ChatSenderRole`: `CUSTOMER` (Khách hàng), `PHARMACIST` (Dược sĩ chuyên môn), `SUPPORT_AGENT` (Chuyên viên CSKH), `SYSTEM_BOT` (Hệ thống tự động).
+    - `ChatSessionStatus`: `ACTIVE` (Đang trao đổi), `PENDING_PHARMACIST` (Chờ Dược sĩ hỗ trợ), `RESOLVED` (Đã giải đáp), `CLOSED` (Đã đóng).
+    - `ChatMessageType`: `TEXT` (Văn bản), `IMAGE` (Ảnh toa thuốc/bao bì), `PRODUCT_CARD` (Thẻ sản phẩm), `ORDER_CARD` (Thẻ đơn hàng).
+  - Thiết kế 2 models quan hệ hoàn chỉnh:
+    - `ChatSession`: Mã phiên `sessionCode`, liên kết `User` hoặc khách vãng lai `guestSessionId`, tên khách, SĐT, email, trạng thái, người phụ trách, bộ đếm tin chưa đọc hai chiều và tin nhắn cuối.
+    - `ChatMessage`: Nội dung trao đổi, vai trò người gửi, đính kèm mediaUrl, metadata JSON và trạng thái đã đọc `isRead`.
+  - Cập nhật quan hệ hai chiều `chatSessions` trong model `User`.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng Zod validation schemas (`src/lib/validations/chat.ts`), cấu hình vai trò, trạng thái và 5 gợi ý câu hỏi nhanh (Quick Chat Prompts).
+  - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-chat.ts`): Nạp 2 phiên hội thoại chuyên sâu (Tư vấn vận chuyển Cherry Tasmania bay Air `CHAT-202611-001` và tư vấn Dược sĩ về sữa Aptamil Profutura tiêu hóa nhạy cảm `CHAT-202611-002`).
+- [ ] **Giai đoạn 18.2: Xây Dựng Hệ Thống REST APIs & Logic Hội Thoại Thời Gian Thực (Chat Engine)**
+- [ ] **Giai đoạn 18.3: Giao Diện Trung Tâm Live Chat CSKH & Dược Sĩ Admin CMS (`/admin/chat-cskh`)**
+- [ ] **Giai đoạn 18.4: Widget Floating Live Chat Storefront Góc Màn Hình & Trải Nghiệm Tương Tác Hai Chiều**
+- [ ] **Giai đoạn 18.5: Tích Hợp Đa Kênh Zalo OA, Facebook Messenger, Âm Báo Tin Nhắn & Hoàn Thiện Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.

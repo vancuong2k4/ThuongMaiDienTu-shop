@@ -169,6 +169,27 @@ enum CorporateGiftStatus {
   CANCELLED        // Đã hủy yêu cầu
 }
 
+enum ChatSenderRole {
+  CUSTOMER         // Khách hàng
+  PHARMACIST       // Dược sĩ tư vấn chuyên môn
+  SUPPORT_AGENT    // Chuyên viên CSKH / Admin
+  SYSTEM_BOT       // Tin nhắn tự động hệ thống
+}
+
+enum ChatSessionStatus {
+  ACTIVE               // Cuộc hội thoại đang diễn ra
+  PENDING_PHARMACIST   // Cần Dược sĩ tham vấn chuyên môn
+  RESOLVED             // Đã giải đáp thỏa đáng
+  CLOSED               // Đã đóng phiên chat
+}
+
+enum ChatMessageType {
+  TEXT             // Tin nhắn văn bản thuần túy
+  IMAGE            // Ảnh chụp bao bì, hóa đơn, triệu chứng
+  PRODUCT_CARD     // Thẻ sản phẩm đính kèm nút xem/mua nhanh
+  ORDER_CARD       // Thẻ tra cứu trạng thái đơn hàng
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -218,6 +239,7 @@ model User {
   consultationBookings  PharmacistConsultationBooking[]
   customHampers         GiftCustomHamper[]
   corporateGiftInquiries CorporateGiftInquiry[]
+  chatSessions          ChatSession[]
 
   @@index([email])
   @@index([phone])
@@ -1245,4 +1267,57 @@ model CorporateGiftInquiry {
   @@index([phone])
   @@index([createdAt])
   @@map("corporate_gift_inquiries")
+}
+
+// ============================================================
+// PHASE 18: HỆ THỐNG LIVE CHAT & HỖ TRỢ ĐA KÊNH DƯỢC SĨ / CSKH
+// (Multi-channel Live Chat, Pharmacist Consultation & Support)
+// ============================================================
+
+model ChatSession {
+  id                  String            @id @default(cuid())
+  sessionCode         String            @unique // Ví dụ: "CHAT-202611-001"
+  userId              String?
+  guestSessionId      String?           // Hỗ trợ khách vãng lai lưu session
+  customerName        String
+  customerPhone       String?
+  customerEmail       String?
+  status              ChatSessionStatus @default(ACTIVE)
+  assignedTo          String?           // Tên Dược sĩ hoặc CSKH phụ trách
+  unreadCustomerCount Int               @default(0) // Số tin chưa đọc phía khách
+  unreadAdminCount    Int               @default(0) // Số tin chưa đọc phía Admin/Dược sĩ
+  lastMessageText     String?           @db.Text
+  lastMessageAt       DateTime          @default(now())
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  user                User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages            ChatMessage[]
+
+  @@index([sessionCode])
+  @@index([userId])
+  @@index([guestSessionId])
+  @@index([status])
+  @@index([lastMessageAt])
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id                  String          @id @default(cuid())
+  sessionId           String
+  senderRole          ChatSenderRole
+  senderName          String
+  messageType         ChatMessageType @default(TEXT)
+  content             String          @db.Text
+  mediaUrl            String?
+  metadata            Json?           // Lưu productId, orderId, badge info
+  isRead              Boolean         @default(false)
+  createdAt           DateTime        @default(now())
+
+  session             ChatSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([senderRole])
+  @@index([createdAt])
+  @@map("chat_messages")
 }
