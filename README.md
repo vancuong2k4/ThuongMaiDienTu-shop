@@ -1108,7 +1108,21 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng Zod validation schemas (`src/lib/validations/protocol.ts`): Cấu hình 5 nhóm đối tượng, 4 trạng thái tư vấn và schemas đánh giá bài test, đặt lịch hẹn và tạo phác đồ.
   - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-protocols.ts`): Nạp 4 phác đồ lâm sàng chuẩn Dược sĩ Úc (Bé tiêu hóa kém biếng ăn, Bé tăng chiều cao đề kháng, Mẹ bầu toàn diện giảm nghén, Người cao tuổi sụn khớp bổ não), 9 câu hỏi trắc nghiệm chuyên sâu và 1 lịch hẹn tư vấn mẫu.
-- [ ] **Giai đoạn 16.2: Xây Dựng Hệ Thống REST APIs Đánh Giá Sức Khỏe & Đề Xuất Phác Đồ**
+- [x] **Giai đoạn 16.2: Xây Dựng Hệ Thống REST APIs Đánh Giá Sức Khỏe & Đề Xuất Phác Đồ** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện logic đánh giá sức khỏe & thuật toán đề xuất (`src/lib/protocols.ts`):
+    - `getQuizQuestionsByTargetGroup`: Truy vấn ngân hàng câu hỏi trắc nghiệm theo nhóm đối tượng mục tiêu.
+    - `evaluateAssessmentAndMatchProtocol`: Thuật toán phân tích câu trả lời, đối soát tags vi chất và matching phác đồ tối ưu; tính toán tổng giá gốc, chiết khấu combo phác đồ trọn bộ (-10% đến -15%) và lưu trữ hồ sơ `UserHealthAssessment`.
+    - `calculateProtocolKPIs`: Tổng hợp 5 chỉ số KPI vận hành (Tổng lượt làm bài test, Lịch hẹn tư vấn mới, Lịch hẹn hoàn tất, Tổng số phác đồ lưu hành).
+  - Hệ thống Public REST APIs:
+    - `GET /api/quiz/questions`: API trả về ngân hàng câu hỏi trắc nghiệm kèm options lọc theo `targetGroup`.
+    - `POST /api/quiz/evaluate`: API tiếp nhận câu trả lời, đánh giá tức thì và trả về phác đồ cá nhân hóa kèm lịch uống chi tiết.
+    - `GET /api/protocols/[slug]`: API lấy thông tin chi tiết một phác đồ cụ thể cùng danh sách sản phẩm thành phần.
+    - `POST /api/consultations/book`: API đặt lịch hẹn gọi điện tư vấn 1-1 chuyên sâu cùng Dược sĩ THUYNGA Shop.
+  - Bộ Admin REST APIs bảo mật (`ADMIN` role check):
+    - `GET & POST /api/admin/protocols`: Quản lý danh sách phác đồ phân trang, tìm kiếm, lọc theo đối tượng; tạo mới phác đồ với Zod validation.
+    - `GET, PATCH & DELETE /api/admin/protocols/[id]`: Xem chi tiết phác đồ, cập nhật thông tin và xóa an toàn.
+    - `GET /api/admin/consultations`: Quản lý danh sách lịch hẹn tư vấn dược sĩ, lọc theo trạng thái (`PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED`).
+    - `PATCH & DELETE /api/admin/consultations/[id]`: Cập nhật trạng thái cuộc gọi và lưu ghi chú chuyên môn của Dược sĩ.
 - [ ] **Giai đoạn 16.3: Giao Diện Quản Trị Phác Đồ & Lịch Hẹn Tư Vấn Admin CMS (`/admin/phac-do-dinh-duong`)**
 - [ ] **Giai đoạn 16.4: Giao Diện Storefront Trắc Nghiệm Sức Khỏe Tương Tác & Trình Trưng Bày Phác Đồ (`/tu-van-dinh-duong`)**
 - [ ] **Giai đoạn 16.5: Hub Quản Lý Phác Đồ Cá Nhân (`/tai-khoan/phac-do`), Lịch Nhắc Liều Dùng Hàng Ngày & Tích Hợp Toàn Sàn**
