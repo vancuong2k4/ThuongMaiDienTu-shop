@@ -28,6 +28,7 @@ import {
   Stethoscope,
   Gift,
   MessageSquare,
+  Scale,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -108,6 +109,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Hộp quà biếu",
       href: "/admin/hop-qua-bieu",
       icon: Gift,
+    },
+    {
+      label: "Chỉ tiêu vi chất",
+      href: "/admin/vi-chat",
+      icon: Scale,
     },
     {
       label: "Live Chat CSKH",

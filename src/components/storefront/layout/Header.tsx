@@ -17,6 +17,7 @@ import {
   Baby,
   Stethoscope,
   Gift,
+  Scale,
 } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CartButton } from "./CartButton";
@@ -326,6 +327,15 @@ export function Header({ categories }: HeaderProps) {
               >
                 <Gift className="w-3.5 h-3.5 text-[#800028]" />
                 <span>Giỏ quà biếu</span>
+              </Link>
+
+              {/* So sánh sản phẩm & phân tích vi chất */}
+              <Link
+                href="/so-sanh"
+                className="hidden 2xl:flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200/80 font-bold text-xs rounded-full transition-all whitespace-nowrap"
+              >
+                <Scale className="w-3.5 h-3.5 text-indigo-600" />
+                <span>So sánh vi chất</span>
               </Link>
 
               {/* Flash Sale link */}

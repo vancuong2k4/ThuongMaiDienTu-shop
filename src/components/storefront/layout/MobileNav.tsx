@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Stethoscope,
   Gift,
+  Scale,
 } from "lucide-react";
 
 interface SubCategory {
@@ -163,6 +164,20 @@ export function MobileNav({ categories }: MobileNavProps) {
               </div>
               <span className="text-[10px] bg-[#800028] text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
                 VIP
+              </span>
+            </Link>
+
+            <Link
+              href="/so-sanh"
+              onClick={closeMenu}
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-indigo-50 text-indigo-900 font-bold hover:bg-indigo-100 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Scale className="w-4 h-4 text-indigo-600" />
+                <span>So Sánh Sản Phẩm & Vi Chất</span>
+              </div>
+              <span className="text-[10px] bg-indigo-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
+                Chuẩn Úc
               </span>
             </Link>
 
