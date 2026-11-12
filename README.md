@@ -1385,8 +1385,24 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Trạng thái mở rộng: 4 ô sản phẩm (thẻ ảnh, tên, giá bán và nút X xóa nhanh 1-chạm), ô trống có nét đứt khuyến khích thêm sản phẩm, nút "Xóa hết" và nút CTA "So Sánh Ngay" dẫn thẳng vào `/so-sanh`.
   - Tích Hợp Toàn Bộ Giao Diện Storefront (`layout.tsx`):
     - Xuất hiện xuyên suốt trên tất cả các trang bán hàng của THUYNGA Shop.
-- [ ] **Giai đoạn 19.4: Giao Diện Bảng Ma Trận So Sánh & Thẻ Phân Tích Hiệp Đồng Dược Sĩ (`/so-sanh`)**
-- [ ] **Giai đoạn 19.4: Giao Diện Bảng Ma Trận So Sánh & Thẻ Phân Tích Hiệp Đồng Dược Sĩ (`/so-sanh`)**
+- [x] **Giai đoạn 19.4: Giao Diện Bảng Ma Trận So Sánh & Thẻ Phân Tích Hiệp Đồng Dược Sĩ (`/so-sanh`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bảng Ma Trận Đối Chiếu Trực Quan Đa Chiều (`ComparisonMatrixTable.tsx`):
+    - Cột cố định (Sticky Header): 4 cột sản phẩm kèm ảnh phóng to, tên, giá bán và nút 1-chạm "Thêm vào giỏ" (`useCartStore`) cùng nút xóa nhanh.
+    - Phân nhóm 4 phần rõ ràng: (1) Thông tin chung & chi phí sử dụng (giá, chi phí ngày dùng ~VNĐ/ngày, số ngày dùng/hộp, quy cách, xuất xứ hàng bay Air), (2) Chứng nhận tiêu chuẩn & kiểm định Úc (TGA, FSANZ, ACO Organic), (3) Bảng hàm lượng vi chất dinh dưỡng đối chiếu đồng trục (DHA, EPA, Synbiotics, MGO, Canxi, Sắt, Kẽm, D3, K2...), (4) Cảm quan trải nghiệm & ưu điểm đột phá độc quyền.
+    - Cột trống nét đứt thông minh khi so sánh ít hơn 4 sản phẩm, tích hợp nút "Chọn sản phẩm đối chiếu".
+  - Thẻ Phân Tích Hiệp Đồng & Cảnh Báo An Toàn Dược Sĩ (`ComparisonSynergyCard.tsx`):
+    - Huy hiệu tổng thể: "Hiệp đồng sinh học cao" (xanh ngọc lục bảo), "Cần lưu ý liều dùng" (đỏ hồng), "Kết hợp an toàn".
+    - Khối ý kiến đánh giá chuyên môn Dược sĩ THUYNGA Shop kèm icon `Stethoscope`.
+    - Danh sách các tương tác chi tiết: Giải thích cơ chế sinh học, chỉ định liều uống cụ thể của Dược sĩ và các sản phẩm liên đới.
+  - Modal Tìm Kiếm & Bổ Sung Sản Phẩm (`ComparisonSearchModal.tsx`):
+    - Tìm kiếm tức thời theo từ khóa tên hoặc thương hiệu, tự động loại trừ sản phẩm đã có trong bảng, 1-click thêm vào bảng so sánh.
+  - Giao Diện Trạng Thái Trống & 3 Bộ Đôi Mẫu Gợi Ý Sẵn (`ComparisonPageClient.tsx`):
+    - Bộ đôi 1: Aptamil Profutura vs A2 Platinum Úc (Synbiotics vs Đạm A2).
+    - Bộ đôi 2: Dầu cá Blackmores & Vitamin D3 K2 MK7 (Hiệp đồng vi chất).
+    - Bộ đôi 3: Elevit Bayer Úc & Sữa Bột Aptamil (Chỉ định giãn cách Canxi và Sắt hữu cơ).
+  - Trang Server Component [`/so-sanh`](/so-sanh):
+    - Cấu hình OpenGraph & SEO Metadata chuyên sâu cho công cụ so sánh.
+- [ ] **Giai đoạn 19.5: Giao Diện Quản Trị Admin CMS Chỉ Tiêu Vi Chất (`/admin/vi-chat`) & Tích Hợp Toàn Sàn**
 - [ ] **Giai đoạn 19.5: Giao Diện Quản Trị Admin CMS Chỉ Tiêu Vi Chất (`/admin/vi-chat`) & Tích Hợp Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
