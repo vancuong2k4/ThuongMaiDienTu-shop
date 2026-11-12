@@ -1195,7 +1195,23 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng Zod validation schemas (`src/lib/validations/gift-box.ts`) và cấu hình bảng màu sắc, chất liệu, mẫu lời chúc thiệp theo dịp.
   - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-gift-boxes.ts`): Nạp 5 mẫu vỏ hộp quà sang trọng và 1 yêu cầu quà tặng doanh nghiệp mẫu `CORP-202611-001`.
-- [ ] **Giai đoạn 17.2: Xây Dựng Hệ Thống REST APIs Quản Lý Hộp Quà, Tính Toán Sức Chứa (Slot Capacity Engine) & Báo Giá Doanh Nghiệp**
+- [x] **Giai đoạn 17.2: Xây Dựng Hệ Thống REST APIs Quản Lý Hộp Quà, Tính Toán Sức Chứa (Slot Capacity Engine) & Báo Giá Doanh Nghiệp** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện logic dung lượng giỏ quà & tổng hợp KPIs (`src/lib/gift-box.ts`):
+    - `getActiveGiftBoxTemplates`: Lấy danh sách mẫu vỏ hộp quà đang hoạt động theo thứ tự ưu tiên.
+    - `calculateHamperCapacityAndTotal`: Động cơ tính toán dung lượng (Slots), kiểm tra giới hạn sức chứa vỏ hộp, cộng gộp giá nền vỏ hộp + phụ kiện đèn LED + các sản phẩm thành phần; tự động kích hoạt ưu đãi combo giỏ quà cao cấp -5% khi đạt từ 2.000.000đ.
+    - `generateHamperCode` & `generateCorporateInquiryCode`: Sinh mã giỏ quà duy nhất `HMP-YYYYMM-XXXX` và mã yêu cầu doanh nghiệp `CORP-YYYYMM-XXXX`.
+    - `calculateCorporateGiftKPIs`: Thống kê 6 chỉ số KPI vận hành (Tổng yêu cầu doanh nghiệp, Yêu cầu mới chờ liên hệ, Đã gửi bảng báo giá, Hợp đồng đã cọc/chốt thành công, Doanh thu quà biếu thực tế, Tỷ lệ chốt đơn B2B).
+  - Hệ thống Public REST APIs:
+    - `GET /api/gift-boxes/templates`: API lấy danh sách mẫu vỏ hộp quà công khai kèm bộ lọc loại hộp (`boxType`).
+    - `POST /api/gift-boxes/calculate`: API tính toán dung lượng slots và tổng tiền giỏ quà thời gian thực phục vụ trình dựng visual.
+    - `POST /api/gift-boxes/create`: API lưu cấu hình giỏ quà tùy biến của khách hàng (User hoặc Guest Session), tạo bản ghi `GiftCustomHamper` và `GiftHamperItem`.
+    - `GET /api/gift-boxes/[id]`: API lấy chi tiết giỏ quà theo ID hoặc mã `hamperCode`.
+    - `POST /api/gift-boxes/corporate-inquiry`: API tiếp nhận yêu cầu báo giá quà tặng doanh nghiệp B2B số lượng lớn có kiểm tra Zod validation.
+  - Hệ thống Admin REST APIs bảo mật (`ADMIN` role check):
+    - `GET & POST /api/admin/gift-boxes/templates`: Quản lý danh sách mẫu vỏ hộp và tạo mẫu hộp mới.
+    - `GET, PATCH & DELETE /api/admin/gift-boxes/templates/[id]`: Xem chi tiết, cập nhật giá vỏ hộp, kích thước, và xóa an toàn (tự động chuyển trạng thái ẩn nếu đã có khách dùng).
+    - `GET /api/admin/gift-boxes/corporate-inquiries`: Danh sách yêu cầu doanh nghiệp phân trang, tìm kiếm đa năng và lọc theo trạng thái.
+    - `GET, PATCH & DELETE /api/admin/gift-boxes/corporate-inquiries/[id]`: Cập nhật trạng thái đàm phán B2B, lưu báo giá chính thức `quotedTotal` và ghi chú nội bộ `adminNotes`.
 - [ ] **Giai đoạn 17.3: Giao Diện Quản Trị Hộp Quà Biếu & Báo Giá Doanh Nghiệp Admin CMS (`/admin/hop-qua-bieu`)**
 - [ ] **Giai đoạn 17.4: Giao Diện Storefront Trình Thiết Kế Giỏ Quà Tương Tác Visual & Viết Thiệp Cá Nhân Hóa (`/gio-qua-bieu`)**
 - [ ] **Giai đoạn 17.5: Tích Hợp Giỏ Hàng, Trang Chi Tiết Đơn Hàng & Điều Hướng Toàn Sàn**
