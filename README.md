@@ -1285,7 +1285,22 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
   - Xây dựng Zod validation schemas (`src/lib/validations/chat.ts`), cấu hình vai trò, trạng thái và 5 gợi ý câu hỏi nhanh (Quick Chat Prompts).
   - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-chat.ts`): Nạp 2 phiên hội thoại chuyên sâu (Tư vấn vận chuyển Cherry Tasmania bay Air `CHAT-202611-001` và tư vấn Dược sĩ về sữa Aptamil Profutura tiêu hóa nhạy cảm `CHAT-202611-002`).
-- [ ] **Giai đoạn 18.2: Xây Dựng Hệ Thống REST APIs & Logic Hội Thoại Thời Gian Thực (Chat Engine)**
+- [x] **Giai đoạn 18.2: Xây Dựng Hệ Thống REST APIs & Logic Hội Thoại Thời Gian Thực (Chat Engine)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện logic hội thoại & tổng hợp KPIs (`src/lib/chat.ts`):
+    - `generateChatSessionCode`: Sinh mã định danh phiên chat duy nhất `CHAT-YYYYMM-XXXX`.
+    - `getOrCreateChatSession`: Tự động nhận diện phiên chat đang hoạt động (`ACTIVE`, `PENDING_PHARMACIST`) của khách hàng theo `userId` hoặc `guestSessionId`, hỗ trợ lưu tin nhắn mở đầu mượt mà.
+    - `calculateChatKPIs`: Thống kê 5 chỉ số KPI CSKH (Tổng số phiên chat, Số phiên đang trao đổi, Số phiên cần Dược sĩ tham vấn, Số phiên đã giải quyết, Tổng lượng tin nhắn và thời gian phản hồi trung bình).
+  - Hệ thống Public Storefront REST APIs:
+    - `GET /api/chat/session`: API lấy phiên chat hiện tại của khách hàng vãng lai hoặc đã đăng nhập.
+    - `POST /api/chat/session`: API khởi tạo phiên chat mới kèm tin nhắn chào hỏi ban đầu có Zod validation.
+    - `GET /api/chat/messages`: API tải lịch sử tin nhắn của phiên chat (hỗ trợ polling tin nhắn mới theo `sinceTimestamp`).
+    - `POST /api/chat/messages`: API khách hàng gửi tin nhắn mới, tự động tăng bộ đếm tin chưa đọc phía Admin (`unreadAdminCount`) và cập nhật thời gian tin nhắn cuối.
+    - `POST /api/chat/read`: API khách hàng đánh dấu đã đọc tin nhắn trong phiên (`unreadCustomerCount = 0`).
+  - Hệ thống Admin / Pharmacist REST APIs bảo mật (`ADMIN` role check):
+    - `GET /api/admin/chat/sessions`: Quản lý danh sách các phiên trò chuyện phân trang, tìm kiếm theo tên/SĐT/mã và lọc theo trạng thái.
+    - `GET, PATCH & DELETE /api/admin/chat/sessions/[id]`: Xem toàn bộ lịch sử trò chuyện kèm hồ sơ khách hàng, chuyển trạng thái hội thoại và xóa an toàn.
+    - `POST /api/admin/chat/messages`: API Dược sĩ / Chuyên viên CSKH phản hồi khách hàng (hỗ trợ văn bản, ảnh, thẻ sản phẩm), tự động tăng `unreadCustomerCount`.
+    - `POST /api/admin/chat/read`: API quản trị viên đánh dấu đã đọc tin nhắn của khách hàng.
 - [ ] **Giai đoạn 18.3: Giao Diện Trung Tâm Live Chat CSKH & Dược Sĩ Admin CMS (`/admin/chat-cskh`)**
 - [ ] **Giai đoạn 18.4: Widget Floating Live Chat Storefront Góc Màn Hình & Trải Nghiệm Tương Tác Hai Chiều**
 - [ ] **Giai đoạn 18.5: Tích Hợp Đa Kênh Zalo OA, Facebook Messenger, Âm Báo Tin Nhắn & Hoàn Thiện Toàn Sàn**
