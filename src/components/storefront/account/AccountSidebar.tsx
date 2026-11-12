@@ -21,6 +21,7 @@ import {
   LogOut,
   ShieldCheck,
   ChevronRight,
+  Stethoscope,
 } from "lucide-react";
 
 interface AccountSidebarProps {
@@ -51,6 +52,12 @@ export const AccountSidebar: React.FC<AccountSidebarProps> = ({ user }) => {
       label: "Gói giao định kỳ",
       href: "/tai-khoan/dinh-ky",
       icon: Repeat,
+      exact: false,
+    },
+    {
+      label: "Phác đồ & Lịch uống",
+      href: "/tai-khoan/phac-do",
+      icon: Stethoscope,
       exact: false,
     },
     {

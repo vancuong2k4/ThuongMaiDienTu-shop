@@ -17,6 +17,7 @@ import {
   FileText,
   ShieldCheck,
   ChevronRight,
+  Stethoscope,
 } from "lucide-react";
 
 interface SubCategory {
@@ -133,6 +134,20 @@ export function MobileNav({ categories }: MobileNavProps) {
               </div>
               <span className="text-[10px] bg-red-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
                 Hot
+              </span>
+            </Link>
+
+            <Link
+              href="/tu-van-dinh-duong"
+              onClick={closeMenu}
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-emerald-50 text-emerald-800 font-bold hover:bg-emerald-100 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Stethoscope className="w-4 h-4 text-emerald-600" />
+                <span>Tư vấn Dinh dưỡng Dược sĩ</span>
+              </div>
+              <span className="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
+                Mới
               </span>
             </Link>
 

@@ -15,6 +15,7 @@ import {
   Apple,
   Droplet,
   Baby,
+  Stethoscope,
 } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CartButton } from "./CartButton";
@@ -81,6 +82,14 @@ export function Header({ categories }: HeaderProps) {
           </div>
 
           <div className="flex items-center gap-5">
+            <Link
+              href="/tu-van-dinh-duong"
+              className="flex items-center gap-1 text-emerald-200 hover:text-white transition-colors"
+            >
+              <Stethoscope className="w-3.5 h-3.5 text-emerald-300" />
+              <span>Tư vấn Dinh dưỡng</span>
+            </Link>
+            <span className="text-white/20">|</span>
             <Link
               href="/minh-bach-air-cargo"
               className="flex items-center gap-1 text-sky-200 hover:text-white transition-colors"
@@ -298,6 +307,15 @@ export function Header({ categories }: HeaderProps) {
               >
                 <Plane className="w-3.5 h-3.5 text-sky-600" />
                 <span>Minh bạch bay Air</span>
+              </Link>
+
+              {/* Phác đồ dinh dưỡng Dược sĩ */}
+              <Link
+                href="/tu-van-dinh-duong"
+                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/80 font-bold text-xs rounded-full transition-all whitespace-nowrap"
+              >
+                <Stethoscope className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Tư vấn phác đồ</span>
               </Link>
 
               {/* Flash Sale link */}

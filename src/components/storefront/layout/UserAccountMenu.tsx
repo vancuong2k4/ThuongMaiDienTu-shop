@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { User, LogIn, UserPlus, Package, Heart, Shield, LogOut, ChevronDown, Award, Bell, Share2, Repeat, Star } from "lucide-react";
+import { User, LogIn, UserPlus, Package, Heart, Shield, LogOut, ChevronDown, Award, Bell, Share2, Repeat, Star, Stethoscope } from "lucide-react";
 
 export function UserAccountMenu() {
   const { data: session, status } = useSession();
@@ -118,6 +118,15 @@ export function UserAccountMenu() {
             >
               <Repeat className="w-4 h-4 text-[#800028]" />
               <span>Gói giao định kỳ</span>
+            </Link>
+
+            <Link
+              href="/tai-khoan/phac-do"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2.5 px-4 py-2 text-sm text-teal-800 font-semibold hover:bg-teal-50/60 transition-colors"
+            >
+              <Stethoscope className="w-4 h-4 text-teal-600" />
+              <span>Phác đồ & Lịch uống</span>
             </Link>
 
             <Link

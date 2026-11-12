@@ -1097,7 +1097,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Header Navigation Bar: Bổ sung huy hiệu "Minh bạch bay Air" nổi bật bên cạnh nút "FLASH SALE".
     - Footer Chân Trang: Bổ sung mục "Minh bạch lô bay Air & Hạn sử dụng (AWB)" trong khối Hỗ Trợ & Chính Sách.
 
-### 🩺 Giai đoạn 16: Hệ Thống Tư Vấn Dinh Dưỡng & Phác Đồ Bổ Sung Cá Nhân Hóa Chuẩn Y Khoa (AI/Pharmacist Health Assessment & Personalized Supplement Protocol Builder - ĐANG TRIỂN KHAI)
+### 🩺 Giai đoạn 16: Hệ Thống Tư Vấn Dinh Dưỡng & Phác Đồ Bổ Sung Cá Nhân Hóa Chuẩn Y Khoa (AI/Pharmacist Health Assessment & Personalized Supplement Protocol Builder - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 16.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu Ngân Hàng Câu Hỏi & Phác Đồ Mẫu** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`: `HealthTargetGroup` (`BABY_KIDS`, `PREGNANT_MOM`, `POSTPARTUM_MOM`, `ADULT_HEALTH`, `ELDERLY`), `QuizQuestionType` (`SINGLE_CHOICE`, `MULTIPLE_CHOICE`), `ConsultationStatus` (`PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED`).
   - Thiết kế 6 models cơ sở dữ liệu quan hệ hoàn chỉnh:
@@ -1161,7 +1161,23 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Đặt lịch hẹn qua điện thoại: Chọn ngày thuận tiện, chọn khung giờ (Sáng 09:00 - 11:30, Chiều 14:00 - 16:30, Tối 19:00 - 21:00) và màn hình xác nhận thành công.
   - Container Hợp Nhất & Trang Server Component [`/tu-van-dinh-duong`](/tu-van-dinh-duong):
     - Quản lý đồng bộ URL searchParams `?protocol=...`, hỗ trợ SSR pre-fetch kết quả tức thì và làm lại bài test linh hoạt.
-- [ ] **Giai đoạn 16.5: Hub Quản Lý Phác Đồ Cá Nhân (`/tai-khoan/phac-do`), Lịch Nhắc Liều Dùng Hàng Ngày & Tích Hợp Toàn Sàn**
+- [x] **Giai đoạn 16.5: Hub Quản Lý Phác Đồ Cá Nhân (`/tai-khoan/phac-do`), Lịch Nhắc Liều Dùng Hàng Ngày & Tích Hợp Toàn Sàn** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Trung Tâm Phác Đồ & Lịch Nhắc Uống Vi Chất Của Tôi (`AccountProtocolsHubClient.tsx`):
+    - Quản lý đồng thời nhiều phác đồ đã được Dược sĩ kê và lưu trữ trên tài khoản.
+    - Chuyển đổi tab linh hoạt: "Lịch Nhắc Uống Hôm Nay" và "Tất Cả Phác Đồ & Lịch Hẹn Tư Vấn".
+  - Thẻ Lịch Nhắc Liều Dùng Hàng Ngày & Điểm Danh Uống Vi Chất (`DailyDosageScheduleCard.tsx`):
+    - Phân bổ 3 khung giờ uống khoa học trong ngày: Sáng (sau ăn sáng), Chiều (men vi sinh nước ấm < 40°C), Tối (sữa ấm trước ngủ).
+    - Bộ đếm chuỗi ngày uống đúng giờ liên tiếp (Streak counter 🔥) kích thích thói quen bổ sung vi chất đều đặn.
+    - Thanh tiến trình hoàn thành trong ngày (% cữ đã uống) lưu trạng thái bền vững trong `localStorage`.
+  - Danh Sách Phác Đồ Đã Lưu & Lịch Hẹn Tư Vấn (`SavedProtocolsList.tsx`):
+    - Xem chi tiết từng phác đồ đã làm, danh sách sản phẩm thành phần và theo dõi tiến trình lịch hẹn tư vấn cùng Dược sĩ (`PENDING`, `CONFIRMED`, `COMPLETED`).
+  - Trang Server Component [`/tai-khoan/phac-do`](/tai-khoan/phac-do):
+    - Bảo vệ nghiêm ngặt bằng NextAuth v5 Session Guard, tự động chuyển hướng đăng nhập có callbackUrl.
+    - SSR truy vấn lịch sử đánh giá `userHealthAssessment` cùng dữ liệu sản phẩm, biến thể và lịch hẹn tư vấn.
+  - Tích Hợp Toàn Bộ Hệ Thống Điều Hướng Sàn:
+    - Bổ sung mục "Phác đồ & Lịch uống" (`Stethoscope`) trên thanh menu bên trái `AccountSidebar.tsx`.
+    - Bổ sung phím tắt phác đồ trên menu tài khoản `UserAccountMenu.tsx`.
+    - Bổ sung nút "Tư vấn Dinh dưỡng" trên thanh thông báo đầu trang (Top Announcement Bar), huy hiệu nổi bật trên thanh điều hướng chính `Header.tsx` và menu di động `MobileNav.tsx`.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
