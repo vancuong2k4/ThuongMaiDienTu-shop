@@ -1179,6 +1179,27 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bổ sung phím tắt phác đồ trên menu tài khoản `UserAccountMenu.tsx`.
     - Bổ sung nút "Tư vấn Dinh dưỡng" trên thanh thông báo đầu trang (Top Announcement Bar), huy hiệu nổi bật trên thanh điều hướng chính `Header.tsx` và menu di động `MobileNav.tsx`.
 
+### 🎁 Giai đoạn 17: Hệ Thống Giỏ Quà Biếu Tùy Biến Cao Cấp, Hộp Quà Cherry Bay Air & Thiệp Chúc Mừng Cá Nhân Hóa (Luxury Custom Gift Box, Cherry Hamper Builder & Corporate B2B Gifts - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 17.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu 5 Mẫu Hộp Quà Biếu & Yêu Cầu Doanh Nghiệp** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung 4 enums cốt lõi trong `prisma/schema.prisma`:
+    - `GiftBoxType`: `WOODEN_BOX` (Hộp gỗ thông sơn mài), `LEATHER_CASE` (Hộp da lót nhung đỏ), `BAMBOO_HAMPER` (Giỏ mây tre đan thủ công), `CHERRY_CARGO_BOX` (Hộp chuyên dụng Air-Cargo Cherry ép kim vàng 24K), `LUXURY_MAGNETIC_BOX` (Hộp nam châm nắp gập Châu Âu).
+    - `GiftRibbonColor`: `RUBY_RED` (Đỏ rượu Ruby #800028), `CHAMPAGNE_GOLD` (Vàng kim ánh champagne), `EMERALD_GREEN` (Xanh ngọc lục bảo), `ROYAL_NAVY` (Xanh Navy quý phái).
+    - `GiftOccasion`: `TET_HOLIDAY` (Tết Nguyên Đán), `MID_AUTUMN` (Tết Trung Thu), `CORPORATE_THANK_YOU` (Tri ân đối tác doanh nghiệp), `BIRTHDAY` (Sinh nhật & Kỷ niệm), `NEWBORN_BABY` (Mừng đầy tháng bé), `PARENTS_HEALTH` (Báo hiếu cha mẹ).
+    - `CorporateGiftStatus`: `PENDING`, `CONTACTED`, `QUOTED`, `DEPOSIT_PAID`, `FULFILLED`, `CANCELLED`.
+  - Thiết kế 4 models cơ sở dữ liệu quan hệ hoàn chỉnh:
+    - `GiftBoxTemplate`: Mẫu vỏ hộp, kích thước, giá nền vỏ hộp, sức chứa tối đa (slots), cam kết bảo ôn bay Air.
+    - `GiftCustomHamper`: Bản ghi giỏ quà do khách thiết kế, mã giỏ quà `HMP-XXXX`, dịp tặng, màu nơ ruy băng, niêm phong sáp đồng hoàng gia (Wax seal), đèn LED, nội dung thiệp in và người gửi/người nhận.
+    - `GiftHamperItem`: Chi tiết các sản phẩm xếp vào giỏ kèm số slot chiếm dụng.
+    - `CorporateGiftInquiry`: Yêu cầu báo giá quà biếu doanh nghiệp B2B số lượng lớn (Công ty, Người liên hệ, Ngân sách mỗi suất, Hóa đơn VAT, Khắc laser logo).
+  - Cập nhật các quan hệ hai chiều với `User`, `Product`, `ProductVariant` và `Order`.
+  - Đồng bộ thành công cơ sở dữ liệu PostgreSQL qua Prisma `db push` và tái sinh Prisma Client v5.22.0.
+  - Xây dựng Zod validation schemas (`src/lib/validations/gift-box.ts`) và cấu hình bảng màu sắc, chất liệu, mẫu lời chúc thiệp theo dịp.
+  - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-gift-boxes.ts`): Nạp 5 mẫu vỏ hộp quà sang trọng và 1 yêu cầu quà tặng doanh nghiệp mẫu `CORP-202611-001`.
+- [ ] **Giai đoạn 17.2: Xây Dựng Hệ Thống REST APIs Quản Lý Hộp Quà, Tính Toán Sức Chứa (Slot Capacity Engine) & Báo Giá Doanh Nghiệp**
+- [ ] **Giai đoạn 17.3: Giao Diện Quản Trị Hộp Quà Biếu & Báo Giá Doanh Nghiệp Admin CMS (`/admin/hop-qua-bieu`)**
+- [ ] **Giai đoạn 17.4: Giao Diện Storefront Trình Thiết Kế Giỏ Quà Tương Tác Visual & Viết Thiệp Cá Nhân Hóa (`/gio-qua-bieu`)**
+- [ ] **Giai đoạn 17.5: Tích Hợp Giỏ Hàng, Trang Chi Tiết Đơn Hàng & Điều Hướng Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
