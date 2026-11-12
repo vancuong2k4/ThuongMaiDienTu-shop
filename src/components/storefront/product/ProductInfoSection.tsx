@@ -25,6 +25,7 @@ import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
 import { CountryFlag } from "@/components/ui/CountryFlag";
 import { WishlistButton } from "@/components/storefront/product/WishlistButton";
+import { ComparisonButton } from "@/components/storefront/comparison/ComparisonButton";
 import {
   SubscriptionOptionSelector,
   type SubscriptionFrequencyType,
@@ -518,13 +519,31 @@ export function ProductInfoSection({
           </button>
         </div>
 
-        {/* Yêu thích & Chia sẻ */}
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100 text-xs text-gray-500">
-          <WishlistButton
-            productId={product.id}
-            showText={true}
-            className="hover:text-red-600 transition-colors"
-          />
+        {/* Yêu thích, So sánh & Chia sẻ */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-gray-100 text-xs text-gray-500">
+          <div className="flex items-center gap-4">
+            <WishlistButton
+              productId={product.id}
+              showText={true}
+              className="hover:text-red-600 transition-colors"
+            />
+            <ComparisonButton
+              product={{
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                brand: product.brand,
+                origin: product.origin,
+                categoryName: product.category.name,
+                categorySlug: product.category.slug,
+                price: price,
+                originalPrice: originalPrice || null,
+                image: selectedVariant.image || product.images[0]?.url || "/images/placeholder.svg",
+              }}
+              showText={true}
+              className="hover:text-[#800028] transition-colors"
+            />
+          </div>
 
           <button
             type="button"

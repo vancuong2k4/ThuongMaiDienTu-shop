@@ -3,6 +3,7 @@ import { Header } from "@/components/storefront/layout/Header";
 import { Footer } from "@/components/storefront/layout/Footer";
 import { MobileBottomNav } from "@/components/storefront/layout/MobileBottomNav";
 import { QuickContact } from "@/components/storefront/layout/QuickContact";
+import { FloatingComparisonDock } from "@/components/storefront/comparison/FloatingComparisonDock";
 
 export default async function StorefrontLayout({
   children,
@@ -40,6 +41,9 @@ export default async function StorefrontLayout({
 
       {/* Nút liên hệ nhanh (Zalo, Hotline, Scroll-top) */}
       <QuickContact />
+
+      {/* Thanh Dock nổi so sánh sản phẩm & phân tích vi chất */}
+      <FloatingComparisonDock />
     </div>
   );
 }

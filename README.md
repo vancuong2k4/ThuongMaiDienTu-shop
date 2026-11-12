@@ -1373,8 +1373,19 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Hệ thống Admin CMS REST APIs bảo mật (`ADMIN` role guard):
     - `GET & POST /api/admin/nutrients`: Xem danh mục và khởi tạo chỉ tiêu vi chất chuẩn hóa.
     - `PUT /api/admin/products/[id]/nutrients`: Cập nhật thông số so sánh mở rộng và cấu trúc thành phần vi chất cho từng sản phẩm trong database transaction.
-- [ ] **Giai đoạn 19.3: Quản Lý State Zustand & Thanh So Sánh Nổi Storefront (Floating Comparison Dock)**
-- [ ] **Giai đoạn 19.3: Quản Lý State Zustand & Thanh So Sánh Nổi Storefront (Floating Comparison Dock)**
+- [x] **Giai đoạn 19.3: Quản Lý State Zustand & Thanh So Sánh Nổi Storefront (Floating Comparison Dock)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Zustand Store Lưu Trữ Client-side Thông Minh (`src/store/comparison.ts`):
+    - Quản lý danh sách tối đa 4 sản phẩm so sánh, đồng bộ `localStorage` qua middleware `persist` (`thuynga_comparison_store`).
+    - Các actions: `addItem` (tự động kiểm tra giới hạn 4 sản phẩm và tự động mở dock khi thêm mới), `removeItem`, `clear`, `toggleOpen`, `hasItem`.
+  - Nút So Sánh Sản Phẩm Đa Năng (`ComparisonButton.tsx`):
+    - Đặt nổi trên từng thẻ sản phẩm `ProductCard.tsx` (cạnh nút Thả Tim Yêu Thích) và trang chi tiết sản phẩm `ProductInfoSection.tsx` (`showText=true`).
+    - Nhận diện trạng thái đã thêm/chưa thêm với icon `Scale` (chuẩn quy tắc không dùng icon Sparkles).
+  - Thanh Dock Nổi Thông Minh Dưới Đáy Màn Hình (`FloatingComparisonDock.tsx`):
+    - Trạng thái thu gọn: Huy hiệu pill sang trọng gradient đỏ rượu `#800028` đính kèm bộ đếm `(N/4)` nhấp nháy tinh tế.
+    - Trạng thái mở rộng: 4 ô sản phẩm (thẻ ảnh, tên, giá bán và nút X xóa nhanh 1-chạm), ô trống có nét đứt khuyến khích thêm sản phẩm, nút "Xóa hết" và nút CTA "So Sánh Ngay" dẫn thẳng vào `/so-sanh`.
+  - Tích Hợp Toàn Bộ Giao Diện Storefront (`layout.tsx`):
+    - Xuất hiện xuyên suốt trên tất cả các trang bán hàng của THUYNGA Shop.
+- [ ] **Giai đoạn 19.4: Giao Diện Bảng Ma Trận So Sánh & Thẻ Phân Tích Hiệp Đồng Dược Sĩ (`/so-sanh`)**
 - [ ] **Giai đoạn 19.4: Giao Diện Bảng Ma Trận So Sánh & Thẻ Phân Tích Hiệp Đồng Dược Sĩ (`/so-sanh`)**
 - [ ] **Giai đoạn 19.5: Giao Diện Quản Trị Admin CMS Chỉ Tiêu Vi Chất (`/admin/vi-chat`) & Tích Hợp Toàn Sàn**
 

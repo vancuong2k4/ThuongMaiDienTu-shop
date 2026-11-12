@@ -8,6 +8,7 @@ import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
 import { CountryFlag } from "@/components/ui/CountryFlag";
 import { WishlistButton } from "@/components/storefront/product/WishlistButton";
+import { ComparisonButton } from "@/components/storefront/comparison/ComparisonButton";
 
 export interface ProductCardData {
   id: string;
@@ -119,11 +120,26 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        {/* Wishlist Button */}
-        <div className="absolute bottom-2.5 right-2.5 z-10">
+        {/* Quick Action Buttons (Comparison & Wishlist) */}
+        <div className="absolute bottom-2.5 right-2.5 z-10 flex items-center gap-1.5 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+          <ComparisonButton
+            product={{
+              id: product.id,
+              name: product.name,
+              slug: product.slug,
+              brand: product.brand,
+              origin: product.origin,
+              categoryName: product.category.name,
+              categorySlug: product.category.slug,
+              price: price,
+              originalPrice: originalPrice,
+              image: imageUrl,
+            }}
+            className="w-8 h-8 rounded-full backdrop-blur-sm flex items-center justify-center shadow-xs"
+          />
           <WishlistButton
             productId={product.id}
-            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm border border-neutral-200 flex items-center justify-center shadow-xs opacity-90 sm:opacity-0 sm:group-hover:opacity-100 hover:bg-white"
+            className="w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm border border-neutral-200 flex items-center justify-center shadow-xs hover:bg-white"
           />
         </div>
 
