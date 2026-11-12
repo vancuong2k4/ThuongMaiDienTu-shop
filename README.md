@@ -1212,7 +1212,32 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `GET, PATCH & DELETE /api/admin/gift-boxes/templates/[id]`: Xem chi tiết, cập nhật giá vỏ hộp, kích thước, và xóa an toàn (tự động chuyển trạng thái ẩn nếu đã có khách dùng).
     - `GET /api/admin/gift-boxes/corporate-inquiries`: Danh sách yêu cầu doanh nghiệp phân trang, tìm kiếm đa năng và lọc theo trạng thái.
     - `GET, PATCH & DELETE /api/admin/gift-boxes/corporate-inquiries/[id]`: Cập nhật trạng thái đàm phán B2B, lưu báo giá chính thức `quotedTotal` và ghi chú nội bộ `adminNotes`.
-- [ ] **Giai đoạn 17.3: Giao Diện Quản Trị Hộp Quà Biếu & Báo Giá Doanh Nghiệp Admin CMS (`/admin/hop-qua-bieu`)**
+- [x] **Giai đoạn 17.3: Giao Diện Quản Trị Hộp Quà Biếu & Báo Giá Doanh Nghiệp Admin CMS (`/admin/hop-qua-bieu`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 5 Thẻ Thống Kê KPI Quà Biếu & Quà Doanh Nghiệp (`GiftBoxStats.tsx`):
+    - Tổng yêu cầu B2B: Theo dõi lượng doanh nghiệp liên hệ đặt quà.
+    - Chờ báo giá: Cảnh báo các đơn hàng B2B cần chuyên viên tư vấn gấp.
+    - Đã chốt cọc: Số lượng hợp đồng quà tặng thành công kèm tỷ lệ chốt đơn (%).
+    - Doanh số quà biếu: Tổng giá trị hợp đồng B2B đã thu (VNĐ).
+    - Mẫu vỏ hộp: Đếm số lượng mẫu vỏ hộp đang hoạt động và số giỏ quà khách hàng đã tự thiết kế trên sàn.
+  - Bộ Lọc Đa Năng & Chuyển Đổi Tab Thông Minh (`GiftBoxFilters.tsx`):
+    - Tab Switcher: "Yêu Cầu Quà Doanh Nghiệp (B2B)" và "Mẫu Vỏ Hộp Quà Biếu".
+    - Tìm kiếm theo mã yêu cầu, tên công ty, người liên hệ, SĐT, hoặc tên mẫu hộp/slug.
+    - Lọc theo trạng thái hợp đồng B2B (`PENDING`, `CONTACTED`, `QUOTED`, `DEPOSIT_PAID`, `FULFILLED`, `CANCELLED`).
+    - Phím tắt mở Modal thêm mới mẫu vỏ hộp quà.
+  - Bảng Quản Lý Yêu Cầu Quà Doanh Nghiệp (`CorporateInquiryTable.tsx`):
+    - Hiển thị mã `CORP-XXXX`, tên công ty, người liên hệ, nút gọi nhanh (`tel:`) và email (`mailto:`).
+    - Chi tiết dịp tặng, số lượng suất quà, ngân sách dự kiến mỗi suất, báo giá tổng, hạn giao hàng, huy hiệu xuất hóa đơn VAT và in logo doanh nghiệp.
+    - Thao tác mở Modal báo giá & xóa an toàn.
+  - Bảng Quản Lý Mẫu Vỏ Hộp Quà (`GiftTemplateTable.tsx`):
+    - Hiển thị ảnh mẫu hộp, tên, slug, loại chất liệu, kích thước chuẩn (DxRxC), giá vỏ hộp, sức chứa slots và huy hiệu cam kết giữ nhiệt bay Air.
+    - Nút gạt chuyển trạng thái kinh doanh / tạm ngừng tức thì.
+  - Modal Thêm Mới Mẫu Vỏ Hộp Quà (`CreateGiftTemplateModal.tsx`):
+    - Form nhập tên, tự động sinh slug tiếng Việt chuẩn, chọn kiểu dáng hộp, sức chứa slots (2-12 ô), kích thước, giá vỏ hộp, URL ảnh và cam kết bảo ôn.
+  - Modal Báo Giá & Cập Nhật Trạng Thái B2B (`InquiryQuoteModal.tsx`):
+    - Xem tóm tắt thông tin khách và yêu cầu phối set quà, cập nhật tiến trình xử lý, nhập số tiền báo giá chính thức (VNĐ) và lưu nhật ký đàm phán nội bộ.
+  - Trang Server Component [`/admin/hop-qua-bieu`](/admin/hop-qua-bieu) & Menu Sidebar:
+    - Pre-fetch SSR số liệu KPI, danh sách mẫu hộp và yêu cầu B2B.
+    - Bổ sung mục "Hộp quà biếu" (icon `Gift`) trên thanh menu điều hướng `AdminSidebar.tsx`.
 - [ ] **Giai đoạn 17.4: Giao Diện Storefront Trình Thiết Kế Giỏ Quà Tương Tác Visual & Viết Thiệp Cá Nhân Hóa (`/gio-qua-bieu`)**
 - [ ] **Giai đoạn 17.5: Tích Hợp Giỏ Hàng, Trang Chi Tiết Đơn Hàng & Điều Hướng Toàn Sàn**
 

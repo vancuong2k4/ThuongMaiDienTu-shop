@@ -26,6 +26,7 @@ import {
   Repeat,
   Plane,
   Stethoscope,
+  Gift,
   ExternalLink,
   LogOut,
   ChevronLeft,
@@ -101,6 +102,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Phác đồ Dược sĩ",
       href: "/admin/phac-do-dinh-duong",
       icon: Stethoscope,
+    },
+    {
+      label: "Hộp quà biếu",
+      href: "/admin/hop-qua-bieu",
+      icon: Gift,
     },
     {
       label: "Danh mục",
