@@ -90,6 +90,18 @@ export interface CartItem {
   originalPrice?: number | null;
   isSubscription?: boolean;
   subscriptionFrequency?: "EVERY_2_WEEKS" | "EVERY_1_MONTH" | "EVERY_2_MONTHS" | "EVERY_3_MONTHS";
+  isCustomHamper?: boolean;
+  hamperId?: string;
+  hamperCode?: string;
+  hamperDetails?: {
+    templateName: string;
+    occasion: string;
+    ribbonColor: string;
+    hasWaxSeal: boolean;
+    hasLedLights: boolean;
+    greetingCardMessage?: string | null;
+    itemCount: number;
+  };
 }
 
 // ============================================================

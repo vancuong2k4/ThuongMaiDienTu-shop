@@ -1238,7 +1238,32 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Trang Server Component [`/admin/hop-qua-bieu`](/admin/hop-qua-bieu) & Menu Sidebar:
     - Pre-fetch SSR số liệu KPI, danh sách mẫu hộp và yêu cầu B2B.
     - Bổ sung mục "Hộp quà biếu" (icon `Gift`) trên thanh menu điều hướng `AdminSidebar.tsx`.
-- [ ] **Giai đoạn 17.4: Giao Diện Storefront Trình Thiết Kế Giỏ Quà Tương Tác Visual & Viết Thiệp Cá Nhân Hóa (`/gio-qua-bieu`)**
+- [x] **Giai đoạn 17.4: Giao Diện Storefront Trình Thiết Kế Giỏ Quà Tương Tác Visual & Viết Thiệp Cá Nhân Hóa (`/gio-qua-bieu`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Khối Hero Sang Trọng & Phím Tắt Báo Giá Doanh Nghiệp B2B:
+    - Nhận diện thương hiệu đỏ rượu vang `#800028`, gradient hoàng gia và giới thiệu quy trình đóng gói quà tặng nhập khẩu bay Air từ Úc.
+    - Nút CTA mở Modal báo giá B2B dành cho khách hàng doanh nghiệp đặt từ 5 suất trở lên.
+  - Thanh Tiến Trình 4 Bước Thông Minh (`HamperBuilderClient.tsx`):
+    - Bước 1: Chọn vỏ hộp -> Bước 2: Chọn sản phẩm -> Bước 3: Phụ kiện & Thiệp -> Bước 4: Tóm tắt & Đặt hàng.
+    - Điều hướng mượt mà, cho phép nhấn quay lại các bước trước đó bất kỳ lúc nào.
+  - Lựa Chọn Kiểu Dáng Vỏ Hộp (`StepBoxSelection.tsx`):
+    - Hiển thị danh thiếp vỏ hộp gỗ thông sơn mài, hộp da lót nhung đỏ, giỏ mây tre đan thủ công, hộp chuyên dụng Cherry ép kim 24K.
+    - Trực quan kích thước chuẩn, chất liệu, sức chứa slots và huy hiệu cam kết chuẩn bay Air.
+  - Chọn Vật Phẩm & Đo Lường Sức Chứa Theo Thời Gian Thực (`StepProductSelection.tsx`):
+    - Thanh đo dung lượng giỏ (Capacity Gauge): Cập nhật trực tiếp số ô đã dùng / tối đa (VD: 3/5 ô), cảnh báo tức thì khi hộp đã đầy sức chứa.
+    - Bộ lọc danh mục vật phẩm linh hoạt: Cherry Úc tươi bay Air, Mật ong Manuka & TPCN Úc, Sữa Aptamil Mẹ & Bé.
+    - Bộ điều khiển số lượng (+ / -) cùng thẻ thông tin số slot mỗi sản phẩm chiếm dụng.
+  - Phụ Kiện Đóng Gói Hoàng Gia & Thiết Kế Thiệp Chúc Mừng (`StepPackagingAndCard.tsx`):
+    - Bảng 4 màu nơ lụa satin cao cấp: Đỏ Ruby (#800028), Vàng Champagne, Xanh Ngọc Lục Bảo, Xanh Navy.
+    - Tùy chọn đóng dấu niêm sáp đồng THUYNGA (Royal Wax seal) và lắp dây đèn LED đom đóm ấm áp (+50.000₫).
+    - Bộ soạn thảo thiệp chúc mừng cá nhân hóa: Chọn dịp lễ (Tết, Trung Thu, Doanh nghiệp, Sinh nhật, Đầy tháng, Báo hiếu), 1-click điền lời chúc mẫu trang trọng, nhập tên người gửi và người nhận.
+    - Thẻ xem trước thiệp chúc mừng dập nổi thực tế thời gian thực (Realtime Card Preview) với phong cách thư pháp tinh tế.
+  - Modal Đặt Hàng Doanh Nghiệp B2B Số Lượng Lớn (`CorporateInquiryModal.tsx`):
+    - Biểu mẫu nhập thông tin công ty, người phụ trách, SĐT Zalo, email, số lượng suất, ngân sách, xuất hóa đơn VAT và khắc laser logo lên nắp hộp gỗ.
+  - Thanh Tóm Tắt & Tính Tiền Giỏ Quà Tự Động (Sticky Live Summary Panel):
+    - Tính toán chi tiết giá vỏ hộp, tổng tiền sản phẩm thành phần, phụ kiện đèn LED và tự động kích hoạt ưu đãi giỏ quà cao cấp -5% khi đạt từ 2.000.000đ.
+    - Nút 1-chạm "Thêm Giỏ Quà Này Vào Giỏ Hàng" gọi API lưu cấu hình và đồng bộ tức thì vào giỏ hàng Zustand `useCartStore`.
+  - Trang Server Component [`/gio-qua-bieu`](/gio-qua-bieu):
+    - Pre-fetch SSR toàn bộ mẫu vỏ hộp quà tặng đang kích hoạt và danh sách sản phẩm Úc đạt chuẩn phối set quà biếu.
 - [ ] **Giai đoạn 17.5: Tích Hợp Giỏ Hàng, Trang Chi Tiết Đơn Hàng & Điều Hướng Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
