@@ -1347,6 +1347,26 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Lời chào Dược sĩ, Tư vấn sữa Aptamil Profutura Synbiotics, Mật ong Manuka chỉ số MGO/UMF, Cherry Tasmania bay Air 48h tươi giòn, Hóa đơn Chemist Warehouse & tem phụ tiếng Việt, Đóng gói giao hàng hỏa tốc.
     - Nút bật/tắt âm báo chuông tin nhắn mới của khách hàng cho nhân viên tư vấn Admin.
 
+### 🔬 Giai đoạn 19: Bộ So Sánh Sản Phẩm Chuyên Sâu & Phân Tích Vi Chất Thông Minh (Smart Australian Product Comparison, Nutrient Synergy & Safety Matrix - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 19.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu Vi Chất Chuẩn Úc** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`:
+    - `NutrientUnit`: `MG`, `MCG`, `G`, `IU`, `CFU`, `PERCENT`, `MGO`.
+    - `ComparisonScope`: `GENERAL`, `INFANT_FORMULA`, `SUPPLEMENTS`, `MANUKA_HONEY`, `FRESH_FRUITS`.
+    - `SynergyType`: `SYNERGY_BENEFICIAL`, `CAUTION_OVERDOSE`, `INTERACTION_SEPARATE`, `NEUTRAL`.
+  - Thiết kế 4 models chuyên sâu:
+    - `NutrientReference`: Chỉ tiêu hoạt chất tiêu chuẩn (DHA, EPA, Synbiotics, MGO, Folic Acid, Sắt hữu cơ, Canxi, Kẽm, Vitamin D3, K2 MK7, Silymarin kế sữa).
+    - `ProductNutrient`: Hàm lượng vi chất trên liều dùng và trên 100g của từng sản phẩm.
+    - `ProductComparisonFeature`: Bảng chỉ tiêu so sánh mở rộng (chi phí ngày dùng `costPerDay`, số ngày dùng `servingsPerPack`, chứng nhận TGA/ACO, đối tượng phù hợp, đặc điểm vị giác, bảo quản).
+    - `NutrientSynergyRule`: Bộ quy tắc tương tác vi chất chuẩn Dược sĩ (D3+K2 dẫn hướng canxi, Omega-3 DHA/EPA tỷ lệ vàng, Canxi và Sắt giãn cách 2 giờ tránh cạnh tranh hấp thụ).
+  - Cập nhật quan hệ hai chiều `nutrients` và `comparisonFeature` trong model `Product`.
+  - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
+  - Xây dựng Zod validation schemas (`src/lib/validations/comparison.ts`) với cấu hình danh mục và màu sắc tương tác.
+  - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-comparison.ts`): Nạp 11 chỉ tiêu vi chất, 5 quy tắc hiệp đồng/cảnh báo, và thiết lập đầy đủ thông số cho 6 sản phẩm chủ lực (Aptamil Profutura, A2 Platinum, Mật ong Manuka Comvita, Dầu cá Blackmores, Elevit bà bầu, Vitamin D3 K2 Sunday Natural).
+- [ ] **Giai đoạn 19.2: Xây Dựng Comparison Engine, Dịch Vụ Phân Tích Tương Tác Vi Chất & Hệ Thống REST APIs**
+- [ ] **Giai đoạn 19.3: Quản Lý State Zustand & Thanh So Sánh Nổi Storefront (Floating Comparison Dock)**
+- [ ] **Giai đoạn 19.4: Giao Diện Bảng Ma Trận So Sánh & Thẻ Phân Tích Hiệp Đồng Dược Sĩ (`/so-sanh`)**
+- [ ] **Giai đoạn 19.5: Giao Diện Quản Trị Admin CMS Chỉ Tiêu Vi Chất (`/admin/vi-chat`) & Tích Hợp Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.

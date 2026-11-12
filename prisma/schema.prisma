@@ -190,6 +190,31 @@ enum ChatMessageType {
   ORDER_CARD       // Thẻ tra cứu trạng thái đơn hàng
 }
 
+enum NutrientUnit {
+  MG               // Milligram (mg)
+  MCG              // Microgram (mcg)
+  G                // Gram (g)
+  IU               // International Unit (IU)
+  CFU              // Colony Forming Units (CFU cho men vi sinh probiotics)
+  PERCENT          // Phần trăm (%)
+  MGO              // Chỉ số kháng khuẩn Methylglyoxal (MGO cho mật ong Manuka)
+}
+
+enum ComparisonScope {
+  GENERAL          // So sánh tổng quan quy cách & giá
+  INFANT_FORMULA   // Sữa công thức & Dinh dưỡng mẹ bé
+  SUPPLEMENTS      // Thực phẩm chức năng & Vi chất Úc
+  MANUKA_HONEY     // Mật ong Manuka cao cấp Úc/New Zealand
+  FRESH_FRUITS     // Trái cây tươi bay Air (Cherry, Nho tiêu chuẩn)
+}
+
+enum SynergyType {
+  SYNERGY_BENEFICIAL     // Tác dụng hiệp đồng tương hỗ có lợi (VD: Vitamin D3 + K2 tăng hấp thụ Canxi)
+  CAUTION_OVERDOSE       // Cảnh báo trùng lặp vi chất có nguy cơ vượt ngưỡng tối đa UL
+  INTERACTION_SEPARATE   // Cần dùng cách thời điểm (VD: Canxi và Sắt nên uống cách nhau 2 giờ)
+  NEUTRAL                // Dùng phối hợp bình thường
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -375,6 +400,8 @@ model Product {
   batches        ProductBatch[]
   protocolItems  ProtocolProductItem[]
   giftHamperItems GiftHamperItem[]
+  nutrients      ProductNutrient[]
+  comparisonFeature ProductComparisonFeature?
 
   @@index([slug])
   @@index([categoryId])
@@ -1320,4 +1347,95 @@ model ChatMessage {
   @@index([senderRole])
   @@index([createdAt])
   @@map("chat_messages")
+}
+
+// ============================================================
+// PHASE 19: BỘ SO SÁNH SẢN PHẨM & PHÂN TÍCH VI CHẤT THÔNG MINH
+// (Australian Product Comparison, Nutrient Synergy & Safety Matrix)
+// ============================================================
+
+model NutrientReference {
+  id                  String             @id @default(cuid())
+  code                String             @unique // Ví dụ: "DHA", "SYNBIOTICS", "MGO", "GLUCOSAMINE", "ZINC", "CALCIUM"
+  nameVi              String             // Ví dụ: "DHA Tinh Khiết Từ Vi Tảo"
+  nameEn              String?            // "Docosahexaenoic Acid"
+  category            String             // "Axit Béo Omega", "Khoáng Chất", "Men Vi Sinh", "Vitamin", "Kháng Khuẩn Tự Nhiên"
+  standardRdi         Decimal?           @db.Decimal(10, 2) // Khuyến nghị hàng ngày RDI
+  upperLimit          Decimal?           @db.Decimal(10, 2) // Giới hạn tối đa an toàn mỗi ngày (UL)
+  unit                NutrientUnit       @default(MG)
+  benefitsSummary     String             @db.Text // Tóm tắt lợi ích sức khỏe
+  cautionNotes        String?            @db.Text // Lưu ý sử dụng
+  sortOrder           Int                @default(0)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  productNutrients    ProductNutrient[]
+  primarySynergies    NutrientSynergyRule[] @relation("PrimaryNutrient")
+  secondarySynergies  NutrientSynergyRule[] @relation("SecondaryNutrient")
+
+  @@index([code])
+  @@index([category])
+  @@map("nutrient_references")
+}
+
+model ProductNutrient {
+  id                  String             @id @default(cuid())
+  productId           String
+  nutrientRefId       String
+  amountPerServing    Decimal            @db.Decimal(10, 2) // Hàm lượng trên 1 liều dùng
+  amountPer100g       Decimal?           @db.Decimal(10, 2) // Hàm lượng trên 100g/100ml
+  servingSizeText     String?            // Ví dụ: "1 viên/ngày" hoặc "8.8g pha 50ml"
+  percentDailyValue   Decimal?           @db.Decimal(6, 2)  // % RDI (ví dụ: 120%)
+  highlightClaim      String?            // Ví dụ: "Hàm lượng DHA cao nhất phân khúc"
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  product             Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  nutrientRef         NutrientReference  @relation(fields: [nutrientRefId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, nutrientRefId])
+  @@index([productId])
+  @@index([nutrientRefId])
+  @@map("product_nutrients")
+}
+
+model ProductComparisonFeature {
+  id                      String           @id @default(cuid())
+  productId               String           @unique
+  scope                   ComparisonScope  @default(GENERAL)
+  costPerDay              Decimal?         @db.Decimal(12, 0) // Chi phí trung bình ngày dùng (VNĐ)
+  servingsPerPack         Int?             // Số ngày / liều dùng trong 1 hộp
+  australianCertification  String?          // "TGA AUST L 312345", "ACO Certified Organic"
+  targetAgeGroup          String?          // "Trẻ 0-6 tháng", "Người cao tuổi", "Cả gia đình"
+  textureOrFlavor         String?          // "Vị thanh mát giống sữa mẹ", "Hạt dẻo, ngọt thanh"
+  keyDifferentiators      Json?            // Mảng string 3-4 điểm nổi bật độc quyền
+  storageInstruction      String?          // "Bảo quản ngăn mát 0-4°C sau khi mở"
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+
+  product                 Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([scope])
+  @@map("product_comparison_features")
+}
+
+model NutrientSynergyRule {
+  id                      String           @id @default(cuid())
+  primaryNutrientId       String
+  secondaryNutrientId     String
+  synergyType             SynergyType      @default(SYNERGY_BENEFICIAL)
+  title                   String           // "DHA kết hợp Lutein: Hiệp đồng tối ưu tế bào võng mạc"
+  description             String           @db.Text
+  pharmacistRecommendation String?         @db.Text
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+
+  primaryNutrient         NutrientReference @relation("PrimaryNutrient", fields: [primaryNutrientId], references: [id], onDelete: Cascade)
+  secondaryNutrient       NutrientReference @relation("SecondaryNutrient", fields: [secondaryNutrientId], references: [id], onDelete: Cascade)
+
+  @@unique([primaryNutrientId, secondaryNutrientId])
+  @@index([primaryNutrientId])
+  @@index([secondaryNutrientId])
+  @@index([synergyType])
+  @@map("nutrient_synergy_rules")
 }
