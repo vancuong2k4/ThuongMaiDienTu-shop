@@ -1301,7 +1301,26 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `GET, PATCH & DELETE /api/admin/chat/sessions/[id]`: Xem toàn bộ lịch sử trò chuyện kèm hồ sơ khách hàng, chuyển trạng thái hội thoại và xóa an toàn.
     - `POST /api/admin/chat/messages`: API Dược sĩ / Chuyên viên CSKH phản hồi khách hàng (hỗ trợ văn bản, ảnh, thẻ sản phẩm), tự động tăng `unreadCustomerCount`.
     - `POST /api/admin/chat/read`: API quản trị viên đánh dấu đã đọc tin nhắn của khách hàng.
-- [ ] **Giai đoạn 18.3: Giao Diện Trung Tâm Live Chat CSKH & Dược Sĩ Admin CMS (`/admin/chat-cskh`)**
+- [x] **Giai đoạn 18.3: Giao Diện Trung Tâm Live Chat CSKH & Dược Sĩ Admin CMS (`/admin/chat-cskh`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 4 Thẻ Thống Kê KPI Live Chat & Dược Sĩ (`ChatStats.tsx`):
+    - Đang trao đổi: Theo dõi số lượng cuộc hội thoại khách đang online.
+    - Cần Dược sĩ: Cảnh báo các thắc mắc về liều dùng vi chất và sữa cần Dược sĩ chuyên môn tham vấn.
+    - Đã giải quyết: Số lượng phiên tư vấn đã hỗ trợ thành công.
+    - Tổng tin nhắn & Thời gian phản hồi trung bình (~3 phút).
+  - Danh Sách Hội Thoại Đa Luồng Bên Trái (`ChatSessionList.tsx`):
+    - Ô tìm kiếm khách hàng theo tên, số điện thoại, mã phiên `CHAT-XXXX`.
+    - Bộ lọc trạng thái tab nhanh (Tất cả, Đang chat, Cần Dược sĩ, Đã xong).
+    - Thẻ hội thoại trực quan kèm huy hiệu tin chưa đọc nổi bật, trích đoạn tin nhắn mới nhất và thời gian tương tác gần nhất.
+  - Khung Trò Chuyện & Phản Hồi Trực Tiếp Bên Phải (`ChatConversationPane.tsx`):
+    - Tiêu đề hiển thị hồ sơ khách, nút gọi nhanh (`tel:`), email và bộ chọn chuyển đổi trạng thái phiên chat.
+    - Luồng tin nhắn phân biệt rõ ràng: Tin nhắn khách hàng (trắng), Tin nhắn CSKH (đỏ rượu #800028), Tin nhắn Dược sĩ (xanh ngọc lục bảo kèm icon `Stethoscope`), Tin nhắn hệ thống (tím).
+    - Bộ chuyển đổi vai trò phản hồi: Cho phép quản trị viên linh hoạt chuyển đổi giữa "Chuyên viên CSKH" và "Dược sĩ Chuyên Môn".
+    - Khung nhập tin nhắn tiện lợi hỗ trợ phím tắt Enter để gửi nhanh.
+  - Bộ Điều Phối Live Chat Tự Động (`ChatCenterManager.tsx`):
+    - Tự động poll cập nhật tin nhắn mới mỗi 4 giây và tự động đánh dấu đã đọc khi mở phiên.
+  - Trang Server Component [`/admin/chat-cskh`](/admin/chat-cskh) & Menu Sidebar:
+    - Pre-fetch SSR số liệu KPI và 30 phiên hội thoại mới nhất.
+    - Bổ sung mục "Live Chat CSKH" (icon `MessageSquare`) trên menu thanh bên `AdminSidebar.tsx`.
 - [ ] **Giai đoạn 18.4: Widget Floating Live Chat Storefront Góc Màn Hình & Trải Nghiệm Tương Tác Hai Chiều**
 - [ ] **Giai đoạn 18.5: Tích Hợp Đa Kênh Zalo OA, Facebook Messenger, Âm Báo Tin Nhắn & Hoàn Thiện Toàn Sàn**
 
