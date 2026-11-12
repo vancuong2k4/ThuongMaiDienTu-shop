@@ -1321,7 +1321,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Trang Server Component [`/admin/chat-cskh`](/admin/chat-cskh) & Menu Sidebar:
     - Pre-fetch SSR số liệu KPI và 30 phiên hội thoại mới nhất.
     - Bổ sung mục "Live Chat CSKH" (icon `MessageSquare`) trên menu thanh bên `AdminSidebar.tsx`.
-- [ ] **Giai đoạn 18.4: Widget Floating Live Chat Storefront Góc Màn Hình & Trải Nghiệm Tương Tác Hai Chiều**
+- [x] **Giai đoạn 18.4: Widget Floating Live Chat Storefront Góc Màn Hình & Trải Nghiệm Tương Tác Hai Chiều** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Nút Bấm Nổi Hoàng Gia Góc Phải Màn Hình (`LiveChatButton.tsx`):
+    - Tông màu đỏ rượu mận `#800028` viền vàng gold, chấm xanh online động và bộ đếm huy hiệu tin nhắn chưa đọc (`unreadCount`).
+    - Tooltip gợi ý "Chat cùng Dược sĩ & CSKH" trên Desktop.
+  - Cửa Sổ Trò Chuyện Trực Tuyến Hiện Đại (`LiveChatWindow.tsx`):
+    - Tiêu đề "Dược Sĩ & CSKH THUYNGA" kèm huy hiệu trạng thái cam kết phản hồi trong 3 phút.
+    - Màn hình khởi tạo (Pre-chat): Lời chào nồng hậu, 5 thẻ câu hỏi nhanh 1-chạm (HSD Cherry Úc, đổi sữa Aptamil, tra cứu đơn, giỏ quà Tết) và form đăng ký họ tên, SĐT Zalo.
+    - Luồng tin nhắn tương tác hai chiều: Bong bóng tin nhắn khách hàng (đỏ rượu #800028) đối xứng với tin phản hồi của Chuyên viên/Dược sĩ (trắng/xanh ngọc lục bảo kèm icon `Stethoscope`).
+    - Khung nhập tin nhắn tích hợp thanh gợi ý nhanh và nút gửi `Send`.
+  - Widget Hợp Nhất & Duy Trì Phiên Khách Vãng Lai (`LiveChatWidget.tsx`):
+    - Tự động sinh và lưu `thuynga_guest_session_id` trong `localStorage`, bảo toàn lịch sử chat khi khách tải lại trang hoặc chuyển tab.
+    - Cơ chế polling tự động mỗi 3.5 giây kiểm tra tin nhắn mới và tự động đánh dấu đã đọc khi mở cửa sổ.
+  - Tích Hợp Toàn Bộ Giao Diện Storefront (`QuickContact.tsx`):
+    - Đặt vị trí nổi bật góc dưới bên phải màn hình trên tất cả các trang bán hàng.
 - [ ] **Giai đoạn 18.5: Tích Hợp Đa Kênh Zalo OA, Facebook Messenger, Âm Báo Tin Nhắn & Hoàn Thiện Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production

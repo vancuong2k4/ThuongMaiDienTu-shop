@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Phone, ArrowUp, MessageCircle } from "lucide-react";
+import { LiveChatWidget } from "@/components/storefront/chat/LiveChatWidget";
 
 export function QuickContact() {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -28,6 +29,9 @@ export function QuickContact() {
       className="fixed bottom-20 lg:bottom-8 right-4 z-40 flex flex-col items-center gap-3"
       aria-label="Liên hệ nhanh"
     >
+      {/* Widget Live Chat cùng Dược sĩ & CSKH */}
+      <LiveChatWidget />
+
       {/* Nút gọi Hotline */}
       <a
         href="tel:0987654321"
