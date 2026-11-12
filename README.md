@@ -1147,7 +1147,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Xem lại toàn bộ câu trả lời bài test của khách, cập nhật trạng thái cuộc gọi và lưu chỉ dẫn chuyên môn.
   - Trang Server Component [`/admin/phac-do-dinh-duong`](/admin/phac-do-dinh-duong) & Điều Hướng:
     - Pre-fetch SSR dữ liệu ban đầu và bổ sung mục "Phác đồ Dược sĩ" (icon `Stethoscope`) trên thanh menu điều hướng Admin.
-- [ ] **Giai đoạn 16.4: Giao Diện Storefront Trắc Nghiệm Sức Khỏe Tương Tác & Trình Trưng Bày Phác Đồ (`/tu-van-dinh-duong`)**
+- [x] **Giai đoạn 16.4: Giao Diện Storefront Trắc Nghiệm Sức Khỏe Tương Tác & Trình Trưng Bày Phác Đồ (`/tu-van-dinh-duong`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Khối Trắc Nghiệm Đa Tầng Tương Tác (`HealthQuizStepper.tsx`):
+    - Bước 1: Chọn đối tượng mục tiêu với thẻ thông tin sinh động (Bé sơ sinh, Mẹ bầu, Sau sinh, Người trưởng thành, Người cao tuổi).
+    - Bước 2 -> N: Chuỗi câu hỏi chuyên môn kèm thanh tiến trình % trực quan, điều hướng tiến lùi mượt mà.
+    - Bước cuối: Biểu mẫu nhập họ tên, số điện thoại và ghi chú thể trạng riêng của bé/mẹ.
+  - Trình Trưng Bày Phác Đồ Cá Nhân Hóa & Đặt Combo 1-Chạm (`ProtocolResultShowcase.tsx`):
+    - Khối tổng quan phác đồ: Tiêu đề lâm sàng, huy hiệu đối tượng, danh sách vi chất cốt lõi và chỉ dẫn chuyên môn từ Dược sĩ.
+    - Biểu đồ liều dùng trong ngày: Trực quan hóa thời điểm uống Sáng / Trưa / Chiều / Tối tối ưu hấp thu.
+    - Danh mục sản phẩm thành phần: Hiển thị ảnh, quy cách, liều lượng, cam kết 100% bay air.
+    - Khối ưu đãi combo phác đồ: Tính toán tổng tiền gốc, chiết khấu combo 10-15%, nút 1-chạm "Thêm trọn bộ phác đồ vào giỏ hàng" tích hợp trực tiếp vào giỏ hàng Zustand.
+  - Modal Đặt Lịch Tư Vấn Dược Sĩ 1-1 Miễn Phí (`BookConsultationModal.tsx`):
+    - Đặt lịch hẹn qua điện thoại: Chọn ngày thuận tiện, chọn khung giờ (Sáng 09:00 - 11:30, Chiều 14:00 - 16:30, Tối 19:00 - 21:00) và màn hình xác nhận thành công.
+  - Container Hợp Nhất & Trang Server Component [`/tu-van-dinh-duong`](/tu-van-dinh-duong):
+    - Quản lý đồng bộ URL searchParams `?protocol=...`, hỗ trợ SSR pre-fetch kết quả tức thì và làm lại bài test linh hoạt.
 - [ ] **Giai đoạn 16.5: Hub Quản Lý Phác Đồ Cá Nhân (`/tai-khoan/phac-do`), Lịch Nhắc Liều Dùng Hàng Ngày & Tích Hợp Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
