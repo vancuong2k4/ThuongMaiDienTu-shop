@@ -1272,7 +1272,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bổ sung liên kết nổi bật "Giỏ quà biếu" (`Gift`) trên thanh điều hướng chính `Header.tsx`.
     - Bổ sung mục "Giỏ Quà Biếu Hoàng Gia" (huy hiệu `VIP`) trên ngăn kéo menu di động `MobileNav.tsx`.
 
-### 💬 Giai đoạn 18: Hệ Thống Live Chat & Hỗ Trợ Đa Kênh Tích Hợp Dược Sĩ / CSKH (Multi-channel Live Chat, Pharmacist Consultation Widget & Webhook Zalo/Facebook - ĐANG TRIỂN KHAI)
+### ✅ Giai đoạn 18: Hệ Thống Live Chat & Hỗ Trợ Đa Kênh Tích Hợp Dược Sĩ / CSKH (Multi-channel Live Chat, Pharmacist Consultation Widget & Webhook Zalo/Facebook - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 18.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu Hội Thoại Chat Mẫu** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`:
     - `ChatSenderRole`: `CUSTOMER` (Khách hàng), `PHARMACIST` (Dược sĩ chuyên môn), `SUPPORT_AGENT` (Chuyên viên CSKH), `SYSTEM_BOT` (Hệ thống tự động).
@@ -1335,7 +1335,17 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Cơ chế polling tự động mỗi 3.5 giây kiểm tra tin nhắn mới và tự động đánh dấu đã đọc khi mở cửa sổ.
   - Tích Hợp Toàn Bộ Giao Diện Storefront (`QuickContact.tsx`):
     - Đặt vị trí nổi bật góc dưới bên phải màn hình trên tất cả các trang bán hàng.
-- [ ] **Giai đoạn 18.5: Tích Hợp Đa Kênh Zalo OA, Facebook Messenger, Âm Báo Tin Nhắn & Hoàn Thiện Toàn Sàn**
+- [x] **Giai đoạn 18.5: Tích Hợp Đa Kênh Zalo OA, Facebook Messenger, Mẫu Phản Hồi Nhanh & Âm Báo Chime Web Audio API** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư Viện Tổng Hợp Âm Báo Độc Lập Chuẩn Web Audio API (`src/lib/chat-audio.ts`):
+    - Khởi tạo âm thanh dạng sóng sin mượt mà tần số G5 (784Hz) -> C6 (1046.5Hz) cho tin nhắn mới đến và D5 (587Hz) cho thao tác gửi tin.
+    - Hoạt động 100% offline, không phụ thuộc bất kỳ file mp3 ngoài nào, tự động tương thích chính sách autoplay của trình duyệt và lưu trạng thái bật/tắt chuông vào `localStorage`.
+  - Thanh Chuyển Tiếp Đa Kênh Storefront (`LiveChatWindow.tsx`):
+    - Tích hợp 3 kênh liên hệ tức thời: Zalo OA Dược Sĩ chính thức (`https://zalo.me/0908886666`), Facebook Messenger Fanpage (`https://m.me/thuyngashop.com.vn`), và Hotline Dược Sĩ (`tel:0908886666`).
+    - Nút bật/tắt âm báo chuông (`Volume2` / `VolumeX`) trực tiếp trên thanh tiêu đề cửa sổ chat.
+    - Thẻ đánh giá 5 sao hài lòng tư vấn Dược sĩ khi phiên trò chuyện được chuyển sang trạng thái `RESOLVED`.
+  - Bổ Sung 6 Mẫu Tin Nhắn Trả Lời Nhanh Chuẩn Dược Sĩ Trong Admin CMS (`ChatConversationPane.tsx`):
+    - Lời chào Dược sĩ, Tư vấn sữa Aptamil Profutura Synbiotics, Mật ong Manuka chỉ số MGO/UMF, Cherry Tasmania bay Air 48h tươi giòn, Hóa đơn Chemist Warehouse & tem phụ tiếng Việt, Đóng gói giao hàng hỏa tốc.
+    - Nút bật/tắt âm báo chuông tin nhắn mới của khách hàng cho nhân viên tư vấn Admin.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.

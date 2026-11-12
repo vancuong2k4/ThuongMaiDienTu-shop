@@ -3,6 +3,7 @@
 // ============================================================
 // components/admin/chat/ChatConversationPane.tsx
 // Khung Trò Chuyện Chi Tiết & Gửi Phản Hồi Trực Tiếp Bên Phải (Phase 18)
+// Bổ sung Mẫu trả lời nhanh (Canned Replies) & Âm báo Chime Web Audio API
 // ============================================================
 
 import React, { useState, useRef, useEffect } from "react";
@@ -18,6 +19,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Paperclip,
+  Volume2,
+  VolumeX,
+  MessageSquare,
 } from "lucide-react";
 import { AdminChatSession, AdminChatMessage } from "./types";
 import {
@@ -29,6 +33,7 @@ import {
   CHAT_SESSION_STATUS_CONFIG,
   CHAT_SENDER_ROLE_CONFIG,
 } from "@/lib/validations/chat";
+import { chatAudio } from "@/lib/chat-audio";
 
 interface ChatConversationPaneProps {
   session: AdminChatSession | null;
@@ -38,6 +43,39 @@ interface ChatConversationPaneProps {
   onUpdateAssignee: (assignee: string) => Promise<void>;
   isSending: boolean;
 }
+
+const PHARMACIST_CANNED_REPLIES = [
+  {
+    id: "welcome",
+    label: "👋 Chào hỏi Dược sĩ",
+    text: "Dạ Dược sĩ Thùy Nga xin chào anh/chị ạ! Anh/chị đang quan tâm đến sản phẩm sữa Aptamil, mật ong Manuka hay bổ sung vi chất Úc nào để em hỗ trợ tư vấn chi tiết cho gia đình mình ạ?",
+  },
+  {
+    id: "aptamil",
+    label: "🍼 Tư vấn Aptamil Úc",
+    text: "Dạ sữa Aptamil Profutura Úc chứa hệ vi sinh Synbiotics độc quyền và hàm lượng DHA dồi dào, vị thanh mát gần giống sữa mẹ. Bé nhà mình hiện được bao nhiêu tháng tuổi rồi ạ?",
+  },
+  {
+    id: "manuka",
+    label: "🍯 Mật ong Manuka Úc",
+    text: "Dạ Mật ong Manuka Úc bên em nhập nguyên hũ chuẩn chỉ số kháng khuẩn MGO/UMF từ 100+ đến 850+, rất tốt để làm dịu họng, hỗ trợ dạ dày và tăng đề kháng cho cả nhà ạ.",
+  },
+  {
+    id: "cherry",
+    label: "🍒 Cherry bay Air",
+    text: "Dạ Cherry Úc bên em về đều đường bay Air mỗi tuần, cuống xanh tươi giòn nguyên phấn, được bảo quản lạnh 0-4°C nghiêm ngặt chuẩn quốc tế ạ.",
+  },
+  {
+    id: "origin",
+    label: "🇦🇺 Hóa đơn & Tem phụ",
+    text: "Dạ 100% sản phẩm tại THUYNGA Shop đều có tem phụ tiếng Việt theo quy định của Bộ Y Tế và lưu trữ đầy đủ hóa đơn mua hàng Chemist Warehouse Úc ạ.",
+  },
+  {
+    id: "shipping",
+    label: "🚀 Vận chuyển hỏa tốc",
+    text: "Dạ đơn hàng của anh/chị đang được nhân viên đóng gói chống sốc và bàn giao cho đơn vị vận chuyển hỏa tốc. Anh/chị sẽ nhận được hàng trong thời gian sớm nhất ạ.",
+  },
+];
 
 export const ChatConversationPane: React.FC<ChatConversationPaneProps> = ({
   session,
@@ -49,12 +87,24 @@ export const ChatConversationPane: React.FC<ChatConversationPaneProps> = ({
 }) => {
   const [inputText, setInputText] = useState("");
   const [activeRole, setActiveRole] = useState<ChatSenderRole>(
-    ChatSenderRole.SUPPORT_AGENT
+    ChatSenderRole.PHARMACIST
   );
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isMuted, setIsMuted] = useState(chatAudio.getMuted());
+  const [showCannedMenu, setShowCannedMenu] = useState(false);
 
-  // Auto-scroll to bottom on new messages
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessagesCountRef = useRef<number>(messages?.length || 0);
+
+  // Play audio chime when new customer message arrives in Admin
   useEffect(() => {
+    const currentCount = messages?.length || 0;
+    if (currentCount > prevMessagesCountRef.current) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg && lastMsg.senderRole === ChatSenderRole.CUSTOMER) {
+        chatAudio.playIncoming();
+      }
+    }
+    prevMessagesCountRef.current = currentCount;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -74,12 +124,18 @@ export const ChatConversationPane: React.FC<ChatConversationPaneProps> = ({
     );
   }
 
+  const handleToggleMute = () => {
+    const nextMuted = chatAudio.toggleMute();
+    setIsMuted(nextMuted);
+  };
+
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim() || isSending) return;
     const text = inputText;
     setInputText("");
     await onSendMessage(text, activeRole);
+    chatAudio.playSent();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -87,6 +143,11 @@ export const ChatConversationPane: React.FC<ChatConversationPaneProps> = ({
       e.preventDefault();
       handleSend(e);
     }
+  };
+
+  const handleSelectCannedReply = (text: string) => {
+    setInputText(text);
+    setShowCannedMenu(false);
   };
 
   const statusCfg =
@@ -130,8 +191,17 @@ export const ChatConversationPane: React.FC<ChatConversationPaneProps> = ({
           </div>
         </div>
 
-        {/* Status & Assignment */}
+        {/* Status, Mute & Assignment */}
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleToggleMute}
+            className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:text-slate-900 bg-white"
+            title={isMuted ? "Bật âm báo tin nhắn" : "Tắt âm báo tin nhắn"}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+
           {/* Status switcher */}
           <select
             value={session.status}
@@ -208,25 +278,42 @@ export const ChatConversationPane: React.FC<ChatConversationPaneProps> = ({
       </div>
 
       {/* 3. Bottom Input Bar */}
-      <div className="p-4 border-t border-slate-100 bg-white space-y-3">
+      <div className="p-4 border-t border-slate-100 bg-white space-y-2.5">
+        {/* Quick Canned Replies Carousel/Chips */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-bold text-slate-500 flex items-center gap-1">
+              <MessageSquare className="w-3.5 h-3.5 text-[#800028]" />
+              <span>Mẫu phản hồi nhanh Dược sĩ:</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowCannedMenu(!showCannedMenu)}
+              className="text-[#800028] hover:underline font-bold text-[10px]"
+            >
+              {showCannedMenu ? "Ẩn bớt" : "Xem tất cả mẫu"}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+            {PHARMACIST_CANNED_REPLIES.slice(0, showCannedMenu ? undefined : 3).map((reply) => (
+              <button
+                key={reply.id}
+                type="button"
+                onClick={() => handleSelectCannedReply(reply.text)}
+                className="text-[11px] font-medium px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-[#800028] text-slate-700 whitespace-nowrap transition-colors border border-slate-200"
+              >
+                {reply.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Role Switcher Pill */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-bold text-slate-500">Trả lời với vai trò:</span>
             <div className="inline-flex rounded-xl p-0.5 bg-slate-100 border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setActiveRole(ChatSenderRole.SUPPORT_AGENT)}
-                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
-                  activeRole === ChatSenderRole.SUPPORT_AGENT
-                    ? "bg-[#800028] text-white shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <Headphones className="w-3 h-3" />
-                <span>CSKH</span>
-              </button>
-
               <button
                 type="button"
                 onClick={() => setActiveRole(ChatSenderRole.PHARMACIST)}
@@ -238,6 +325,19 @@ export const ChatConversationPane: React.FC<ChatConversationPaneProps> = ({
               >
                 <Stethoscope className="w-3 h-3" />
                 <span>Dược Sĩ</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveRole(ChatSenderRole.SUPPORT_AGENT)}
+                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                  activeRole === ChatSenderRole.SUPPORT_AGENT
+                    ? "bg-[#800028] text-white shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                <Headphones className="w-3 h-3" />
+                <span>CSKH</span>
               </button>
             </div>
           </div>

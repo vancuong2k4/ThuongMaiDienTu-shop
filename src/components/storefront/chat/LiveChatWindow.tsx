@@ -3,6 +3,7 @@
 // ============================================================
 // components/storefront/chat/LiveChatWindow.tsx
 // Cửa Sổ Trò Chuyện Trực Tuyến Live Chat Storefront (Phase 18)
+// Tích hợp Đa kênh Zalo/Messenger & Âm báo Chime Web Audio API
 // ============================================================
 
 import React, { useState, useRef, useEffect } from "react";
@@ -18,10 +19,18 @@ import {
   ChevronDown,
   Clock,
   AlertCircle,
+  Volume2,
+  VolumeX,
+  ExternalLink,
+  PhoneCall,
+  MessageCircle,
+  Star,
+  CheckCircle2,
 } from "lucide-react";
 import { StorefrontChatSession, StorefrontChatMessage } from "./types";
-import { ChatSenderRole } from "@prisma/client";
+import { ChatSenderRole, ChatSessionStatus } from "@prisma/client";
 import { QUICK_CHAT_PROMPTS } from "@/lib/validations/chat";
+import { chatAudio } from "@/lib/chat-audio";
 
 interface LiveChatWindowProps {
   isOpen: boolean;
@@ -51,17 +60,38 @@ export const LiveChatWindow: React.FC<LiveChatWindowProps> = ({
   const [initialQuestion, setInitialQuestion] = useState("");
   const [inputText, setInputText] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isMuted, setIsMuted] = useState(chatAudio.getMuted());
+  const [hasRated, setHasRated] = useState(false);
+  const [ratingStars, setRatingStars] = useState(5);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessagesCountRef = useRef<number>(session?.messages?.length || 0);
 
-  // Auto-scroll to bottom
+  // Play audio chime when new pharmacist / support response arrives
   useEffect(() => {
     if (session?.messages) {
+      const currentCount = session.messages.length;
+      if (currentCount > prevMessagesCountRef.current) {
+        const lastMsg = session.messages[session.messages.length - 1];
+        if (
+          lastMsg &&
+          (lastMsg.senderRole === ChatSenderRole.PHARMACIST ||
+            lastMsg.senderRole === ChatSenderRole.SUPPORT_AGENT)
+        ) {
+          chatAudio.playIncoming();
+        }
+      }
+      prevMessagesCountRef.current = currentCount;
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [session?.messages]);
 
   if (!isOpen) return null;
+
+  const handleToggleMute = () => {
+    const nextMuted = chatAudio.toggleMute();
+    setIsMuted(nextMuted);
+  };
 
   const handleStartChat = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +99,7 @@ export const LiveChatWindow: React.FC<LiveChatWindowProps> = ({
     setError(null);
     try {
       await onStartSession(customerName, customerPhone, initialQuestion);
+      chatAudio.playSent();
     } catch (err: any) {
       setError(err.message || "Không thể bắt đầu trò chuyện.");
     }
@@ -81,6 +112,7 @@ export const LiveChatWindow: React.FC<LiveChatWindowProps> = ({
     setInputText("");
     try {
       await onSendMessage(text);
+      chatAudio.playSent();
     } catch (err: any) {
       setError(err.message || "Không thể gửi tin nhắn.");
     }
@@ -89,13 +121,16 @@ export const LiveChatWindow: React.FC<LiveChatWindowProps> = ({
   const handleQuickPromptClick = (text: string) => {
     if (session) {
       onSendMessage(text);
+      chatAudio.playSent();
     } else {
       setInitialQuestion(text);
     }
   };
 
+  const isResolved = session?.status === ChatSessionStatus.RESOLVED;
+
   return (
-    <div className="fixed bottom-24 lg:bottom-6 right-4 sm:right-6 z-50 w-[92vw] sm:w-[380px] h-[520px] max-h-[85vh] bg-white rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200">
+    <div className="fixed bottom-24 lg:bottom-6 right-4 sm:right-6 z-50 w-[92vw] sm:w-[390px] h-[540px] max-h-[85vh] bg-white rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200 font-sans">
       {/* ── 1. Window Header ─────────────────────────────────── */}
       <div className="bg-gradient-to-r from-slate-900 via-[#800028] to-slate-900 text-white px-5 py-3.5 flex items-center justify-between shadow-xs shrink-0">
         <div className="flex items-center gap-3">
@@ -118,16 +153,62 @@ export const LiveChatWindow: React.FC<LiveChatWindowProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
-          aria-label="Đóng cửa sổ chat"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={handleToggleMute}
+            className="p-1.5 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            title={isMuted ? "Bật âm báo tin nhắn" : "Tắt âm báo tin nhắn"}
+            aria-label={isMuted ? "Bật âm báo" : "Tắt âm báo"}
+          >
+            {isMuted ? <VolumeX className="w-4 h-4 text-rose-300" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="Đóng cửa sổ chat"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
-      {/* ── 2. Body: Pre-chat Welcome OR Active Conversation ─── */}
+      {/* ── 2. Multi-channel Quick Strip (Zalo OA, Messenger, Hotline) ─── */}
+      <div className="bg-slate-100/80 px-3.5 py-1.5 border-b border-slate-200/70 flex items-center justify-between text-[11px] shrink-0">
+        <span className="text-slate-500 font-medium text-[10px]">Kênh trực tiếp khác:</span>
+        <div className="flex items-center gap-2">
+          <a
+            href="https://zalo.me/0908886666"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-bold hover:underline"
+          >
+            <MessageCircle className="w-3 h-3" />
+            <span>Zalo OA</span>
+          </a>
+          <span className="text-slate-300">•</span>
+          <a
+            href="https://m.me/thuyngashop.com.vn"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-sky-600 hover:text-sky-800 font-bold hover:underline"
+          >
+            <MessageSquare className="w-3 h-3" />
+            <span>Messenger</span>
+          </a>
+          <span className="text-slate-300">•</span>
+          <a
+            href="tel:0908886666"
+            className="inline-flex items-center gap-1 text-rose-700 hover:text-rose-900 font-bold hover:underline"
+          >
+            <PhoneCall className="w-3 h-3" />
+            <span>Hotline</span>
+          </a>
+        </div>
+      </div>
+
+      {/* ── 3. Body: Pre-chat Welcome OR Active Conversation ─── */}
       <div className="flex-1 overflow-y-auto p-4 bg-slate-50/50 flex flex-col space-y-3">
         {error && (
           <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
@@ -267,12 +348,51 @@ export const LiveChatWindow: React.FC<LiveChatWindowProps> = ({
                 </div>
               );
             })}
+
+            {/* If session is RESOLVED, offer satisfaction rating card */}
+            {isResolved && (
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2 mt-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 mx-auto flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+                <h6 className="font-bold text-xs text-emerald-950">
+                  Phiên tư vấn đã được giải đáp hoàn tất!
+                </h6>
+                <p className="text-[11px] text-emerald-800">
+                  Quý khách có hài lòng với sự hỗ trợ của Dược sĩ THUYNGA Shop không ạ?
+                </p>
+
+                {hasRated ? (
+                  <div className="text-[11px] font-bold text-emerald-700 bg-emerald-100/80 py-1.5 px-3 rounded-xl inline-block">
+                    Cảm ơn Quý khách đã đánh giá {ratingStars} sao!
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-1 pt-1">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => {
+                          setRatingStars(s);
+                          setHasRated(true);
+                        }}
+                        className="p-1 hover:scale-110 transition-transform text-amber-400 hover:text-amber-500"
+                        title={`${s} sao`}
+                      >
+                        <Star className="w-5 h-5 fill-amber-400" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
         )}
       </div>
 
-      {/* ── 3. Bottom Input Bar (When session active) ─────────── */}
+      {/* ── 4. Bottom Input Bar (When session active) ─────────── */}
       {session && (
         <div className="p-3 border-t border-slate-100 bg-white space-y-2 shrink-0">
           {/* Quick chips when session active */}
