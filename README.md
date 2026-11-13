@@ -1501,7 +1501,22 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
   - Xây dựng Zod validation schemas (`src/lib/validations/preorder.ts`).
   - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-preorder.ts`): Nạp chiến dịch Cherry Đỏ Tasmania vụ Tết Bính Ngọ 2026 và Mật ong Manuka hoàng gia MGO 1200+ kèm các mốc nhật ký nông trường thực tế.
-- [ ] **Giai đoạn 21.2: Xây Dựng Pre-Order Engine, Tính Toán Phân Bổ Slot & Hệ Thống REST APIs**
+- [x] **Giai đoạn 21.2: Xây Dựng Pre-Order Engine, Tính Toán Phân Bổ Slot & Hệ Thống REST APIs** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện Pre-Order Business Engine & Slot Allocation (`src/lib/preorder.ts`):
+    - `calculateCampaignProgress`: Tính toán động tỷ lệ lấp đầy %, sản lượng kg còn lại, tổng số suất đặt theo từng Tier, số ngày đếm ngược đến vụ thu hoạch và phân hạng huy hiệu sang trọng (`ROYAL_RESERVE`, `DIAMOND_SELECT`).
+    - `generateReservationCode`: Sinh mã giữ chỗ mùa vụ ngẫu nhiên định dạng chuẩn hàng không (`PRE-CHE-2026-XXXX`).
+    - `createPreOrderReservationRecord`: Xử lý giao dịch nguyên tử Prisma `$transaction`, tự động kiểm tra slot trống, khóa giữ chỗ, tính tiền cọc 30% và tăng tải sản lượng đã đặt.
+    - `calculatePreOrderKPIs`: Thống kê tổng hợp số chiến dịch đang mở, tổng tiền cọc đã thu, tổng giá trị hợp đồng mùa vụ và số lượng đơn đặt trước.
+  - Hệ thống Public Storefront REST APIs:
+    - `GET /api/preorders/campaigns`: Danh sách chiến dịch mùa vụ kèm tiến độ slot và nhật ký vườn mới nhất.
+    - `GET /api/preorders/campaigns/[slug]`: Chi tiết toàn diện chiến dịch, danh sách các tier và toàn bộ nhật ký nông trường.
+    - `POST /api/preorders/reserve`: Khởi tạo đơn đặt cọc giữ chỗ và trả về trực tiếp mã VietQR Napas 24/7 khớp số tiền cọc 30% và mã nội dung chuyển khoản.
+    - `GET /api/preorders/kpis`: Chỉ số KPI phục vụ dashboard và banner trang chủ.
+  - Hệ thống Admin CMS REST APIs bảo mật (`ADMIN` role check):
+    - `GET & POST /api/admin/preorders/campaigns`: Quản trị danh sách và khởi tạo chiến dịch nông sản Úc mới.
+    - `PATCH & DELETE /api/admin/preorders/campaigns/[id]`: Cập nhật thông số kỹ thuật, trạng thái vụ mùa hoặc xóa chiến dịch.
+    - `POST /api/admin/preorders/harvest-updates`: Xuất bản bài viết nhật ký nông trường (độ ngọt Brix, kích thước mm, thời tiết).
+    - `GET & PATCH /api/admin/preorders/reservations`: Quản lý danh sách khách đặt giữ chỗ, gán số hiệu chuyến bay Air Cargo (`flightNumber`) và vận đơn hàng không (`airWaybillNumber`).
 - [ ] **Giai đoạn 21.3: Giao Diện Trung Tâm Chiến Dịch Mùa Vụ Úc & Nhật Ký Nông Trường (`/dat-truoc-mua-vu`)**
 - [ ] **Giai đoạn 21.4: Quy Trình Đặt Cọc Giữ Chỗ Mùa Vụ, Tích Hợp VietQR & User Portal**
 - [ ] **Giai đoạn 21.5: Giao Diện Quản Trị Admin CMS Mùa Vụ Đặt Trước (`/admin/mua-vu-dat-truoc`) & Hoàn Thiện Toàn Sàn**
