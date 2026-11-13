@@ -25,6 +25,7 @@ import {
   Share2,
   Repeat,
   Plane,
+  Compass,
   Stethoscope,
   Gift,
   MessageSquare,
@@ -99,6 +100,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Lô hàng bay Air",
       href: "/admin/kho-hang/lo-hang-air",
       icon: Plane,
+    },
+    {
+      label: "Chuyến bay Air Cargo",
+      href: "/admin/kho-hang/chuyen-bay-air",
+      icon: Compass,
     },
     {
       label: "Phác đồ Dược sĩ",

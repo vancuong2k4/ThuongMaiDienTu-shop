@@ -1419,7 +1419,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bổ sung nút liên kết nổi bật "So sánh vi chất" (icon `Scale`) trên thanh điều hướng chính `Header.tsx`.
     - Bổ sung mục "So Sánh Sản Phẩm & Vi Chất" (huy hiệu `Chuẩn Úc`) trên ngăn kéo menu di động `MobileNav.tsx`.
 
-### ✈️ Giai đoạn 20: Hệ Thống Giám Sát Chuyến Bay Air Cargo Thời Gian Thực & Bản Đồ Chuỗi Lạnh Cold-Chain (Realtime Flight Tracker, Cold-Chain Sensor Log & Radar Map - ĐANG TRIỂN KHAI)
+### ✈️ Giai đoạn 20: Hệ Thống Giám Sát Chuyến Bay Air Cargo Thời Gian Thực & Bản Đồ Chuỗi Lạnh Cold-Chain (Realtime Flight Tracker, Cold-Chain Sensor Log & Radar Map - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 20.1: Thiết Kế Schema Chuyến Bay, Cảm Biến Chuỗi Lạnh & Seed Dữ Liệu Thực Tế** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`:
     - `FlightStatus`: `SCHEDULED` (Đã lên lịch), `DEPARTED` (Đã cất cánh), `CRUISING` (Đang bay trên không phận), `LANDED` (Đã hạ cánh), `CUSTOMS_CLEARING` (Đang thông quan & kiểm dịch), `STORED_COLD` (Đã nhập kho lạnh THUYNGA Shop).
@@ -1469,7 +1469,22 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tích Hợp Huy Hiệu Sản Phẩm & Điều Hướng Toàn Diện:
     - Nâng cấp `ProductAirCargoBadge.tsx`: Nhấp trực tiếp vào số hiệu chuyến bay để mở Radar giám sát thời gian thực `/tra-cuu-air-cargo/[flightNumber]`.
     - Bổ sung nút liên kết "Radar Air Cargo Úc" trên thanh điều hướng đầu trang `Header.tsx` và ngăn kéo menu di động `MobileNav.tsx`.
-- [ ] **Giai đoạn 20.5: Giao Diện Quản Trị Admin CMS Chuyến Bay Air Cargo (`/admin/kho-hang/chuyen-bay-air`) & Hoàn Thiện Toàn Sàn**
+- [x] **Giai đoạn 20.5: Giao Diện Quản Trị Admin CMS Chuyến Bay Air Cargo (`/admin/kho-hang/chuyen-bay-air`) & Hoàn Thiện Toàn Sàn** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 5 Thẻ Thống Kê KPI Chuyến Bay Air Cargo & Chuỗi Lạnh (`FlightStats.tsx`):
+    - Tổng chuyến bay Air Cargo, Chuyến đang bay trên không, Chuyến đã nhập kho lạnh, Tỷ lệ tuân thủ chuỗi lạnh (%), Tổng sản lượng tấn hàng bay Air.
+  - Bảng Quản Trị Chuyến Bay & Điều Phối Chuỗi Lạnh (`FlightTable.tsx`):
+    - Cập nhật tức thời trạng thái chuyến bay (`SCHEDULED`, `DEPARTED`, `CRUISING`, `LANDED`, `CUSTOMS_CLEARING`, `STORED_COLD`) bằng ô chọn trực tiếp trong bảng.
+    - Thanh đo tiến độ hành trình % chuyển màu sinh động (sky -> emerald).
+    - Cột nhiệt độ cảm biến: Tự động so sánh với ngưỡng an toàn `targetTempMin` - `targetTempMax` và hiển thị badge "An toàn" hoặc "Cảnh báo".
+    - Phím tắt xem nhanh Radar trên Storefront và nút xóa chuyến bay an toàn.
+  - Modal Khởi Tạo Chuyến Bay Air Cargo Mới (`CreateFlightModal.tsx`):
+    - Biểu mẫu chi tiết: Số hiệu, hãng bay (Vietnam Airlines / Qantas Freight), dòng tàu bay, sân bay đi/đến, thời gian dự kiến và tự động cấu hình dải nhiệt độ theo từng nhóm hàng (Cherry Úc 0-4°C, Men vi sinh 2-8°C, Aptamil 18-24°C).
+    - Tự động sinh sẵn 4 mốc hành trình cơ bản cho chuyến bay mới.
+  - Modal Ghi Nhận Dữ Liệu Cảm Biến IoT (`AddSensorLogModal.tsx`):
+    - Nhập mã cảm biến, thời điểm, nhiệt độ (°C), độ ẩm (%), pin (%) và vị trí kiện hàng, tự động tái tính toán nhiệt độ trung bình chuyến bay.
+  - Bộ Điều Phối Admin Chuyến Bay (`FlightAdminManager.tsx`) & Server Component [`/admin/kho-hang/chuyen-bay-air`](/admin/kho-hang/chuyen-bay-air):
+    - Bộ lọc trạng thái đa năng, tìm kiếm tức thời và tự động làm mới dữ liệu.
+    - Tích hợp mục "Chuyến bay Air Cargo" (icon `Compass`) trên thanh bên quản trị `AdminSidebar.tsx`.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
