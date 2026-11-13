@@ -18,6 +18,7 @@ import {
   Stethoscope,
   Gift,
   Scale,
+  Calendar,
 } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CartButton } from "./CartButton";
@@ -90,6 +91,14 @@ export function Header({ categories }: HeaderProps) {
             >
               <Stethoscope className="w-3.5 h-3.5 text-emerald-300" />
               <span>Tư vấn Dinh dưỡng</span>
+            </Link>
+            <span className="text-white/20">|</span>
+            <Link
+              href="/dat-truoc-mua-vu"
+              className="flex items-center gap-1 text-amber-200 hover:text-white transition-colors"
+            >
+              <Calendar className="w-3.5 h-3.5 text-amber-300" />
+              <span>Đặt trước vụ Úc</span>
             </Link>
             <span className="text-white/20">|</span>
             <Link

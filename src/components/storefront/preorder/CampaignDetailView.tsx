@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { BrixSweetnessMeter } from "./BrixSweetnessMeter";
 import { HarvestUpdateTimeline } from "./HarvestUpdateTimeline";
+import { ReservationModal } from "./ReservationModal";
 import type { CampaignProgressStats } from "@/lib/preorder";
 
 export interface CampaignDetailData {
@@ -81,6 +82,7 @@ export const CampaignDetailView: React.FC<CampaignDetailViewProps> = ({
   const [selectedTierId, setSelectedTierId] = useState<string>(
     campaign.tiers[0]?.id || ""
   );
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const formatVND = (n: number) => {
     return new Intl.NumberFormat("vi-VN").format(n) + "₫";
@@ -335,10 +337,7 @@ export const CampaignDetailView: React.FC<CampaignDetailViewProps> = ({
             {/* CTA Button */}
             <div className="space-y-2">
               <button
-                onClick={() => {
-                  const modalBtn = document.getElementById("open-reserve-modal-btn");
-                  if (modalBtn) modalBtn.click();
-                }}
+                onClick={() => setIsModalOpen(true)}
                 className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#800028] to-[#660020] hover:opacity-95 text-white font-black text-sm shadow-lg shadow-rose-950/20 transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <span>Đặt Cọc Giữ Suất Ngay</span>
@@ -367,6 +366,17 @@ export const CampaignDetailView: React.FC<CampaignDetailViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Reservation & VietQR Modal */}
+      <ReservationModal
+        campaignId={campaign.id}
+        campaignTitle={campaign.title}
+        depositPercent={campaign.depositPercent}
+        flightDepartureWeek={campaign.flightDepartureWeek}
+        tier={selectedTier}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

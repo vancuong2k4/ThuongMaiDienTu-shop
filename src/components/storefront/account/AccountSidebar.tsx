@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   ChevronRight,
   Stethoscope,
+  Plane,
 } from "lucide-react";
 
 interface AccountSidebarProps {
@@ -46,6 +47,12 @@ export const AccountSidebar: React.FC<AccountSidebarProps> = ({ user }) => {
       label: "Đơn hàng của tôi",
       href: "/tai-khoan/don-hang",
       icon: Package,
+      exact: false,
+    },
+    {
+      label: "Đơn đặt trước mùa vụ",
+      href: "/tai-khoan/don-dat-truoc",
+      icon: Plane,
       exact: false,
     },
     {

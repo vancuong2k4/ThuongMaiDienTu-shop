@@ -1530,7 +1530,17 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Danh sách các Tier hộp quà biếu 2kg, thùng 5kg Master Box kèm thẻ tóm tắt giá trị cọc 30% và nút hành động đặt giữ chỗ tức thời.
   - Trang Trung Tâm Khám Phá Mùa Vụ Úc [`/dat-truoc-mua-vu`](/dat-truoc-mua-vu) & Trang Chi Tiết [`/dat-truoc-mua-vu/[slug]`](/dat-truoc-mua-vu/cherry-tasmania-tet-2026):
     - 4 Thẻ KPI sản lượng bao tiêu, tổng suất đặt, số ngày bay Air và liên kết điều hướng breadcrumb mượt mà.
-- [ ] **Giai đoạn 21.4: Quy Trình Đặt Cọc Giữ Chỗ Mùa Vụ, Tích Hợp VietQR & User Portal**
+- [x] **Giai đoạn 21.4: Quy Trình Đặt Cọc Giữ Chỗ Mùa Vụ, Tích Hợp VietQR & User Portal** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Modal Đặt Cọc Giữ Chỗ Tương Tác 2 Bước (`ReservationModal.tsx`):
+    - Bước 1: Thu thập thông tin khách nhận hàng, số lượng đặt, tự động đối chiếu số suất còn lại của Tier và tính toán chính xác tiền cọc 30% cùng số tiền thanh toán khi nhận hàng.
+    - Bước 2: Hiển thị ngay lập tức mã VietQR Napas 24/7 (MBBank - `0988888888` - THUYNGA SHOP) đính kèm mã chuyển khoản tự sinh (`COC PRE-TAS-2026-XXXX`) cùng các nút sao chép 1-chạm thuận tiện.
+  - Tích Hợp Trực Tiếp Vào Chi Tiết Mùa Vụ (`CampaignDetailView.tsx`):
+    - Nút "Đặt Cọc Giữ Suất Ngay" mở modal đồng bộ tức thời theo Tier đang chọn.
+  - Trang Quản Lý Đơn Đặt Trước Trong Tài Khoản Khách Hàng [`/tai-khoan/don-dat-truoc`](/tai-khoan/don-dat-truoc):
+    - Xem chi tiết danh sách đơn đặt trước mùa vụ, tiến độ cọc, số tiền còn lại và đặc biệt liên kết trực tiếp tới Radar Chuyến Bay Air Cargo (`/tra-cuu-air-cargo/[flightNumber]`) khi hàng đã được xếp chỗ khoang máy bay.
+  - Tích Hợp Điều Hướng Toàn Diện:
+    - Bổ sung mục "Đơn đặt trước mùa vụ" trên thanh bên tài khoản người dùng `AccountSidebar.tsx`.
+    - Bổ sung nút liên kết nổi bật "Đặt trước vụ Úc" trên thanh `Header.tsx` và ngăn kéo menu di động `MobileNav.tsx`.
 - [ ] **Giai đoạn 21.5: Giao Diện Quản Trị Admin CMS Mùa Vụ Đặt Trước (`/admin/mua-vu-dat-truoc`) & Hoàn Thiện Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
