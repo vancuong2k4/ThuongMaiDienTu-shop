@@ -142,8 +142,8 @@ export const ProductAirCargoBadge: React.FC<ProductAirCargoBadgeProps> = ({
         </div>
       </div>
 
-      {/* Action CTA link to Portal */}
-      <div className="flex items-center justify-between gap-2 pt-1 text-[11px]">
+      {/* Action CTA link to Portal & Flight Radar */}
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px]">
         <div className="flex items-center gap-1 text-slate-500 truncate">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
           <span className="truncate">
@@ -151,13 +151,25 @@ export const ProductAirCargoBadge: React.FC<ProductAirCargoBadgeProps> = ({
           </span>
         </div>
 
-        <Link
-          href={`/minh-bach-air-cargo?code=${encodeURIComponent(latestBatch.batchCode)}`}
-          className="font-bold text-[#800028] hover:text-[#660020] hover:underline flex items-center gap-0.5 shrink-0"
-        >
-          <span>Soi hóa đơn & AWB</span>
-          <ChevronRight className="w-3.5 h-3.5" />
-        </Link>
+        <div className="flex items-center gap-2">
+          {latestBatch.flightNumber && (
+            <Link
+              href={`/tra-cuu-air-cargo/${encodeURIComponent(latestBatch.flightNumber)}`}
+              className="font-bold text-sky-700 hover:text-sky-900 hover:underline flex items-center gap-0.5"
+            >
+              <Plane className="w-3 h-3" />
+              <span>Radar bay {latestBatch.flightNumber}</span>
+            </Link>
+          )}
+
+          <Link
+            href={`/minh-bach-air-cargo?code=${encodeURIComponent(latestBatch.batchCode)}`}
+            className="font-bold text-[#800028] hover:text-[#660020] hover:underline flex items-center gap-0.5 shrink-0"
+          >
+            <span>Soi hóa đơn & AWB</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
     </div>
   );

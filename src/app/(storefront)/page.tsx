@@ -3,6 +3,7 @@ import { HeroBannerCarousel } from "@/components/storefront/home/HeroBannerCarou
 import { FlashSaleSection } from "@/components/storefront/home/FlashSaleSection";
 import { CategoryProductSection } from "@/components/storefront/home/CategoryProductSection";
 import { BrandCommitmentSection } from "@/components/storefront/home/BrandCommitmentSection";
+import { LiveFlightTicker } from "@/components/storefront/air-cargo/LiveFlightTicker";
 import type { ProductCardData } from "@/components/storefront/product/ProductCard";
 
 export const revalidate = 60; // ISR cache 60s để tối ưu tốc độ tải trang dưới 2s
@@ -171,6 +172,9 @@ export default async function StorefrontHomePage() {
     <div className="pb-12">
       {/* ── 1. Hero Banner Carousel Slider ─────────────────────────── */}
       <HeroBannerCarousel />
+
+      {/* ── 1.1 Live Flight Ticker Air Cargo Úc ─────────────────────── */}
+      <LiveFlightTicker />
 
       {/* ── 2. Flash Sale Section (Đếm ngược thời gian thực) ──────── */}
       {activeFlashSale && serializedFlashSaleItems.length > 0 && (

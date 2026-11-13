@@ -20,6 +20,7 @@ import {
   Stethoscope,
   Gift,
   Scale,
+  Plane,
 } from "lucide-react";
 
 interface SubCategory {
@@ -178,6 +179,20 @@ export function MobileNav({ categories }: MobileNavProps) {
               </div>
               <span className="text-[10px] bg-indigo-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
                 Chuẩn Úc
+              </span>
+            </Link>
+
+            <Link
+              href="/tra-cuu-air-cargo"
+              onClick={closeMenu}
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-sky-50 text-sky-900 font-bold hover:bg-sky-100 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Plane className="w-4 h-4 text-sky-600" />
+                <span>Radar Air Cargo Úc</span>
+              </div>
+              <span className="text-[10px] bg-sky-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
+                Live Radar
               </span>
             </Link>
 

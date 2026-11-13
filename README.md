@@ -1461,8 +1461,14 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Hero banner phong cách radar hàng không, 4 thẻ KPI chuyến bay và danh sách các chuyến bay cập nhật tiến trình % trực tiếp.
   - Trang Chi Tiết Chuyến Bay [`/tra-cuu-air-cargo/[flightNumber]`](/tra-cuu-air-cargo/VN780):
     - Bản kê kiện hàng hóa Air Cargo (Manifest) và liên kết các lô sản phẩm tương ứng.
-- [ ] **Giai đoạn 20.4: Tích Hợp Live Flight Ticker & Kết Nối Thẻ Sản Phẩm Air Cargo**
-- [ ] **Giai đoạn 20.4: Tích Hợp Live Flight Ticker & Kết Nối Thẻ Sản Phẩm Air Cargo**
+- [x] **Giai đoạn 20.4: Tích Hợp Live Flight Ticker & Kết Nối Thẻ Sản Phẩm Air Cargo** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Dải Băng Thông Tin Chuyến Bay Air Cargo Trực Tiếp (`LiveFlightTicker.tsx`):
+    - Đặt ngay dưới Hero Banner trang chủ `src/app/(storefront)/page.tsx`.
+    - Hiệu ứng la bàn radar quay nhẹ nhàng (`Compass` animate-spin), huy hiệu chuyến bay (VN772, VN780, QF7561) gắn cờ quốc gia, lộ trình bay (SYD/MEL ➔ HAN/SGN), tiến độ hành trình % và nhiệt độ khoang hàng trực tiếp (°C).
+    - Phím tắt 1-chạm xem nhanh chi tiết radar chuyến bay tương ứng.
+  - Tích Hợp Huy Hiệu Sản Phẩm & Điều Hướng Toàn Diện:
+    - Nâng cấp `ProductAirCargoBadge.tsx`: Nhấp trực tiếp vào số hiệu chuyến bay để mở Radar giám sát thời gian thực `/tra-cuu-air-cargo/[flightNumber]`.
+    - Bổ sung nút liên kết "Radar Air Cargo Úc" trên thanh điều hướng đầu trang `Header.tsx` và ngăn kéo menu di động `MobileNav.tsx`.
 - [ ] **Giai đoạn 20.5: Giao Diện Quản Trị Admin CMS Chuyến Bay Air Cargo (`/admin/kho-hang/chuyen-bay-air`) & Hoàn Thiện Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production

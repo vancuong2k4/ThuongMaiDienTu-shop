@@ -93,11 +93,11 @@ export function Header({ categories }: HeaderProps) {
             </Link>
             <span className="text-white/20">|</span>
             <Link
-              href="/minh-bach-air-cargo"
+              href="/tra-cuu-air-cargo"
               className="flex items-center gap-1 text-sky-200 hover:text-white transition-colors"
             >
               <Plane className="w-3.5 h-3.5 text-sky-300" />
-              <span>Minh bạch bay Air</span>
+              <span>Radar Air Cargo Úc</span>
             </Link>
             <span className="text-white/20">|</span>
             <a
