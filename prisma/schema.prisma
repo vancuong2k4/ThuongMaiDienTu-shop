@@ -236,6 +236,36 @@ enum SensorAlertLevel {
   CRITICAL             // Nhiệt độ vượt ngưỡng cho phép (báo động đỏ)
 }
 
+enum CampaignStatus {
+  UPCOMING             // Sắp diễn ra
+  OPEN_FOR_RESERVATION // Đang mở đặt cọc giữ chỗ
+  HARVESTING           // Đang thu hoạch tại nông trường Úc
+  AIR_SHIPPING         // Đang bay Air về Việt Nam
+  DELIVERED            // Đã trả hàng hoàn tất
+  CLOSED               // Đã đóng chiến dịch
+}
+
+enum DepositType {
+  PERCENTAGE_30        // Cọc 30% giá trị
+  PERCENTAGE_50        // Cọc 50% giá trị
+  FULL_PAYMENT         // Thanh toán 100% giữ suất ưu tiên
+}
+
+enum HarvestQualityGrade {
+  PREMIUM_EXPORT       // Chuẩn xuất khẩu loại 1
+  ROYAL_RESERVE        // Dòng thượng hạng hoàng gia
+  DIAMOND_SELECT       // Tuyển chọn kim cương độc quyền
+}
+
+enum ReservationStatus {
+  CONFIRMED_DEPOSIT    // Đã cọc thành công
+  PAID_FULL            // Đã thanh toán toàn bộ
+  ALLOCATED_FLIGHT     // Đã phân bổ slot khoang hàng máy bay
+  SHIPPED              // Đang giao tận tay khách
+  COMPLETED            // Hoàn thành đơn đặt trước
+  CANCELLED            // Đã hủy & hoàn cọc
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -286,6 +316,7 @@ model User {
   customHampers         GiftCustomHamper[]
   corporateGiftInquiries CorporateGiftInquiry[]
   chatSessions          ChatSession[]
+  preOrderReservations  PreOrderReservation[]
 
   @@index([email])
   @@index([phone])
@@ -1544,4 +1575,121 @@ model ColdChainSensorLog {
   @@index([recordedAt])
   @@index([alertLevel])
   @@map("cold_chain_sensor_logs")
+}
+
+// ============================================================
+// PHASE 21: AUSTRALIAN HARVEST PRE-ORDER & AIR ALLOCATION
+// ============================================================
+
+model SeasonalCampaign {
+  id                     String              @id @default(cuid())
+  title                  String              // "Cherry Đỏ Tasmania Vụ Thu Hoạch Tết 2026"
+  slug                   String              @unique // "cherry-tasmania-tet-2026"
+  subtitle               String              // "Bay Air 24h từ Thung Lũng Huon, Tasmania - Cuống xanh ngắt, size 32-34mm"
+  description            String              @db.Text
+  farmName               String              // "Reid Fruits Tasmania"
+  farmRegion             String              // "Huon Valley, Tasmania, Australia"
+  originCountry          String              @default("Australia")
+  productCategory        String              @default("CHERRY") // CHERRY, MANUKA_HONEY, TASMANIAN_FRUIT
+  bannerImage            String
+  galleryImages          Json?               // string[]
+  harvestStartDate       DateTime
+  harvestEndDate         DateTime
+  flightDepartureWeek    String              // "Tuần 3 Tháng 1/2026 (Đúng dịp Tết Bính Ngọ)"
+  targetBrixSweetness    String              // "22.0° - 26.0° Brix"
+  fruitSizeMm            String              // "32mm - 34mm (Jumbo Select)"
+  qualityGrade           HarvestQualityGrade @default(ROYAL_RESERVE)
+  totalCapacityKg        Float               // 5000.0 (5 tấn)
+  reservedCapacityKg     Float               @default(0) // 3650.0 (đã cọc)
+  status                 CampaignStatus      @default(OPEN_FOR_RESERVATION)
+  depositType            DepositType         @default(PERCENTAGE_30)
+  depositPercent         Int                 @default(30)
+  sortOrder              Int                 @default(0)
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  tiers                  PreOrderTier[]
+  harvestUpdates         HarvestUpdate[]
+  reservations           PreOrderReservation[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([harvestStartDate])
+  @@map("seasonal_campaigns")
+}
+
+model PreOrderTier {
+  id                     String              @id @default(cuid())
+  campaignId             String
+  name                   String              // "Hộp Quà 2kg Thượng Hạng - Size 32mm+"
+  specification          String              // "Hộp nam châm dập kim vàng, kèm thiệp chúc Tết & túi giữ nhiệt"
+  price                  Decimal             @db.Decimal(12, 2) // 1,950,000đ
+  depositAmount          Decimal             @db.Decimal(12, 2) // 585,000đ (30%)
+  totalSlots             Int                 // 500 hộp
+  reservedSlots          Int                 @default(0)
+  isAvailable            Boolean             @default(true)
+  sortOrder              Int                 @default(0)
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  campaign               SeasonalCampaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  reservations           PreOrderReservation[]
+
+  @@index([campaignId])
+  @@index([isAvailable])
+  @@map("pre_order_tiers")
+}
+
+model HarvestUpdate {
+  id                     String              @id @default(cuid())
+  campaignId             String
+  title                  String              // "Cập nhật ngày nắng Huon Valley: Quả chuyển sắc đỏ ruby đậm, đạt 23.5° Brix"
+  content                String              @db.Text
+  brixRecorded           Float?              // 23.5
+  sizeRecordedMm         Float?              // 32.8
+  weatherCondition       String?             // "Trời trong, 21°C nắng nhẹ"
+  photos                 Json?               // string[]
+  reportedAt             DateTime            @default(now())
+  createdAt              DateTime            @default(now())
+
+  campaign               SeasonalCampaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([reportedAt])
+  @@map("harvest_updates")
+}
+
+model PreOrderReservation {
+  id                     String              @id @default(cuid())
+  reservationCode        String              @unique // "PRE-TAS-2026-089"
+  campaignId             String
+  tierId                 String
+  userId                 String?
+  customerName           String
+  customerPhone          String
+  customerEmail          String?
+  deliveryAddress        String
+  quantity               Int                 @default(1)
+  totalPrice             Decimal             @db.Decimal(12, 2)
+  depositPaid            Decimal             @db.Decimal(12, 2)
+  remainingAmount        Decimal             @db.Decimal(12, 2)
+  depositMethod          String              @default("VIETQR_NAPAS")
+  status                 ReservationStatus   @default(CONFIRMED_DEPOSIT)
+  flightNumber           String?             // "VN780" (Liên kết tới chuyến bay Air Cargo)
+  airWaybillNumber       String?             // "738-49201942"
+  notes                  String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  campaign               SeasonalCampaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  tier                   PreOrderTier        @relation(fields: [tierId], references: [id], onDelete: Restrict)
+  user                   User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([reservationCode])
+  @@index([campaignId])
+  @@index([tierId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("pre_order_reservations")
 }

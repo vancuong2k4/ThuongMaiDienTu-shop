@@ -1486,6 +1486,26 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bộ lọc trạng thái đa năng, tìm kiếm tức thời và tự động làm mới dữ liệu.
     - Tích hợp mục "Chuyến bay Air Cargo" (icon `Compass`) trên thanh bên quản trị `AdminSidebar.tsx`.
 
+### 🍒 Giai đoạn 21: Hệ Thống Đặt Hàng Trước Nông Sản & Đặc Sản Theo Mùa Vụ Úc (Australian Seasonal Harvest Pre-Order & Air Allocation System - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 21.1: Thiết Kế Schema Mùa Vụ Úc, Phân Hạng Chất Lượng & Seed Dữ Liệu Nông Trường** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung 4 enums cốt lõi trong `prisma/schema.prisma`:
+    - `CampaignStatus`: `UPCOMING` (Sắp diễn ra), `OPEN_FOR_RESERVATION` (Đang mở đặt cọc), `HARVESTING` (Đang hái quả tại vườn Úc), `AIR_SHIPPING` (Đang bay Air về Việt Nam), `DELIVERED` (Đã giao hàng), `CLOSED` (Đã kết thúc).
+    - `DepositType`: `PERCENTAGE_30` (Cọc 30%), `PERCENTAGE_50` (Cọc 50%), `FULL_PAYMENT` (Thanh toán 100%).
+    - `HarvestQualityGrade`: `PREMIUM_EXPORT` (Xuất khẩu loại 1), `ROYAL_RESERVE` (Thượng hạng hoàng gia), `DIAMOND_SELECT` (Tuyển chọn kim cương độc quyền).
+    - `ReservationStatus`: `CONFIRMED_DEPOSIT` (Đã cọc), `PAID_FULL` (Đã thanh toán đủ), `ALLOCATED_FLIGHT` (Đã xếp slot bay Air), `SHIPPED` (Đang giao), `COMPLETED` (Hoàn thành), `CANCELLED` (Đã hủy).
+  - Thiết kế 4 models chuyên sâu:
+    - `SeasonalCampaign`: Chiến dịch mùa vụ (Cherry Tasmania Reid Fruits, Mật ong Manuka MGO 1200+ Berringa), vùng trồng, tuần bay dự kiến, độ đường Brix mục tiêu, kích thước quả mm, tổng sản lượng và công suất đã đặt.
+    - `PreOrderTier`: Các gói/hộp quà đặt trước (Hộp 2kg Hoàng Gia, Thùng Master Box 5kg, Hộp trải nghiệm 1kg), giá niêm yết, số tiền đặt cọc và giới hạn slot.
+    - `HarvestUpdate`: Nhật ký tiến trình nông trường từ Úc (độ đường Brix đo thực tế, kích thước mm, điều kiện thời tiết vườn và ảnh chụp thực tế).
+    - `PreOrderReservation`: Đơn giữ chỗ mùa vụ có mã định danh `PRE-TAS-2026-xxx`, liên kết tài khoản khách hàng, chuyến bay hàng không `VN780` và số vận đơn AWB.
+  - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
+  - Xây dựng Zod validation schemas (`src/lib/validations/preorder.ts`).
+  - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-preorder.ts`): Nạp chiến dịch Cherry Đỏ Tasmania vụ Tết Bính Ngọ 2026 và Mật ong Manuka hoàng gia MGO 1200+ kèm các mốc nhật ký nông trường thực tế.
+- [ ] **Giai đoạn 21.2: Xây Dựng Pre-Order Engine, Tính Toán Phân Bổ Slot & Hệ Thống REST APIs**
+- [ ] **Giai đoạn 21.3: Giao Diện Trung Tâm Chiến Dịch Mùa Vụ Úc & Nhật Ký Nông Trường (`/dat-truoc-mua-vu`)**
+- [ ] **Giai đoạn 21.4: Quy Trình Đặt Cọc Giữ Chỗ Mùa Vụ, Tích Hợp VietQR & User Portal**
+- [ ] **Giai đoạn 21.5: Giao Diện Quản Trị Admin CMS Mùa Vụ Đặt Trước (`/admin/mua-vu-dat-truoc`) & Hoàn Thiện Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
