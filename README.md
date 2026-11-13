@@ -1433,7 +1433,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
   - Xây dựng Zod validation schemas (`src/lib/validations/air-cargo.ts`) cùng cấu hình trạng thái, dải nhiệt độ và nhận diện hãng bay.
   - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-flights.ts`): Nạp 3 chuyến bay Air Cargo huyết mạch từ Melbourne & Sydney về Nội Bài/Tân Sơn Nhất kèm 15 mốc hành trình và 21 bản ghi cảm biến chuỗi lạnh thực tế.
-- [ ] **Giai đoạn 20.2: Xây Dựng Flight Tracker Engine, Dịch Vụ Đánh Giá Chuỗi Lạnh & REST APIs**
+- [x] **Giai đoạn 20.2: Xây Dựng Flight Tracker Engine, Dịch Vụ Đánh Giá Chuỗi Lạnh & REST APIs** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện Flight Tracker Engine & Cold-Chain Analytics (`src/lib/flight-tracker.ts`):
+    - `calculateFlightLiveProgress`: Tính toán động tọa độ GPS trên không phận quốc tế, tiến độ chuyến bay %, và thời gian bay còn lại (`remainingTimeFormatted`) giữa Melbourne/Sydney và Hà Nội/TP.HCM.
+    - `evaluateColdChainAnalytics`: Đánh giá chất lượng chuỗi lạnh (nhiệt độ min, max, avg, tỷ lệ tuân thủ %, điểm chất lượng và trạng thái `OPTIMAL` / `ACCEPTABLE` / `BREACHED`).
+    - `calculateFlightKPIs`: Tổng hợp 6 chỉ số KPI Air Cargo (Tổng chuyến bay, Chuyến đang bay, Chuyến đã nhập kho lạnh, Sản lượng tấn hàng, Tỷ lệ tuân thủ chuỗi lạnh).
+  - Hệ thống Public Storefront REST APIs:
+    - `GET /api/air-cargo/flights`: Danh sách chuyến bay hỗ trợ tìm kiếm, lọc theo hãng bay và trạng thái.
+    - `GET /api/air-cargo/flights/[flightNumber]`: Chi tiết chuyến bay kèm tiến trình GPS, mốc hành trình và toàn bộ chuỗi số liệu cảm biến nhiệt độ.
+    - `GET /api/air-cargo/kpis`: Số liệu KPI tổng quan cho dashboard và trang công khai.
+  - Hệ thống Admin CMS REST APIs bảo mật (`ADMIN` role check):
+    - `GET & POST /api/admin/air-cargo/flights`: Xem danh sách và khởi tạo chuyến bay mới kèm tự động sinh 4 mốc hành trình cơ bản.
+    - `PATCH & DELETE /api/admin/air-cargo/flights/[id]`: Cập nhật trạng thái bay, tọa độ GPS, thời gian thực tế và xóa chuyến bay.
+    - `POST /api/admin/air-cargo/sensor-logs`: Ghi nhận tức thời số liệu cảm biến nhiệt độ/độ ẩm và tự động tái tính toán nhiệt độ trung bình.
+- [ ] **Giai đoạn 20.3: Trang Tra Cứu Hành Trình Chuyến Bay & Bản Đồ Hàng Không Trực Quan (`/tra-cuu-air-cargo`)**
 - [ ] **Giai đoạn 20.3: Trang Tra Cứu Hành Trình Chuyến Bay & Bản Đồ Hàng Không Trực Quan (`/tra-cuu-air-cargo`)**
 - [ ] **Giai đoạn 20.4: Tích Hợp Live Flight Ticker & Kết Nối Thẻ Sản Phẩm Air Cargo**
 - [ ] **Giai đoạn 20.5: Giao Diện Quản Trị Admin CMS Chuyến Bay Air Cargo (`/admin/kho-hang/chuyen-bay-air`) & Hoàn Thiện Toàn Sàn**
