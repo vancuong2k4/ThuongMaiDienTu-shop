@@ -1419,6 +1419,25 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bổ sung nút liên kết nổi bật "So sánh vi chất" (icon `Scale`) trên thanh điều hướng chính `Header.tsx`.
     - Bổ sung mục "So Sánh Sản Phẩm & Vi Chất" (huy hiệu `Chuẩn Úc`) trên ngăn kéo menu di động `MobileNav.tsx`.
 
+### ✈️ Giai đoạn 20: Hệ Thống Giám Sát Chuyến Bay Air Cargo Thời Gian Thực & Bản Đồ Chuỗi Lạnh Cold-Chain (Realtime Flight Tracker, Cold-Chain Sensor Log & Radar Map - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 20.1: Thiết Kế Schema Chuyến Bay, Cảm Biến Chuỗi Lạnh & Seed Dữ Liệu Thực Tế** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`:
+    - `FlightStatus`: `SCHEDULED` (Đã lên lịch), `DEPARTED` (Đã cất cánh), `CRUISING` (Đang bay trên không phận), `LANDED` (Đã hạ cánh), `CUSTOMS_CLEARING` (Đang thông quan & kiểm dịch), `STORED_COLD` (Đã nhập kho lạnh THUYNGA Shop).
+    - `ColdChainCategory`: `ULTRA_COLD_CHERRY` (Chuỗi lạnh sâu 0-4°C cho Cherry Tasmania), `COOL_PROBIOTICS` (Chuỗi mát 2-8°C cho men sống), `CONTROLLED_AMBIENT` (Nhiệt độ phòng kiểm soát 18-24°C cho sữa Aptamil & TPCN).
+    - `SensorAlertLevel`: `NORMAL` (An toàn tuyệt đối), `WARNING` (Cận ngưỡng), `CRITICAL` (Báo động vượt ngưỡng).
+  - Thiết kế 3 models chuyên sâu:
+    - `AirCargoFlight`: Lưu thông tin chuyến bay, số hiệu (VN780, VN772, QF7561), loại tàu bay (Boeing 787-9, A350-900, B747-8F), hãng hàng không, sân bay đi/đến, thời gian bay thực tế, tọa độ GPS, độ cao bay (ft), tiến độ bay %, nhiệt độ mục tiêu và khối lượng hàng hóa.
+    - `FlightMilestone`: Các mốc hành trình từ đóng gói nông trại, cất cánh, bay hành trình, hạ cánh đến thông quan hải quan.
+    - `ColdChainSensorLog`: Bản ghi chuỗi thời gian của thiết bị cảm biến nhiệt độ & độ ẩm gắn kèm thùng hàng.
+  - Cập nhật quan hệ hai chiều `flights` trong model `AirCargoShipment`.
+  - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
+  - Xây dựng Zod validation schemas (`src/lib/validations/air-cargo.ts`) cùng cấu hình trạng thái, dải nhiệt độ và nhận diện hãng bay.
+  - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-flights.ts`): Nạp 3 chuyến bay Air Cargo huyết mạch từ Melbourne & Sydney về Nội Bài/Tân Sơn Nhất kèm 15 mốc hành trình và 21 bản ghi cảm biến chuỗi lạnh thực tế.
+- [ ] **Giai đoạn 20.2: Xây Dựng Flight Tracker Engine, Dịch Vụ Đánh Giá Chuỗi Lạnh & REST APIs**
+- [ ] **Giai đoạn 20.3: Trang Tra Cứu Hành Trình Chuyến Bay & Bản Đồ Hàng Không Trực Quan (`/tra-cuu-air-cargo`)**
+- [ ] **Giai đoạn 20.4: Tích Hợp Live Flight Ticker & Kết Nối Thẻ Sản Phẩm Air Cargo**
+- [ ] **Giai đoạn 20.5: Giao Diện Quản Trị Admin CMS Chuyến Bay Air Cargo (`/admin/kho-hang/chuyen-bay-air`) & Hoàn Thiện Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.

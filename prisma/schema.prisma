@@ -215,6 +215,27 @@ enum SynergyType {
   NEUTRAL                // Dùng phối hợp bình thường
 }
 
+enum FlightStatus {
+  SCHEDULED            // Đã lên lịch bay
+  DEPARTED             // Đã cất cánh từ sân bay Úc (SYD / MEL / HBA)
+  CRUISING             // Đang bay trên không phận quốc tế
+  LANDED               // Đã hạ cánh tại Việt Nam (HAN / SGN)
+  CUSTOMS_CLEARING     // Đang làm thủ tục thông quan hải quan & kiểm dịch
+  STORED_COLD          // Đã nhập kho mát tiêu chuẩn THUYNGA Shop
+}
+
+enum ColdChainCategory {
+  ULTRA_COLD_CHERRY    // Chuỗi lạnh sâu 0°C - 4°C (Cherry Tasmania, Trái cây tươi bay Air)
+  COOL_PROBIOTICS      // Chuỗi mát 2°C - 8°C (Men vi sinh sống, tinh dầu thông đỏ)
+  CONTROLLED_AMBIENT   // Nhiệt độ phòng tiêu chuẩn 18°C - 24°C (Sữa Aptamil, TPCN, Mật ong Manuka)
+}
+
+enum SensorAlertLevel {
+  NORMAL               // Nhiệt độ trong ngưỡng chuẩn hoàn hảo
+  WARNING              // Nhiệt độ chạm ngưỡng cận kề
+  CRITICAL             // Nhiệt độ vượt ngưỡng cho phép (báo động đỏ)
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -1004,6 +1025,7 @@ model AirCargoShipment {
   updatedAt           DateTime        @updatedAt
 
   batches             ProductBatch[]
+  flights             AirCargoFlight[]
 
   @@index([airWaybillNumber])
   @@index([status])
@@ -1438,4 +1460,88 @@ model NutrientSynergyRule {
   @@index([secondaryNutrientId])
   @@index([synergyType])
   @@map("nutrient_synergy_rules")
+}
+
+// ============================================================
+// PHASE 20: HỆ THỐNG GIÁM SÁT CHUYẾN BAY AIR CARGO THỜI GIAN THỰC & CHUỖI LẠNH
+// (Realtime Air Cargo Flight Tracker, Cold-Chain Sensor Log & Radar Map)
+// ============================================================
+
+model AirCargoFlight {
+  id                     String              @id @default(cuid())
+  flightNumber           String              @unique // Ví dụ: "VN780", "VN772", "QF7561"
+  aircraftType           String              // "Boeing 787-9 Dreamliner", "Airbus A350-900"
+  carrier                AirlineCarrier      @default(VIETNAM_AIRLINES_CARGO)
+  originAirport          String              // "MEL", "SYD", "HBA"
+  originCity             String              // "Melbourne", "Sydney", "Hobart Tasmania"
+  destAirport            String              // "HAN", "SGN"
+  destCity               String              // "Hà Nội", "TP. Hồ Chí Minh"
+  scheduledDeparture     DateTime
+  actualDeparture        DateTime?
+  scheduledArrival       DateTime
+  actualArrival          DateTime?
+  flightDurationMinutes  Int                 @default(540) // 9 giờ bay
+  flightStatus           FlightStatus        @default(LANDED)
+  flightProgressPercent  Int                 @default(100) // 0% - 100%
+  currentLatitude        Float?
+  currentLongitude       Float?
+  currentAltitudeFeet    Int?
+  coldChainCategory      ColdChainCategory   @default(ULTRA_COLD_CHERRY)
+  targetTempMin          Float               @default(0.0) // 0°C
+  targetTempMax          Float               @default(4.0) // 4°C
+  averageTemp            Float?              // Nhiệt độ trung bình thực tế đo được (VD: 2.1°C)
+  isColdChainPassed      Boolean             @default(true)
+  totalCargoWeightKg     Float?              // 4250.5 (kg)
+  cargoManifestSummary   String?             @db.Text // "4.200 kg Cherry Tasmania & 2.500 lon Sữa Aptamil Profutura"
+  shipmentId             String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  shipment               AirCargoShipment?   @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  milestones             FlightMilestone[]
+  sensorLogs             ColdChainSensorLog[]
+
+  @@index([flightNumber])
+  @@index([carrier])
+  @@index([flightStatus])
+  @@index([scheduledArrival])
+  @@map("air_cargo_flights")
+}
+
+model FlightMilestone {
+  id                     String          @id @default(cuid())
+  flightId               String
+  stepNumber             Int             // 1, 2, 3, 4, 5
+  title                  String          // "Cất cánh từ Melbourne Tullamarine"
+  locationName           String          // "Sân bay Quốc tế Melbourne (MEL)"
+  timestamp              DateTime
+  isCompleted            Boolean         @default(false)
+  notes                  String?
+  createdAt              DateTime        @default(now())
+
+  flight                 AirCargoFlight  @relation(fields: [flightId], references: [id], onDelete: Cascade)
+
+  @@index([flightId])
+  @@index([stepNumber])
+  @@map("flight_milestones")
+}
+
+model ColdChainSensorLog {
+  id                     String            @id @default(cuid())
+  flightId               String
+  sensorId               String            // "SENS-LOGGER-TAS-01"
+  recordedAt             DateTime
+  temperatureCelsius     Float             // 2.3 (°C)
+  humidityPercent        Float?            // 89.5 (%)
+  batteryPercent         Int?              @default(98)
+  alertLevel             SensorAlertLevel  @default(NORMAL)
+  stageName              String            // "Khoang hàng không máy bay VN780"
+  createdAt              DateTime          @default(now())
+
+  flight                 AirCargoFlight    @relation(fields: [flightId], references: [id], onDelete: Cascade)
+
+  @@index([flightId])
+  @@index([recordedAt])
+  @@index([alertLevel])
+  @@map("cold_chain_sensor_logs")
 }
