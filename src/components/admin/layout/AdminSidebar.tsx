@@ -26,6 +26,7 @@ import {
   Repeat,
   Plane,
   Compass,
+  Calendar,
   Stethoscope,
   Gift,
   MessageSquare,
@@ -105,6 +106,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Chuyến bay Air Cargo",
       href: "/admin/kho-hang/chuyen-bay-air",
       icon: Compass,
+    },
+    {
+      label: "Đặt trước mùa vụ",
+      href: "/admin/mua-vu-dat-truoc",
+      icon: Calendar,
     },
     {
       label: "Phác đồ Dược sĩ",

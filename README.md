@@ -1486,7 +1486,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Bộ lọc trạng thái đa năng, tìm kiếm tức thời và tự động làm mới dữ liệu.
     - Tích hợp mục "Chuyến bay Air Cargo" (icon `Compass`) trên thanh bên quản trị `AdminSidebar.tsx`.
 
-### 🍒 Giai đoạn 21: Hệ Thống Đặt Hàng Trước Nông Sản & Đặc Sản Theo Mùa Vụ Úc (Australian Seasonal Harvest Pre-Order & Air Allocation System - ĐANG TRIỂN KHAI)
+### 🍒 Giai đoạn 21: Hệ Thống Đặt Hàng Trước Nông Sản & Đặc Sản Theo Mùa Vụ Úc (Australian Seasonal Harvest Pre-Order & Air Allocation System - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 21.1: Thiết Kế Schema Mùa Vụ Úc, Phân Hạng Chất Lượng & Seed Dữ Liệu Nông Trường** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung 4 enums cốt lõi trong `prisma/schema.prisma`:
     - `CampaignStatus`: `UPCOMING` (Sắp diễn ra), `OPEN_FOR_RESERVATION` (Đang mở đặt cọc), `HARVESTING` (Đang hái quả tại vườn Úc), `AIR_SHIPPING` (Đang bay Air về Việt Nam), `DELIVERED` (Đã giao hàng), `CLOSED` (Đã kết thúc).
@@ -1541,7 +1541,21 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tích Hợp Điều Hướng Toàn Diện:
     - Bổ sung mục "Đơn đặt trước mùa vụ" trên thanh bên tài khoản người dùng `AccountSidebar.tsx`.
     - Bổ sung nút liên kết nổi bật "Đặt trước vụ Úc" trên thanh `Header.tsx` và ngăn kéo menu di động `MobileNav.tsx`.
-- [ ] **Giai đoạn 21.5: Giao Diện Quản Trị Admin CMS Mùa Vụ Đặt Trước (`/admin/mua-vu-dat-truoc`) & Hoàn Thiện Toàn Sàn**
+- [x] **Giai đoạn 21.5: Giao Diện Quản Trị Admin CMS Mùa Vụ Đặt Trước (`/admin/mua-vu-dat-truoc`) & Hoàn Thiện Toàn Sàn** *(Đã hoàn thành & Đã kiểm thử)*:
+  - 4 Thẻ Thống Kê KPI Chiến Dịch & Tiền Cọc (`PreOrderStats.tsx`):
+    - Tổng chiến dịch mùa vụ, Chiến dịch đang mở cọc, Tiền cọc đã thu qua VietQR Napas, và Tổng khách hàng đã đặt giữ slot khoang bay.
+  - Bảng Quản Trị Chiến Dịch Mùa Vụ Nông Sản Úc (`CampaignAdminTable.tsx`):
+    - Cập nhật tức thời trạng thái chiến dịch (`UPCOMING`, `OPEN_FOR_RESERVATION`, `HARVESTING`, `AIR_SHIPPING`, `DELIVERED`, `CLOSED`) bằng ô chọn trực tiếp trong bảng.
+    - Thanh đo tỷ lệ giữ chỗ % theo sản lượng ký gửi (kg), phím tắt viết nhật ký nông trường và liên kết xem trực tiếp trên Storefront.
+  - Bảng Quản Trị Đơn Đặt Giữ Chỗ & Xếp Chuyến Bay Air (`ReservationAdminTable.tsx`):
+    - Quản lý danh sách khách đặt, số điện thoại, địa chỉ nhận hàng, số tiền cọc và số tiền thanh toán khi nhận.
+    - Chức năng gán số hiệu chuyến bay Air Cargo (`flightNumber`) trực tiếp: tự động liên kết tới Radar GPS chuyến bay của sàn.
+  - Modal Khởi Tạo Chiến Dịch Mùa Vụ Mới (`CreateCampaignModal.tsx`):
+    - Biểu mẫu cấu hình tên chiến dịch, tự sinh slug chuẩn SEO, nông trường, chỉ số độ ngọt Brix, kích thước quả và tỷ lệ cọc giữ chỗ.
+  - Modal Xuất Bản Nhật Ký Nông Trường (`CreateHarvestUpdateModal.tsx`):
+    - Đăng bản tin hiện trường kèm số liệu đo quang phổ độ ngọt (°Brix), kích thước mm và thời tiết thung lũng Huon.
+  - Bộ Điều Phối Admin Mùa Vụ (`PreOrderAdminManager.tsx`) & Server Component [`/admin/mua-vu-dat-truoc`](/admin/mua-vu-dat-truoc):
+    - Chuyển đổi 2 tab linh hoạt, tìm kiếm đa năng và tích hợp menu "Đặt trước mùa vụ" (icon `Calendar`) trên thanh bên quản trị `AdminSidebar.tsx`.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
