@@ -1446,8 +1446,22 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `GET & POST /api/admin/air-cargo/flights`: Xem danh sách và khởi tạo chuyến bay mới kèm tự động sinh 4 mốc hành trình cơ bản.
     - `PATCH & DELETE /api/admin/air-cargo/flights/[id]`: Cập nhật trạng thái bay, tọa độ GPS, thời gian thực tế và xóa chuyến bay.
     - `POST /api/admin/air-cargo/sensor-logs`: Ghi nhận tức thời số liệu cảm biến nhiệt độ/độ ẩm và tự động tái tính toán nhiệt độ trung bình.
-- [ ] **Giai đoạn 20.3: Trang Tra Cứu Hành Trình Chuyến Bay & Bản Đồ Hàng Không Trực Quan (`/tra-cuu-air-cargo`)**
-- [ ] **Giai đoạn 20.3: Trang Tra Cứu Hành Trình Chuyến Bay & Bản Đồ Hàng Không Trực Quan (`/tra-cuu-air-cargo`)**
+- [x] **Giai đoạn 20.3: Trang Tra Cứu Hành Trình Chuyến Bay & Bản Đồ Hàng Không Trực Quan (`/tra-cuu-air-cargo`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bản Đồ Radar Quỹ Đạo Hàng Không SVG Trực Quan (`FlightRadarMap.tsx`):
+    - Vẽ quỹ đạo cong Bezier giữa các sân bay Úc (Melbourne, Sydney, Hobart Tasmania) và Việt Nam (Nội Bài HAN / Tân Sơn Nhất SGN).
+    - Biểu tượng máy bay chuyển động theo tiến trình thực tế, tích hợp hiển thị góc xoay hướng bay, độ cao (FT), tọa độ GPS và thời gian bay còn lại.
+    - Hiệu ứng sóng radar phát tín hiệu ngọn hải đăng (Radar Beacon Ping Ring) tại điểm đến.
+  - Biểu Đồ Cảm Biến Chuỗi Lạnh Cold-Chain SVG (`ColdChainChart.tsx`):
+    - Đồ thị đường polyline nhiệt độ theo chuỗi thời gian ghi nhận từ các cảm biến tự ghi USB Logger.
+    - Vùng an toàn kiểm soát nhiệt độ (0.0°C - 4.0°C) đánh dấu màu xanh ngọc lục bảo mờ trực quan.
+    - Điểm đo tương tác: Nhấp để xem thông số chi tiết nhiệt độ (°C), độ ẩm (%) và tên công đoạn vận chuyển.
+  - Mốc Tiến Trình Hành Trình Vận Chuyển (`FlightMilestoneTimeline.tsx`):
+    - Trực quan hóa 5 mốc khép kín: Đóng gói kiểm nhiệt nông trại, Cất cánh đường băng Úc, Bay tuần tra trên không, Hạ cánh Nội Bài/TSN, Thông quan và nhập kho lạnh THUYNGA Shop.
+  - Trang Tổng Quan Tra Cứu [`/tra-cuu-air-cargo`](/tra-cuu-air-cargo):
+    - Hero banner phong cách radar hàng không, 4 thẻ KPI chuyến bay và danh sách các chuyến bay cập nhật tiến trình % trực tiếp.
+  - Trang Chi Tiết Chuyến Bay [`/tra-cuu-air-cargo/[flightNumber]`](/tra-cuu-air-cargo/VN780):
+    - Bản kê kiện hàng hóa Air Cargo (Manifest) và liên kết các lô sản phẩm tương ứng.
+- [ ] **Giai đoạn 20.4: Tích Hợp Live Flight Ticker & Kết Nối Thẻ Sản Phẩm Air Cargo**
 - [ ] **Giai đoạn 20.4: Tích Hợp Live Flight Ticker & Kết Nối Thẻ Sản Phẩm Air Cargo**
 - [ ] **Giai đoạn 20.5: Giao Diện Quản Trị Admin CMS Chuyến Bay Air Cargo (`/admin/kho-hang/chuyen-bay-air`) & Hoàn Thiện Toàn Sàn**
 
