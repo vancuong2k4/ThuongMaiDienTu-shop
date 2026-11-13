@@ -1517,7 +1517,19 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `PATCH & DELETE /api/admin/preorders/campaigns/[id]`: Cập nhật thông số kỹ thuật, trạng thái vụ mùa hoặc xóa chiến dịch.
     - `POST /api/admin/preorders/harvest-updates`: Xuất bản bài viết nhật ký nông trường (độ ngọt Brix, kích thước mm, thời tiết).
     - `GET & PATCH /api/admin/preorders/reservations`: Quản lý danh sách khách đặt giữ chỗ, gán số hiệu chuyến bay Air Cargo (`flightNumber`) và vận đơn hàng không (`airWaybillNumber`).
-- [ ] **Giai đoạn 21.3: Giao Diện Trung Tâm Chiến Dịch Mùa Vụ Úc & Nhật Ký Nông Trường (`/dat-truoc-mua-vu`)**
+- [x] **Giai đoạn 21.3: Giao Diện Trung Tâm Chiến Dịch Mùa Vụ Úc & Nhật Ký Nông Trường (`/dat-truoc-mua-vu`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thang Đo Độ Ngọt Khúc Xạ Brix & Kích Thước Quả Chuẩn Úc (`BrixSweetnessMeter.tsx`):
+    - Trực quan hóa đối chiếu thang đo độ đường tự nhiên (Trái cây phổ thông 12° Brix vs Cherry thường 18° Brix vs Cherry Tasmania THUYNGA Shop đạt 24°+ Brix đậm đà).
+    - Thẻ chỉ số đường kính mm (Jumbo Select 32-34mm) và chứng nhận kiểm định chất lượng xuất khẩu hoàng gia.
+  - Dòng Thời Gian Nhật Ký Thu Hoạch Hiện Trường Từ Nông Trường Úc (`HarvestUpdateTimeline.tsx`):
+    - Trực quan hóa các bản tin gửi về từ Thung lũng Huon & Derwent Tasmania: ngày ghi nhận, điều kiện thời tiết (nắng ấm ban ngày, lạnh sâu Nam Cực ban đêm), độ đường Brix đo thực tế và đường kính quả.
+  - Thẻ Trực Quan Chiến Dịch Đặt Trước Mùa Vụ (`CampaignCard.tsx`):
+    - Banner chất lượng cao, huy hiệu trạng thái mùa vụ & chất lượng (`ROYAL_RESERVE`, `DIAMOND_SELECT`), thanh đo tỷ lệ lấp đầy % slot khoang máy bay, ngày khởi hành và mức giá cọc tối thiểu.
+  - Giao Diện Chi Tiết Chiến Dịch & Chọn Quy Cách Đặt Cọc (`CampaignDetailView.tsx`):
+    - Hero banner toàn cảnh với các chỉ số cam kết: Bao tiêu đường bay lạnh 0-4°C 24h, hoàn cọc 100% nếu chuyến bay bị hủy và bao bù 1:1 nếu nát dập.
+    - Danh sách các Tier hộp quà biếu 2kg, thùng 5kg Master Box kèm thẻ tóm tắt giá trị cọc 30% và nút hành động đặt giữ chỗ tức thời.
+  - Trang Trung Tâm Khám Phá Mùa Vụ Úc [`/dat-truoc-mua-vu`](/dat-truoc-mua-vu) & Trang Chi Tiết [`/dat-truoc-mua-vu/[slug]`](/dat-truoc-mua-vu/cherry-tasmania-tet-2026):
+    - 4 Thẻ KPI sản lượng bao tiêu, tổng suất đặt, số ngày bay Air và liên kết điều hướng breadcrumb mượt mà.
 - [ ] **Giai đoạn 21.4: Quy Trình Đặt Cọc Giữ Chỗ Mùa Vụ, Tích Hợp VietQR & User Portal**
 - [ ] **Giai đoạn 21.5: Giao Diện Quản Trị Admin CMS Mùa Vụ Đặt Trước (`/admin/mua-vu-dat-truoc`) & Hoàn Thiện Toàn Sàn**
 
