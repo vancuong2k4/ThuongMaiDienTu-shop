@@ -1593,7 +1593,16 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Component `RestockAlertCard.tsx`: Thẻ dự báo hết hàng thông minh dựa trên số liều còn lại và tần suất uống, tích hợp nút 1-click thêm vào giỏ hàng tái nạp.
   - Component `AddMemberModal.tsx` & `AddScheduleModal.tsx`: Hộp thoại thêm hồ sơ thành viên và thiết lập cữ uống liên kết trực tiếp danh mục sản phẩm chính hãng Úc.
   - Component `FamilyVaultClient.tsx`: Bộ điều phối trạng thái client, tự động làm mới dữ liệu và phản hồi tương tác mượt mà.
-- [ ] **Giai đoạn 22.4: Khám Phá Trang Giới Thiệu Tính Năng Storefront & Tích Hợp Hệ Thống**
+- [x] **Giai đoạn 22.4: Khám Phá Trang Giới Thiệu Tính Năng Storefront & Tích Hợp Hệ Thống** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng trang đích giáo dục cộng đồng `/tu-thuoc-gia-dinh`:
+    - Phân tích chi tiết 5 khung giờ vàng Chronobiology (Sáng trước ăn, Sáng sau ăn, Trưa sau ăn, Tối sau ăn, Trước ngủ) gắn liền cơ chế hấp thu enzyme lipase và dịch vị ruột.
+    - Ma trận giải thích xung đột dược lý: Canxi cạnh tranh thụ thể DMT1 với Sắt, liều cao Kẽm ức chế Sắt, và cơ chế hòa tan micelle của vitamin tan trong dầu (D3, K2, DHA).
+    - Phác đồ mẫu chuyên biệt cho 3 thế hệ gia đình (Trẻ sơ sinh/đi học, Mẹ bầu/sau sinh, Ông bà cao tuổi).
+    - Nút CTA trực tiếp khởi tạo Tủ thuốc cá nhân hóa và kết nối tư vấn Dược sĩ.
+  - Tích hợp liên kết toàn diện vào hệ thống Storefront:
+    - `AccountSidebar.tsx`: Thêm mục "Tủ thuốc gia đình" với icon `Clock` trong trung tâm tài khoản khách hàng.
+    - `Header.tsx`: Thêm lối tắt "Tủ thuốc gia đình" nổi bật trên thanh TopBar thương mại.
+    - `MobileNav.tsx`: Thêm mục điều hướng nhanh "Tủ Thuốc Gia Đình - Nhịp Sinh Học" trên thanh menu di động.
 - [ ] **Giai đoạn 22.5: Giao Diện Quản Trị Admin CMS Dự Báo Tiêu Dùng Gia Đình (`/admin/tu-thuoc-gia-dinh`) & Hoàn Thiện Toàn Sàn**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production

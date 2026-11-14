@@ -22,6 +22,7 @@ import {
   Scale,
   Plane,
   Calendar,
+  Heart,
 } from "lucide-react";
 
 interface SubCategory {
@@ -194,6 +195,20 @@ export function MobileNav({ categories }: MobileNavProps) {
               </div>
               <span className="text-[10px] bg-sky-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
                 Live Radar
+              </span>
+            </Link>
+
+            <Link
+              href="/tu-thuoc-gia-dinh"
+              onClick={closeMenu}
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-teal-50 text-teal-950 font-bold hover:bg-teal-100 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Heart className="w-4 h-4 text-teal-600" />
+                <span>Tủ Thuốc Gia Đình</span>
+              </div>
+              <span className="text-[10px] bg-teal-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
+                Nhịp Sinh Học
               </span>
             </Link>
 

@@ -23,6 +23,7 @@ import {
   ChevronRight,
   Stethoscope,
   Plane,
+  Clock,
 } from "lucide-react";
 
 interface AccountSidebarProps {
@@ -53,6 +54,12 @@ export const AccountSidebar: React.FC<AccountSidebarProps> = ({ user }) => {
       label: "Đơn đặt trước mùa vụ",
       href: "/tai-khoan/don-dat-truoc",
       icon: Plane,
+      exact: false,
+    },
+    {
+      label: "Tủ thuốc gia đình",
+      href: "/tai-khoan/tu-thuoc-gia-dinh",
+      icon: Clock,
       exact: false,
     },
     {

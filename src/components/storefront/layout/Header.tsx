@@ -19,6 +19,7 @@ import {
   Gift,
   Scale,
   Calendar,
+  Heart,
 } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { CartButton } from "./CartButton";
@@ -91,6 +92,14 @@ export function Header({ categories }: HeaderProps) {
             >
               <Stethoscope className="w-3.5 h-3.5 text-emerald-300" />
               <span>Tư vấn Dinh dưỡng</span>
+            </Link>
+            <span className="text-white/20">|</span>
+            <Link
+              href="/tu-thuoc-gia-dinh"
+              className="flex items-center gap-1 text-teal-200 hover:text-white transition-colors"
+            >
+              <Heart className="w-3.5 h-3.5 text-teal-300" />
+              <span>Tủ thuốc gia đình</span>
             </Link>
             <span className="text-white/20">|</span>
             <Link
