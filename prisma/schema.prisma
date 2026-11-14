@@ -266,6 +266,28 @@ enum ReservationStatus {
   CANCELLED            // Đã hủy & hoàn cọc
 }
 
+enum FamilyRelation {
+  SELF         // Bản thân
+  SPOUSE       // Vợ / Chồng
+  CHILD        // Con cái (Bé sơ sinh, Trẻ nhỏ, Tuổi teen)
+  PARENT       // Bố / Mẹ
+  GRANDPARENT  // Ông / Bà
+}
+
+enum SupplementTimeSlot {
+  MORNING_BEFORE_MEAL // Sáng trước ăn (Men vi sinh Probiotics, Tinh nghệ Nano)
+  MORNING_AFTER_MEAL  // Sáng sau ăn (Vitamin D3 K2, Canxi hữu cơ, Dầu cá DHA)
+  NOON_AFTER_MEAL     // Trưa sau ăn (Sắt hữu cơ, Kẽm Zinc, Vitamin C)
+  EVENING_AFTER_MEAL  // Tối sau ăn (Glucosamine, CoQ10, Magie)
+  BEFORE_BED          // Trước khi ngủ (Melatonin thảo dược, Canxi sữa)
+}
+
+enum IntakeLogStatus {
+  SCHEDULED    // Chưa đến giờ hoặc đang chờ
+  TAKEN        // Đã uống đúng giờ
+  SKIPPED      // Bỏ qua cữ uống
+}
+
 // ============================================================
 // USER / AUTH
 // ============================================================
@@ -317,6 +339,7 @@ model User {
   corporateGiftInquiries CorporateGiftInquiry[]
   chatSessions          ChatSession[]
   preOrderReservations  PreOrderReservation[]
+  familyMembers         FamilyMemberProfile[]
 
   @@index([email])
   @@index([phone])
@@ -454,6 +477,7 @@ model Product {
   giftHamperItems GiftHamperItem[]
   nutrients      ProductNutrient[]
   comparisonFeature ProductComparisonFeature?
+  supplementSchedules MemberSupplementSchedule[]
 
   @@index([slug])
   @@index([categoryId])
@@ -1692,4 +1716,84 @@ model PreOrderReservation {
   @@index([status])
   @@index([createdAt])
   @@map("pre_order_reservations")
+}
+
+// ============================================================
+// PHASE 22: FAMILY HEALTH VAULT & SMART SUPPLEMENT CLOCK
+// ============================================================
+
+model FamilyMemberProfile {
+  id                     String              @id @default(cuid())
+  userId                 String
+  fullName               String              // "Bé Bon (3 tuổi)", "Bà Nội (68 tuổi)"
+  relation               FamilyRelation      @default(CHILD)
+  dateOfBirth            DateTime?
+  gender                 String?             // "MALE", "FEMALE", "OTHER"
+  avatarEmoji            String?             @default("👶") // Emoji đại diện: 👶, 👩, 👨, 👵, 👴
+  healthGoals            String[]            // ["Tăng chiều cao", "Đề kháng hô hấp", "Ăn ngon ngủ ngon"]
+  allergies              String[]            // ["Dị ứng đạm bò", "Dị ứng hải sản"]
+  weightKg               Float?
+  heightCm               Float?
+  notes                  String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  supplementSchedules    MemberSupplementSchedule[]
+  intakeLogs             SupplementIntakeLog[]
+
+  @@index([userId])
+  @@index([relation])
+  @@map("family_member_profiles")
+}
+
+model MemberSupplementSchedule {
+  id                     String              @id @default(cuid())
+  memberProfileId        String
+  productId              String?             // Liên kết tới sản phẩm trong cửa hàng nếu có
+  customItemName         String              // "Sữa Aptamil Profutura Úc Số 3", "Bio Island Zinc Nhai"
+  brandName              String?             // "Aptamil", "Bio Island", "Blackmores"
+  timeSlot               SupplementTimeSlot  @default(MORNING_AFTER_MEAL)
+  timeString             String              @default("08:00") // "08:00", "12:30", "19:00"
+  dosageText             String              // "1 viên sau ăn sáng cùng nước ấm", "200ml sữa ấm"
+  dailyFrequency         Int                 @default(1)
+  totalServingsPerBox    Int                 @default(60) // Tổng số liều/viên trong 1 hộp
+  servingsRemaining      Int                 @default(60) // Số liều/viên còn lại
+  startDate              DateTime            @default(now())
+  estimatedEmptyDate     DateTime?
+  isActive               Boolean             @default(true)
+  reminderEnabled        Boolean             @default(true)
+  notes                  String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+
+  memberProfile          FamilyMemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  product                Product?            @relation(fields: [productId], references: [id], onDelete: SetNull)
+  intakeLogs             SupplementIntakeLog[]
+
+  @@index([memberProfileId])
+  @@index([productId])
+  @@index([timeSlot])
+  @@index([isActive])
+  @@map("member_supplement_schedules")
+}
+
+model SupplementIntakeLog {
+  id                     String              @id @default(cuid())
+  scheduleId             String
+  memberProfileId        String
+  logDate                DateTime            // Ngày uống (chỉ lấy phần ngày YYYY-MM-DD)
+  status                 IntakeLogStatus     @default(SCHEDULED)
+  takenAt                DateTime?
+  notes                  String?
+  createdAt              DateTime            @default(now())
+
+  schedule               MemberSupplementSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  memberProfile          FamilyMemberProfile      @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([scheduleId, logDate])
+  @@index([memberProfileId])
+  @@index([logDate])
+  @@index([status])
+  @@map("supplement_intake_logs")
 }

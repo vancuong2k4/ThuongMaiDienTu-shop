@@ -1557,6 +1557,25 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Bộ Điều Phối Admin Mùa Vụ (`PreOrderAdminManager.tsx`) & Server Component [`/admin/mua-vu-dat-truoc`](/admin/mua-vu-dat-truoc):
     - Chuyển đổi 2 tab linh hoạt, tìm kiếm đa năng và tích hợp menu "Đặt trước mùa vụ" (icon `Calendar`) trên thanh bên quản trị `AdminSidebar.tsx`.
 
+### 👨‍👩‍👧‍👦 Giai đoạn 22: Tủ Thuốc Sức Khỏe Gia Đình Đa Thế Hệ & Đồng Hồ Nhắc Uống Vi Chất Chuẩn Dược Sĩ (Family Health Vault & Smart Supplement Clock - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 22.1: Thiết Kế Schema Hồ Sơ Gia Đình, Lịch Uống Vi Chất & Seed Dữ Liệu Thực Tế** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`:
+    - `FamilyRelation`: `SELF` (Bản thân), `SPOUSE` (Vợ/Chồng), `CHILD` (Con cái), `PARENT` (Bố/Mẹ), `GRANDPARENT` (Ông/Bà).
+    - `SupplementTimeSlot`: `MORNING_BEFORE_MEAL` (Sáng trước ăn), `MORNING_AFTER_MEAL` (Sáng sau ăn), `NOON_AFTER_MEAL` (Trưa sau ăn), `EVENING_AFTER_MEAL` (Tối sau ăn), `BEFORE_BED` (Trước khi ngủ).
+    - `IntakeLogStatus`: `SCHEDULED` (Chờ uống), `TAKEN` (Đã uống), `SKIPPED` (Bỏ qua).
+  - Thiết kế 3 models chuyên sâu:
+    - `FamilyMemberProfile`: Quản lý hồ sơ từng thành viên trong gia đình (họ tên, mối quan hệ, ngày sinh, giới tính, avatar emoji, mục tiêu sức khỏe và danh sách dị ứng).
+    - `MemberSupplementSchedule`: Quản lý lịch uống vi chất từng ngày (tên sản phẩm, thương hiệu Úc, khung giờ uống, liều lượng, số liều còn lại, ngày dự kiến hết hộp và liên kết bảng sản phẩm).
+    - `SupplementIntakeLog`: Nhật ký uống vi chất hàng ngày ghi nhận thời điểm đã uống thực tế `takenAt` và ghi chú của người thân.
+  - Cập nhật quan hệ hai chiều `familyMembers` trong model `User` và `supplementSchedules` trong model `Product`.
+  - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
+  - Xây dựng Zod validation schemas (`src/lib/validations/family-health.ts`).
+  - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-family-health.ts`): Nạp 3 thế hệ gia đình (Bé Bon 3 tuổi uống Aptamil & DHA, Mẹ Thảo 32 tuổi uống Collagen & Sắt trưa, Bà Nội 68 tuổi uống Glucosamine khớp & CoQ10 tim mạch).
+- [ ] **Giai đoạn 22.2: Xây Dựng Supplement Engine, Thuật Toán Phân Bổ Cữ Uống & REST APIs**
+- [ ] **Giai đoạn 22.3: Giao Diện Tủ Thuốc Gia Đình & Đồng Hồ Sinh Học Vi Chất (`/tai-khoan/tu-thuoc-gia-dinh`)**
+- [ ] **Giai đoạn 22.4: Khám Phá Trang Giới Thiệu Tính Năng Storefront & Tích Hợp Hệ Thống**
+- [ ] **Giai đoạn 22.5: Giao Diện Quản Trị Admin CMS Dự Báo Tiêu Dùng Gia Đình (`/admin/tu-thuoc-gia-dinh`) & Hoàn Thiện Toàn Sàn**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.
