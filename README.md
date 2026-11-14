@@ -1585,7 +1585,14 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `POST /api/family-health/logs/toggle`: 1-Chạm ghi nhận "Đã uống" / "Bỏ qua" kèm hoàn trả số lượng viên.
   - Hệ thống Admin CMS REST APIs bảo mật (`ADMIN` role check):
     - `GET /api/admin/family-health/stats`: Thống kê tổng số hồ sơ gia đình, tỷ lệ tuân thủ và hàng đợi các khách hàng sắp hết hộp trong 7 ngày tới.
-- [ ] **Giai đoạn 22.3: Giao Diện Tủ Thuốc Gia Đình & Đồng Hồ Sinh Học Vi Chất (`/tai-khoan/tu-thuoc-gia-dinh`)**
+- [x] **Giai đoạn 22.3: Giao Diện Tủ Thuốc Gia Đình & Đồng Hồ Sinh Học Vi Chất (`/tai-khoan/tu-thuoc-gia-dinh`)** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng giao diện trung tâm Tủ thuốc gia đình (`/tai-khoan/tu-thuoc-gia-dinh`) hiển thị hồ sơ từng thành viên (Trẻ nhỏ, Mẹ bầu/cho con bú, Ông bà cao tuổi).
+  - Component `FamilyMemberTabs.tsx`: Thanh chọn thành viên với avatar biểu tượng, độ tuổi và chỉ số số lượng vi chất đang theo dõi.
+  - Component `SupplementClockTimeline.tsx`: Trực quan hóa tiến trình sinh học 5 cữ uống (Sáng trước ăn, Sáng sau ăn, Trưa sau ăn, Tối sau ăn, Trước khi ngủ) với trạng thái Đã uống / Chưa uống và nút 1-chạm toggle tức thời kèm âm thanh xác nhận.
+  - Component `NutrientConflictAlert.tsx`: Bảng cảnh báo đối kháng vi chất sinh học (Canxi cạnh tranh Sắt, Kẽm cạnh tranh Sắt) với lời khuyên điều chỉnh khung giờ uống chuẩn Dược sĩ Úc.
+  - Component `RestockAlertCard.tsx`: Thẻ dự báo hết hàng thông minh dựa trên số liều còn lại và tần suất uống, tích hợp nút 1-click thêm vào giỏ hàng tái nạp.
+  - Component `AddMemberModal.tsx` & `AddScheduleModal.tsx`: Hộp thoại thêm hồ sơ thành viên và thiết lập cữ uống liên kết trực tiếp danh mục sản phẩm chính hãng Úc.
+  - Component `FamilyVaultClient.tsx`: Bộ điều phối trạng thái client, tự động làm mới dữ liệu và phản hồi tương tác mượt mà.
 - [ ] **Giai đoạn 22.4: Khám Phá Trang Giới Thiệu Tính Năng Storefront & Tích Hợp Hệ Thống**
 - [ ] **Giai đoạn 22.5: Giao Diện Quản Trị Admin CMS Dự Báo Tiêu Dùng Gia Đình (`/admin/tu-thuoc-gia-dinh`) & Hoàn Thiện Toàn Sàn**
 
