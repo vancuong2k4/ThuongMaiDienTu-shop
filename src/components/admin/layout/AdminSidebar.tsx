@@ -38,6 +38,7 @@ import {
   X,
   Shield,
   User,
+  Heart,
 } from "lucide-react";
 
 export interface AdminSidebarProps {
@@ -116,6 +117,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       label: "Phác đồ Dược sĩ",
       href: "/admin/phac-do-dinh-duong",
       icon: Stethoscope,
+    },
+    {
+      label: "Tủ thuốc gia đình",
+      href: "/admin/tu-thuoc-gia-dinh",
+      icon: Heart,
     },
     {
       label: "Hộp quà biếu",
