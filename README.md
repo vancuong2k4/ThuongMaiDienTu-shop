@@ -1571,7 +1571,20 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ cơ sở dữ liệu PostgreSQL qua Prisma `db push` thành công và tái sinh Prisma Client v5.22.0.
   - Xây dựng Zod validation schemas (`src/lib/validations/family-health.ts`).
   - Kịch bản seed dữ liệu mẫu sinh động (`prisma/seed-family-health.ts`): Nạp 3 thế hệ gia đình (Bé Bon 3 tuổi uống Aptamil & DHA, Mẹ Thảo 32 tuổi uống Collagen & Sắt trưa, Bà Nội 68 tuổi uống Glucosamine khớp & CoQ10 tim mạch).
-- [ ] **Giai đoạn 22.2: Xây Dựng Supplement Engine, Thuật Toán Phân Bổ Cữ Uống & REST APIs**
+- [x] **Giai đoạn 22.2: Xây Dựng Supplement Engine, Thuật Toán Phân Bổ Cữ Uống & REST APIs** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thư viện Supplement Engine & Thuật Toán Phân Bổ Cữ Uống (`src/lib/family-health.ts`):
+    - `calculateMemberScheduleOverview`: Gom nhóm lịch uống tự động thành 5 cữ sinh học trong ngày (Sáng trước ăn, Sáng sau ăn, Trưa sau ăn, Tối sau ăn, Trước khi ngủ), tính tỷ lệ tuân thủ giờ uống % trong ngày.
+    - Thuật toán cảnh báo đối kháng vi chất (Conflict Detection Engine): Tự động phát hiện nếu Canxi và Sắt bị xếp cùng khung giờ sáng và hiển thị chỉ định chuyên môn của Dược sĩ THUYNGA Shop khuyên giãn cách ít nhất 2 giờ.
+    - Dự báo chu kỳ tiêu hao hộp vi chất (Smart Restock Projection): Phân loại `URGENT` (còn dưới 5 ngày) và `WARNING` (còn dưới 10 ngày) kèm liên kết biến thể sản phẩm để tái mua 1-chạm.
+    - `toggleSupplementIntake`: Xử lý giao dịch nguyên tử Prisma `$transaction` ghi nhận trạng thái `TAKEN` / `SKIPPED`, tự động trừ/cộng liều còn lại của hộp.
+  - Hệ thống Public Storefront REST APIs:
+    - `GET & POST /api/family-health/members`: Xem danh sách thành viên và khởi tạo hồ sơ người thân (Bé, Mẹ, Bố, Ông bà).
+    - `GET, PATCH & DELETE /api/family-health/members/[id]`: Chi tiết lịch uống đầy đủ, cập nhật thông tin và xóa hồ sơ.
+    - `POST /api/family-health/schedules`: Bổ sung sản phẩm/vi chất vào lịch uống của từng thành viên.
+    - `PATCH & DELETE /api/family-health/schedules/[id]`: Cập nhật liều dùng, giờ uống, bật/tắt nhắc nhở và xóa cữ uống.
+    - `POST /api/family-health/logs/toggle`: 1-Chạm ghi nhận "Đã uống" / "Bỏ qua" kèm hoàn trả số lượng viên.
+  - Hệ thống Admin CMS REST APIs bảo mật (`ADMIN` role check):
+    - `GET /api/admin/family-health/stats`: Thống kê tổng số hồ sơ gia đình, tỷ lệ tuân thủ và hàng đợi các khách hàng sắp hết hộp trong 7 ngày tới.
 - [ ] **Giai đoạn 22.3: Giao Diện Tủ Thuốc Gia Đình & Đồng Hồ Sinh Học Vi Chất (`/tai-khoan/tu-thuoc-gia-dinh`)**
 - [ ] **Giai đoạn 22.4: Khám Phá Trang Giới Thiệu Tính Năng Storefront & Tích Hợp Hệ Thống**
 - [ ] **Giai đoạn 22.5: Giao Diện Quản Trị Admin CMS Dự Báo Tiêu Dùng Gia Đình (`/admin/tu-thuoc-gia-dinh`) & Hoàn Thiện Toàn Sàn**
