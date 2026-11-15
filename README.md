@@ -1612,7 +1612,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tích hợp menu "Tủ thuốc gia đình" vào `AdminSidebar.tsx` với icon `Heart`.
   - Hoàn tất 100% Phân hệ Tủ thuốc gia đình & Lịch uống tương thích sinh học (Phase 22), đảm bảo chuẩn TypeScript và kiểm thử toàn diện.
 
-### 🍼 Giai đoạn 23: Trợ Lý Tính Liều Lượng Vi Chất & Chuẩn Hóa Pha Sữa Aptamil Úc / Biểu Đồ Tăng Trưởng WHO (Pediatric Formula Preparation & WHO Growth Milestones Assistant - ĐANG TRIỂN KHAI)
+### 🍼 Giai đoạn 23: Trợ Lý Tính Liều Lượng Vi Chất & Chuẩn Hóa Pha Sữa Aptamil Úc / Biểu Đồ Tăng Trưởng WHO (Pediatric Formula Preparation & WHO Growth Milestones Assistant - HOÀN THÀNH 100%)
 - [x] **Giai đoạn 23.1: Thiết Kế Schema Tăng Trưởng WHO, Quy Trình Pha Sữa Aptamil & Seed Dữ Liệu Y Khoa** *(Đã hoàn thành & Đã kiểm thử)*:
   - Thiết kế các Data Models và Enums mới trong `prisma/schema.prisma`:
     - `FormulaStage`: 4 giai đoạn phát triển (`STAGE_1` [0-6m], `STAGE_2` [6-12m], `STAGE_3` [1-3y], `STAGE_4` [3y+]).
@@ -1647,7 +1647,14 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Cập nhật thanh điều hướng toàn sàn:
     - `Header.tsx`: Thêm nút "Pha sữa Aptamil &amp; WHO" nổi bật trên TopBar thương mại với icon `Baby`.
     - `MobileNav.tsx`: Thêm mục điều hướng di động "Pha Sữa &amp; Thước Đo WHO" kèm nhãn Aptamil.
-- [ ] **Giai đoạn 23.5: Giao Diện Quản Trị Admin CMS Phân Tích Thể Trạng Trẻ Em (`/admin/tang-truong-tre-em`) & Đóng Gói Hoàn Thiện**
+- [x] **Giai đoạn 23.5: Giao Diện Quản Trị Admin CMS Phân Tích Thể Trạng Trẻ Em (`/admin/tang-truong-tre-em`) & Đóng Gói Hoàn Thiện** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng trung tâm quản trị thể trạng trẻ em & CRM sữa Úc (`/admin/tang-truong-tre-em`):
+    - Component `PediatricKPIStats.tsx`: Thống kê 4 thẻ chỉ số thời gian thực (Tổng lượt đo thể trạng bé, Tỷ lệ chuẩn WHO P50, Trẻ nhẹ cân cần tư vấn Aptamil &amp; Men vi sinh, Trẻ thấp còi cần phác đồ Canxi &amp; D3 K2).
+    - Component `ChildAssessmentTable.tsx`: Danh sách đánh giá thể trạng trẻ em kèm Z-score chiều cao/cân nặng, phân loại thể trạng, thông tin liên hệ phụ huynh và phác đồ vi chất đã gợi ý.
+    - Component `AptamilProtocolsTable.tsx`: Bảng quản lý 4 quy chuẩn pha sữa Aptamil Profutura Úc (Số 1, 2, 3, 4) với dải nhiệt độ 40°C - 45°C, tỷ lệ 50ml/muỗng và liên kết sản phẩm sàn.
+    - Component `PediatricAdminManager.tsx`: Trình điều phối tab và làm mới dữ liệu.
+  - Tích hợp menu "Tăng trưởng trẻ em" vào `AdminSidebar.tsx` với icon `Baby`.
+  - Hoàn tất 100% Phân hệ Trợ lý tính liều vi chất &amp; Chuẩn hóa pha sữa Aptamil / Thước đo WHO (Phase 23), đảm bảo không có icon AI sparkles và kiểm thử TypeScript nghiêm ngặt.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
