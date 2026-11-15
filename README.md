@@ -1612,6 +1612,23 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Tích hợp menu "Tủ thuốc gia đình" vào `AdminSidebar.tsx` với icon `Heart`.
   - Hoàn tất 100% Phân hệ Tủ thuốc gia đình & Lịch uống tương thích sinh học (Phase 22), đảm bảo chuẩn TypeScript và kiểm thử toàn diện.
 
+### 🍼 Giai đoạn 23: Trợ Lý Tính Liều Lượng Vi Chất & Chuẩn Hóa Pha Sữa Aptamil Úc / Biểu Đồ Tăng Trưởng WHO (Pediatric Formula Preparation & WHO Growth Milestones Assistant - ĐANG TRIỂN KHAI)
+- [x] **Giai đoạn 23.1: Thiết Kế Schema Tăng Trưởng WHO, Quy Trình Pha Sữa Aptamil & Seed Dữ Liệu Y Khoa** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Thiết kế các Data Models và Enums mới trong `prisma/schema.prisma`:
+    - `FormulaStage`: 4 giai đoạn phát triển (`STAGE_1` [0-6m], `STAGE_2` [6-12m], `STAGE_3` [1-3y], `STAGE_4` [3y+]).
+    - `ChildGender`: Bé trai (`BOY`) và Bé gái (`GIRL`).
+    - `GrowthAssessmentStatus`: Phân loại thể trạng WHO (`SEVERELY_UNDERWEIGHT`, `UNDERWEIGHT`, `NORMAL`, `OVERWEIGHT`, `STUNTED`, `TALL`).
+    - `AptamilPreparationProtocol`: Quy chuẩn nhiệt độ nước vàng (40°C - 45°C để bảo toàn men vi sinh sống *Bifidobacterium breve M-16V*), tỷ lệ nước/muỗng gạt (50ml/muỗng), số cữ tiêu chuẩn và các bước hòa tan hạn chế bọt khí.
+    - `WhoGrowthStandard`: Bộ dữ liệu bách phân vị tăng trưởng WHO (0 đến 60 tháng) gồm Median (P50), -2SD (P3 - Ngưỡng suy dinh dưỡng/thấp còi) và +2SD (P97 - Ngưỡng thừa cân/cao vượt trội).
+    - `ChildGrowthAssessmentRecord`: Lịch sử đánh giá thể trạng trẻ em kèm Z-score, đề xuất vi chất Úc và lời khuyên Dược sĩ.
+  - Đồng bộ cơ sở dữ liệu PostgreSQL (`npx prisma db push`) và tạo Prisma Client mới.
+  - Xây dựng Zod validation schemas tại `src/lib/validations/pediatric-growth.ts`.
+  - Tạo và thực thi seed script `prisma/seed-pediatric-growth.ts`: Khởi tạo 4 quy trình pha sữa Aptamil Profutura Úc, 122 bản ghi bách phân vị WHO (0-60 tháng) và hồ sơ thể trạng mẫu cho Bé Bon.
+- [ ] **Giai đoạn 23.2: Xây Dựng Pediatric Growth Engine, Bộ Tính Liều Sữa Aptamil & REST APIs**
+- [ ] **Giai đoạn 23.3: Giao Diện Công Cụ Tính Chuẩn Hóa Pha Sữa Aptamil & Biểu Đồ Radar WHO Storefront**
+- [ ] **Giai đoạn 23.4: Tích Hợp Tiện Ích Vào Trang Chi Tiết Sản Phẩm Aptamil/Bio Island & Liên Kết Tủ Thuốc Gia Đình**
+- [ ] **Giai đoạn 23.5: Giao Diện Quản Trị Admin CMS Phân Tích Thể Trạng Trẻ Em (`/admin/tang-truong-tre-em`) & Đóng Gói Hoàn Thiện**
+
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
 - [ ] Thiết lập PM2 quản lý tiến trình tự động khởi động lại khi server reboot.

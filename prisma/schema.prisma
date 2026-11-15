@@ -340,6 +340,7 @@ model User {
   chatSessions          ChatSession[]
   preOrderReservations  PreOrderReservation[]
   familyMembers         FamilyMemberProfile[]
+  growthAssessments     ChildGrowthAssessmentRecord[]
 
   @@index([email])
   @@index([phone])
@@ -478,6 +479,7 @@ model Product {
   nutrients      ProductNutrient[]
   comparisonFeature ProductComparisonFeature?
   supplementSchedules MemberSupplementSchedule[]
+  aptamilProtocols    AptamilPreparationProtocol[]
 
   @@index([slug])
   @@index([categoryId])
@@ -1741,6 +1743,7 @@ model FamilyMemberProfile {
   user                   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   supplementSchedules    MemberSupplementSchedule[]
   intakeLogs             SupplementIntakeLog[]
+  growthAssessments      ChildGrowthAssessmentRecord[]
 
   @@index([userId])
   @@index([relation])
@@ -1796,4 +1799,101 @@ model SupplementIntakeLog {
   @@index([logDate])
   @@index([status])
   @@map("supplement_intake_logs")
+}
+
+// ============================================================
+// PHASE 23: PEDIATRIC FORMULA PREPARATION & WHO GROWTH ASSISTANT
+// ============================================================
+
+enum FormulaStage {
+  STAGE_1 // 0 - 6 tháng (Aptamil Profutura 1)
+  STAGE_2 // 6 - 12 tháng (Aptamil Profutura 2)
+  STAGE_3 // 1 - 3 tuổi (Aptamil Profutura 3 Toddler)
+  STAGE_4 // 3 tuổi trở lên (Aptamil Profutura 4 Junior)
+}
+
+enum ChildGender {
+  BOY
+  GIRL
+}
+
+enum GrowthAssessmentStatus {
+  SEVERELY_UNDERWEIGHT // Z-score < -3
+  UNDERWEIGHT          // Z-score < -2
+  NORMAL               // -2 <= Z-score <= +2
+  OVERWEIGHT           // Z-score > +2
+  STUNTED              // Chiều cao Z-score < -2
+  TALL                 // Chiều cao Z-score > +2
+}
+
+model AptamilPreparationProtocol {
+  id                        String       @id @default(cuid())
+  stage                     FormulaStage @unique
+  productTitle              String       // "Aptamil Profutura Úc Số 1", "Số 2", etc.
+  ageRangeMonths            String       // "0 - 6 tháng"
+  waterTemperatureMinC       Int          @default(40) // Nhiệt độ nước chuẩn để không chết lợi khuẩn
+  waterTemperatureMaxC       Int          @default(45)
+  waterMlPerScoop           Float        @default(50.0) // 1 muỗng gạt ứng với 50ml nước ấm
+  scoopWeightGrams          Float        @default(7.3)
+  standardFeedsPerDay       Int          @default(4)
+  waterVolumeMlPerFeed      Int          @default(200) // 200ml nước
+  scoopsPerFeed             Int          @default(4)   // 4 muỗng gạt ngang
+  mixingSteps               String[]     // Các bước tuần tự chuẩn y khoa
+  probioticWarning          String       // Cảnh báo không dùng nước > 45°C
+  storageGuidelines         String       // Đậy kín, dùng trong 4 tuần
+  productId                 String?
+  createdAt                 DateTime     @default(now())
+  updatedAt                 DateTime     @updatedAt
+
+  product                   Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([stage])
+  @@index([productId])
+  @@map("aptamil_preparation_protocols")
+}
+
+model WhoGrowthStandard {
+  id            String      @id @default(cuid())
+  gender        ChildGender
+  ageMonths     Int         // 0 đến 60 tháng (0 - 5 tuổi)
+  weightMedianKg Float       // P50
+  weightMinus2SD Float       // -2 SD (Ngưỡng nhẹ cân P3)
+  weightPlus2SD  Float       // +2 SD (Ngưỡng thừa cân P97)
+  heightMedianCm Float       // P50
+  heightMinus2SD Float       // -2 SD (Ngưỡng thấp còi P3)
+  heightPlus2SD  Float       // +2 SD (Ngưỡng cao P97)
+  createdAt     DateTime    @default(now())
+
+  @@unique([gender, ageMonths])
+  @@index([gender, ageMonths])
+  @@map("who_growth_standards")
+}
+
+model ChildGrowthAssessmentRecord {
+  id                    String                 @id @default(cuid())
+  memberProfileId       String?
+  userId                String?
+  childName             String
+  gender                ChildGender            @default(BOY)
+  birthDate             DateTime
+  assessmentDate        DateTime               @default(now())
+  ageMonths             Int
+  weightKg              Float
+  heightCm              Float
+  weightZScore          Float
+  heightZScore          Float
+  weightStatus          GrowthAssessmentStatus
+  heightStatus          GrowthAssessmentStatus
+  recommendedNutrients  String[]               // ["Aptamil Profutura Số 2", "Bio Island Zinc", "Ostelin D3 K2"]
+  pharmacistAdvice      String                 @db.Text
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+
+  user                  User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  memberProfile         FamilyMemberProfile?   @relation(fields: [memberProfileId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([memberProfileId])
+  @@index([assessmentDate])
+  @@map("child_growth_assessment_records")
 }
