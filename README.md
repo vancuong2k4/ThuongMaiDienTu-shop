@@ -1624,7 +1624,18 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
   - Đồng bộ cơ sở dữ liệu PostgreSQL (`npx prisma db push`) và tạo Prisma Client mới.
   - Xây dựng Zod validation schemas tại `src/lib/validations/pediatric-growth.ts`.
   - Tạo và thực thi seed script `prisma/seed-pediatric-growth.ts`: Khởi tạo 4 quy trình pha sữa Aptamil Profutura Úc, 122 bản ghi bách phân vị WHO (0-60 tháng) và hồ sơ thể trạng mẫu cho Bé Bon.
-- [ ] **Giai đoạn 23.2: Xây Dựng Pediatric Growth Engine, Bộ Tính Liều Sữa Aptamil & REST APIs**
+- [x] **Giai đoạn 23.2: Xây Dựng Pediatric Growth Engine, Bộ Tính Liều Sữa Aptamil & REST APIs** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng thư viện tính toán thể trạng `src/lib/pediatric-growth.ts`:
+    - Thuật toán chuẩn hóa Z-Score và ước lượng bách phân vị `estimatePercentile()` theo cơ sở dữ liệu WHO.
+    - Hàm `assessChildGrowth()`: Tự động tính tuổi theo tháng, so khớp ngưỡng P50 / -2SD / +2SD, phân loại thể trạng (bình thường, nhẹ cân, thấp còi, thừa cân), tạo lời khuyên Dược sĩ chuyên sâu và lưu lịch sử vào database.
+    - Hàm `calculateAptamilFormulaMix()`: Tính toán chính xác số muỗng gạt ngang (tỷ lệ 50ml/muỗng), lượng nước ấm yêu cầu, tổng trọng lượng bột (g), năng lượng ước tính (kcal), và kiểm tra nghiêm ngặt nhiệt độ nước 40°C - 45°C để bảo toàn men vi sinh sống *Bifidobacterium breve M-16V*.
+    - Hàm `calculatePediatricAdminKPIs()`: Thống kê số lượng hồ sơ đánh giá, tỷ lệ thể trạng chuẩn và danh sách trẻ cần can thiệp dinh dưỡng.
+  - Chuỗi REST APIs phục vụ tính toán và tích hợp:
+    - `GET /api/pediatric/protocols`: Trả về danh sách 4 quy trình pha sữa Aptamil Profutura kèm sản phẩm.
+    - `POST /api/pediatric/calculate-formula`: Tính số muỗng, nước và kcal theo cân nặng hoặc dung tích mong muốn.
+    - `POST /api/pediatric/assess-growth`: Nhận thông số thể trạng bé, tính Z-score, trả về kết luận WHO và tự động liên kết tài khoản khách hàng.
+    - `GET /api/pediatric/who-standards`: Trả về toàn bộ đường cong bách phân vị WHO theo giới tính để vẽ đồ thị.
+    - `GET /api/admin/pediatric/stats`: Thống kê KPI quản trị thể trạng trẻ em (Bảo mật `ADMIN` role).
 - [ ] **Giai đoạn 23.3: Giao Diện Công Cụ Tính Chuẩn Hóa Pha Sữa Aptamil & Biểu Đồ Radar WHO Storefront**
 - [ ] **Giai đoạn 23.4: Tích Hợp Tiện Ích Vào Trang Chi Tiết Sản Phẩm Aptamil/Bio Island & Liên Kết Tủ Thuốc Gia Đình**
 - [ ] **Giai đoạn 23.5: Giao Diện Quản Trị Admin CMS Phân Tích Thể Trạng Trẻ Em (`/admin/tang-truong-tre-em`) & Đóng Gói Hoàn Thiện**
