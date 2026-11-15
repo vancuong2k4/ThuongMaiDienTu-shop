@@ -23,6 +23,7 @@ import {
   Plane,
   Calendar,
   Heart,
+  Baby,
 } from "lucide-react";
 
 interface SubCategory {
@@ -209,6 +210,20 @@ export function MobileNav({ categories }: MobileNavProps) {
               </div>
               <span className="text-[10px] bg-teal-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
                 Nhịp Sinh Học
+              </span>
+            </Link>
+
+            <Link
+              href="/cong-thuc-pha-sua-aptamil"
+              onClick={closeMenu}
+              className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-pink-50 text-pink-950 font-bold hover:bg-pink-100 transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Baby className="w-4 h-4 text-pink-600" />
+                <span>Pha Sữa &amp; Thước Đo WHO</span>
+              </div>
+              <span className="text-[10px] bg-pink-600 text-white px-1.5 py-0.5 rounded font-extrabold uppercase">
+                Aptamil
               </span>
             </Link>
 

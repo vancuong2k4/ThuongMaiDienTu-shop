@@ -20,6 +20,8 @@ import {
   MapPin,
   CheckCircle2,
   Plane,
+  Baby,
+  ChevronRight,
 } from "lucide-react";
 import { formatVND, calcDiscount, toNumber } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
@@ -336,6 +338,39 @@ export function ProductInfoSection({
 
       {/* ── 3.5. Minh Bạch Vận Chuyển Air-Cargo & Hạn Sử Dụng (Phase 15) ── */}
       <ProductAirCargoBadge latestBatch={latestBatch} />
+
+      {/* ── 3.6. Pediatric Formula & Growth Helper Widget (Phase 23) ── */}
+      {(product.name.toLowerCase().includes("aptamil") ||
+        product.category.slug.includes("me-va-be") ||
+        product.name.toLowerCase().includes("sữa")) && (
+        <div className="rounded-2xl border border-emerald-300 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50/50 p-4 shadow-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Baby className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-200/80 px-2 py-0.5 rounded">
+                  Tiện ích Dược Sĩ Nhi Khoa
+                </span>
+                <span className="text-[11px] font-bold text-emerald-900">
+                  Nhiệt độ vàng 40°C - 45°C
+                </span>
+              </div>
+              <p className="text-xs text-gray-700 font-medium mt-0.5">
+                Xem công thức tính muỗng gạt chuẩn &amp; đối chiếu bách phân vị WHO cho bé
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/cong-thuc-pha-sua-aptamil"
+            className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl transition-all shadow-xs shrink-0 flex items-center gap-1 whitespace-nowrap"
+          >
+            <span>Tính Liều Chuẩn</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* ── 4. Smart Variant Selector (Bộ chọn biến thể thông minh) ─── */}
       <div className="space-y-3 pt-2">

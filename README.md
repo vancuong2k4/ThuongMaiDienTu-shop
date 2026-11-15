@@ -1641,7 +1641,12 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Component `AptamilFormulaCalculator.tsx`: Bộ chọn 4 giai đoạn sữa (Số 1, 2, 3, 4), hai chế độ tính linh hoạt (theo dung tích nước hoặc cân nặng bé), cảm biến đo nhiệt độ nước pha sữa tương tác với cảnh báo nhiệt độ đỏ (> 45°C diệt men vi sinh) và 4 thẻ định lượng chi tiết (ml nước, muỗng gạt, gram bột, kcal) kèm nút 1-chạm mua sữa.
     - Component `WhoGrowthChartCalculator.tsx`: Thước đo thể trạng bách phân vị WHO (0 đến 5 tuổi) với Z-scores cân nặng, chiều cao, đánh giá thể trạng y khoa (chuẩn, nhẹ cân, thấp còi, thừa cân), lời khuyên Dược sĩ và phác đồ vi chất Úc tương thích.
     - Tuyến đường chuyển hướng `/bieu-do-tang-truong-who` liên kết trực tiếp vào module phân tích thể trạng.
-- [ ] **Giai đoạn 23.4: Tích Hợp Tiện Ích Vào Trang Chi Tiết Sản Phẩm Aptamil/Bio Island & Liên Kết Tủ Thuốc Gia Đình**
+- [x] **Giai đoạn 23.4: Tích Hợp Tiện Ích Vào Trang Chi Tiết Sản Phẩm Aptamil/Bio Island & Liên Kết Tủ Thuốc Gia Đình** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Tích hợp tiện ích Dược Sĩ Nhi Khoa trên trang chi tiết sản phẩm (`ProductInfoSection.tsx`): Tự động phát hiện các dòng sữa bột Aptamil Profutura hoặc danh mục Mẹ &amp; Bé để hiển thị widget "Nhiệt độ vàng 40°C - 45°C &amp; Tính muỗng gạt chuẩn".
+  - Tích hợp banner chuyển tiếp trong Tủ thuốc gia đình (`FamilyVaultClient.tsx`): Hiển thị lối tắt "Thước đo tăng trưởng WHO &amp; Công cụ pha sữa Aptamil" khi mẹ đang xem hồ sơ con nhỏ (`relation === CHILD`).
+  - Cập nhật thanh điều hướng toàn sàn:
+    - `Header.tsx`: Thêm nút "Pha sữa Aptamil &amp; WHO" nổi bật trên TopBar thương mại với icon `Baby`.
+    - `MobileNav.tsx`: Thêm mục điều hướng di động "Pha Sữa &amp; Thước Đo WHO" kèm nhãn Aptamil.
 - [ ] **Giai đoạn 23.5: Giao Diện Quản Trị Admin CMS Phân Tích Thể Trạng Trẻ Em (`/admin/tang-truong-tre-em`) & Đóng Gói Hoàn Thiện**
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production

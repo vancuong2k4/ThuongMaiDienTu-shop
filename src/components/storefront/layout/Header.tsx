@@ -103,6 +103,14 @@ export function Header({ categories }: HeaderProps) {
             </Link>
             <span className="text-white/20">|</span>
             <Link
+              href="/cong-thuc-pha-sua-aptamil"
+              className="flex items-center gap-1 text-pink-200 hover:text-white transition-colors"
+            >
+              <Baby className="w-3.5 h-3.5 text-pink-300" />
+              <span>Pha sữa Aptamil &amp; WHO</span>
+            </Link>
+            <span className="text-white/20">|</span>
+            <Link
               href="/dat-truoc-mua-vu"
               className="flex items-center gap-1 text-amber-200 hover:text-white transition-colors"
             >

@@ -6,6 +6,7 @@
 // ============================================================
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Clock,
   Heart,
@@ -14,6 +15,8 @@ import {
   Plus,
   RefreshCw,
   Users,
+  Baby,
+  ChevronRight,
 } from "lucide-react";
 import { FamilyMemberTabs, type FamilyMemberSummary } from "./FamilyMemberTabs";
 import { SupplementClockTimeline } from "./SupplementClockTimeline";
@@ -162,6 +165,32 @@ export const FamilyVaultClient: React.FC<FamilyVaultClientProps> = ({
       {/* Member Details & Conflict / Restock Alerts */}
       {overview && (
         <>
+          {/* WHO & Aptamil Helper for Children */}
+          {activeMember?.relation === "CHILD" && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Baby className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-blue-950">
+                    Thước Đo Tăng Trưởng WHO &amp; Công Cụ Pha Sữa Aptamil Cho Bé
+                  </h4>
+                  <p className="text-[11px] text-blue-700 mt-0.5">
+                    So khớp chiều cao/cân nặng của bé với chuẩn bách phân vị WHO và tính toán lượng sữa chính xác.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/cong-thuc-pha-sua-aptamil"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors shrink-0 flex items-center gap-1 self-start sm:self-auto"
+              >
+                <span>Mở Thước Đo WHO</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          )}
+
           {/* Conflict Alerts */}
           <NutrientConflictAlert alerts={overview.conflictAlerts} />
 
