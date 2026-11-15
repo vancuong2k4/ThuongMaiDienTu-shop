@@ -1636,7 +1636,11 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - `POST /api/pediatric/assess-growth`: Nhận thông số thể trạng bé, tính Z-score, trả về kết luận WHO và tự động liên kết tài khoản khách hàng.
     - `GET /api/pediatric/who-standards`: Trả về toàn bộ đường cong bách phân vị WHO theo giới tính để vẽ đồ thị.
     - `GET /api/admin/pediatric/stats`: Thống kê KPI quản trị thể trạng trẻ em (Bảo mật `ADMIN` role).
-- [ ] **Giai đoạn 23.3: Giao Diện Công Cụ Tính Chuẩn Hóa Pha Sữa Aptamil & Biểu Đồ Radar WHO Storefront**
+- [x] **Giai đoạn 23.3: Giao Diện Công Cụ Tính Chuẩn Hóa Pha Sữa Aptamil & Biểu Đồ Radar WHO Storefront** *(Đã hoàn thành & Đã kiểm thử)*:
+  - Xây dựng trung tâm tính toán dinh dưỡng nhi khoa tại `/cong-thuc-pha-sua-aptamil`:
+    - Component `AptamilFormulaCalculator.tsx`: Bộ chọn 4 giai đoạn sữa (Số 1, 2, 3, 4), hai chế độ tính linh hoạt (theo dung tích nước hoặc cân nặng bé), cảm biến đo nhiệt độ nước pha sữa tương tác với cảnh báo nhiệt độ đỏ (> 45°C diệt men vi sinh) và 4 thẻ định lượng chi tiết (ml nước, muỗng gạt, gram bột, kcal) kèm nút 1-chạm mua sữa.
+    - Component `WhoGrowthChartCalculator.tsx`: Thước đo thể trạng bách phân vị WHO (0 đến 5 tuổi) với Z-scores cân nặng, chiều cao, đánh giá thể trạng y khoa (chuẩn, nhẹ cân, thấp còi, thừa cân), lời khuyên Dược sĩ và phác đồ vi chất Úc tương thích.
+    - Tuyến đường chuyển hướng `/bieu-do-tang-truong-who` liên kết trực tiếp vào module phân tích thể trạng.
 - [ ] **Giai đoạn 23.4: Tích Hợp Tiện Ích Vào Trang Chi Tiết Sản Phẩm Aptamil/Bio Island & Liên Kết Tủ Thuốc Gia Đình**
 - [ ] **Giai đoạn 23.5: Giao Diện Quản Trị Admin CMS Phân Tích Thể Trạng Trẻ Em (`/admin/tang-truong-tre-em`) & Đóng Gói Hoàn Thiện**
 
