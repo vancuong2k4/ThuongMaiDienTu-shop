@@ -1,8 +1,7 @@
 # 🛍️ THUYNGA SHOP – HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ HÀNG NHẬP KHẨU CAO CẤP
 
 > **Dự án E-commerce độc quyền chính hãng:** Thực phẩm chức năng, Thực phẩm & Đồ uống nhập khẩu, Trái cây tươi Air Cargo, Mỹ phẩm & Chăm sóc cá nhân, Mẹ & Bé.  
-> **Chủ sở hữu & Developer trực tiếp:** Trần Văn Cường (`cuongtran190404@gmail.com`)  
-> **AI Co-pilot:** Senior Full-stack Developer  
+> **Chủ sở hữu & Kỹ sư phát triển:** Trần Văn Cường (`cuongtran190404@gmail.com`)  
 > **Quy định bất biến:** Tuyệt đối **KHÔNG** kinh doanh thuốc kê đơn.
 
 ---
@@ -387,7 +386,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
 
 ### ✅ Giai đoạn 2: Layout Storefront & Trang Chủ Hoàn Chỉnh (ĐÃ XONG)
 - [x] Header 3 tầng (TopBar cam kết chính hãng, MainBar logo sang trọng, Mega Menu 2 cấp).
-- [x] Thanh tìm kiếm thông minh gợi ý từ khóa hot không dùng icon AI.
+- [x] Thanh tìm kiếm thông minh gợi ý từ khóa hot trực quan.
 - [x] Drawer menu trượt trên mobile (Accordion mở danh mục con 1 chạm).
 - [x] Thanh Mobile Bottom Navigation cố định đáy màn hình chuẩn App e-commerce.
 - [x] Footer 4 cam kết vàng + 4 cột thông tin chính sách + cam kết pháp lý không bán thuốc kê đơn.
@@ -1097,7 +1096,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Header Navigation Bar: Bổ sung huy hiệu "Minh bạch bay Air" nổi bật bên cạnh nút "FLASH SALE".
     - Footer Chân Trang: Bổ sung mục "Minh bạch lô bay Air & Hạn sử dụng (AWB)" trong khối Hỗ Trợ & Chính Sách.
 
-### 🩺 Giai đoạn 16: Hệ Thống Tư Vấn Dinh Dưỡng & Phác Đồ Bổ Sung Cá Nhân Hóa Chuẩn Y Khoa (AI/Pharmacist Health Assessment & Personalized Supplement Protocol Builder - ĐÃ HOÀN THÀNH 100%)
+### 🩺 Giai đoạn 16: Hệ Thống Tư Vấn Dinh Dưỡng & Phác Đồ Bổ Sung Cá Nhân Hóa Chuẩn Y Khoa (Clinical Health Assessment & Personalized Supplement Protocol Builder - ĐÃ HOÀN THÀNH 100%)
 - [x] **Giai đoạn 16.1: Thiết Kế Schema, Enums, Zod Validations & Seed Dữ Liệu Ngân Hàng Câu Hỏi & Phác Đồ Mẫu** *(Đã hoàn thành & Đã kiểm thử)*:
   - Bổ sung 3 enums cốt lõi trong `prisma/schema.prisma`: `HealthTargetGroup` (`BABY_KIDS`, `PREGNANT_MOM`, `POSTPARTUM_MOM`, `ADULT_HEALTH`, `ELDERLY`), `QuizQuestionType` (`SINGLE_CHOICE`, `MULTIPLE_CHOICE`), `ConsultationStatus` (`PENDING`, `CONFIRMED`, `COMPLETED`, `CANCELLED`).
   - Thiết kế 6 models cơ sở dữ liệu quan hệ hoàn chỉnh:
@@ -1379,7 +1378,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Các actions: `addItem` (tự động kiểm tra giới hạn 4 sản phẩm và tự động mở dock khi thêm mới), `removeItem`, `clear`, `toggleOpen`, `hasItem`.
   - Nút So Sánh Sản Phẩm Đa Năng (`ComparisonButton.tsx`):
     - Đặt nổi trên từng thẻ sản phẩm `ProductCard.tsx` (cạnh nút Thả Tim Yêu Thích) và trang chi tiết sản phẩm `ProductInfoSection.tsx` (`showText=true`).
-    - Nhận diện trạng thái đã thêm/chưa thêm với icon `Scale` (chuẩn quy tắc không dùng icon Sparkles).
+    - Nhận diện trạng thái đã thêm/chưa thêm với icon `Scale`.
   - Thanh Dock Nổi Thông Minh Dưới Đáy Màn Hình (`FloatingComparisonDock.tsx`):
     - Trạng thái thu gọn: Huy hiệu pill sang trọng gradient đỏ rượu `#800028` đính kèm bộ đếm `(N/4)` nhấp nháy tinh tế.
     - Trạng thái mở rộng: 4 ô sản phẩm (thẻ ảnh, tên, giá bán và nút X xóa nhanh 1-chạm), ô trống có nét đứt khuyến khích thêm sản phẩm, nút "Xóa hết" và nút CTA "So Sánh Ngay" dẫn thẳng vào `/so-sanh`.
@@ -1654,7 +1653,7 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
     - Component `AptamilProtocolsTable.tsx`: Bảng quản lý 4 quy chuẩn pha sữa Aptamil Profutura Úc (Số 1, 2, 3, 4) với dải nhiệt độ 40°C - 45°C, tỷ lệ 50ml/muỗng và liên kết sản phẩm sàn.
     - Component `PediatricAdminManager.tsx`: Trình điều phối tab và làm mới dữ liệu.
   - Tích hợp menu "Tăng trưởng trẻ em" vào `AdminSidebar.tsx` với icon `Baby`.
-  - Hoàn tất 100% Phân hệ Trợ lý tính liều vi chất &amp; Chuẩn hóa pha sữa Aptamil / Thước đo WHO (Phase 23), đảm bảo không có icon AI sparkles và kiểm thử TypeScript nghiêm ngặt.
+  - Hoàn tất 100% Phân hệ Trợ lý tính liều vi chất &amp; Chuẩn hóa pha sữa Aptamil / Thước đo WHO (Phase 23), đảm bảo chuẩn giao diện tối ưu và kiểm thử TypeScript nghiêm ngặt.
 
 ### 🔜 Giai đoạn 7: Triển Khai Lên VPS Ubuntu & Production
 - [ ] Cấu hình Nginx làm Reverse Proxy trỏ domain về cổng 3000.
@@ -1664,4 +1663,4 @@ npm run db:seed          # Nạp lại tài khoản admin & danh mục
 
 ---
 
-*Tài liệu được lập và duy trì bởi Developer Trần Văn Cường & AI Co-pilot | Cập nhật lần cuối: 2026-10-27*
+*Tài liệu được lập và duy trì bởi Developer Trần Văn Cường | Cập nhật lần cuối: 2026-11-16*
